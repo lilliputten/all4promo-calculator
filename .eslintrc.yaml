@@ -1,0 +1,286 @@
+# @changed 2024.10.13, 15:58
+# @see https://eslint.org/docs/rules/
+root: true
+extends:
+  # - 'next/core-web-vitals'
+  - 'eslint:recommended'
+  # - 'plugin:jest/recommended'
+env:
+  es6: true
+  # jest: true
+  # jest/globals: true
+  # amd: true
+  commonjs: true
+rules:
+  no-console: warn
+  no-debugger: warn
+  no-extra-semi: warn
+  no-redeclare: warn
+  no-undef: error
+  no-unreachable: warn
+  prefer-const: warn
+  no-empty: warn
+  quotes:
+    - warn
+    - single
+  semi:
+    - warn
+    - always
+
+overrides:
+  - # Typescript files (ts,tsx)...
+    files: '**/*.+(ts|tsx)'
+    extends:
+      - 'eslint:recommended'
+      - 'plugin:prettier/recommended' # prettier: Slighly slower (+0.3s)
+      # - 'plugin:react/recommended'
+      # - 'plugin:react/jsx-runtime'
+      - 'plugin:@typescript-eslint/recommended'
+      # - 'plugin:react-hooks/recommended'
+    parser: '@typescript-eslint/parser'
+    parserOptions:
+      ecmaVersion: 12
+      sourceType: 'module'
+      # project: './tsconfig.json' # Very slow
+    plugins:
+      # - 'react'
+      - '@typescript-eslint'
+      - 'prettier' # prettier: Slighly slower (+~0.3s)
+    rules:
+      prefer-const: 'warn'
+      no-undef: 'off' # Disable js no-undef rule for typescript sources. Using ts2304 instead.
+      # eslint-comments/no-use: 'warn'
+      no-debugger: 'warn'
+      # no-console: 'warn' # TODO: To use if console debugging output is deprecated (44 warnings as on 2022.04.06).
+      # no-magic-numbers:
+      #   # TODO: To determine which modules has false-positive warnings and turn them off per-module or per-line. (As on 2022.04.06 the linter issues 270 warnings in 49 modules.)
+      #   - 'warn'
+      #   - ignore:
+      #       - -1
+      #       - 0
+      #       - 1
+      #     ignoreArrayIndexes: true
+      #     ignoreDefaultValues: true
+      prettier/prettier: # prettier: Slighly slower (+0.3s)
+        - 'warn' # Can we to use warn if we still use `eslint --max-warnings=0` in `package.json`?
+        - endOfLine: 'auto'
+      import/no-namespace: 'off'
+      no-unused-vars: 'off'
+      '@typescript-eslint/explicit-member-accessibility':
+        - 'error'
+        - accessibility: 'no-public'
+      '@typescript-eslint/no-unused-vars':
+        - 'warn'
+        - # varsIgnorePattern: '^[T][A-Z]\\w+' # M.b. useful for typescript `TSmth` types: eslint may treat them us 'unused'.
+          varsIgnorePattern: '^_'
+          argsIgnorePattern: '^_'
+      '@typescript-eslint/no-require-imports': 'warn'
+      '@typescript-eslint/array-type': 'error'
+      # '@typescript-eslint/await-thenable': 'warn' # Requires parserOptions.project (very slow)
+      '@typescript-eslint/ban-ts-comment':
+        - 'error'
+        - ts-ignore: 'allow-with-description'
+      '@typescript-eslint/naming-convention':
+        - 'error'
+        - selector: 'function'
+          format:
+            - 'PascalCase'
+            - 'camelCase'
+      '@typescript-eslint/explicit-module-boundary-types': 'off' # Disable 'Missing return type on function' if no explicit `: void` specified
+      '@typescript-eslint/explicit-function-return-type': 0 # Causes 'Missing return type on function' if no explicit `: void` specified
+      # '@typescript-eslint/explicit-function-return-type': # (Is required!) Causes 'Missing return type on function' if no explicit `: void` specified
+      #   # @see https://github.com/typescript-eslint/typescript-eslint/blob/main/packages/eslint-plugin/docs/rules/explicit-function-return-type.md
+      #   - 'warn'
+      #   - allowExpressions: true
+      #     # allowTypedFunctionExpressions: true
+      # '@typescript-eslint/func-call-spacing':
+      #   - 'error'
+      #   - 'never'
+      '@typescript-eslint/no-explicit-any': 'warn'
+      '@typescript-eslint/no-extraneous-class':
+        - 'error'
+        - allowStaticOnly: true
+      # '@typescript-eslint/no-non-null-assertion': 'warn'
+      # '@typescript-eslint/no-unnecessary-qualifier': 'error' # Requires parserOptions.project (very slow)
+      '@typescript-eslint/no-useless-constructor': 'error'
+      '@typescript-eslint/prefer-for-of': 'warn'
+      '@typescript-eslint/prefer-function-type': 'warn'
+      # '@typescript-eslint/prefer-includes': 'error' # Requires parserOptions.project (very slow)
+      '@typescript-eslint/consistent-type-definitions': 'error'
+      # '@typescript-eslint/promise-function-async': 'warn' # Requires parserOptions.project (very slow)
+      # '@typescript-eslint/require-array-sort-compare': 'error' # Requires parserOptions.project (very slow)
+      # '@typescript-eslint/restrict-plus-operands': 'error' # Requires parserOptions.project (very slow)
+      # '@typescript-eslint/type-annotation-spacing': 'error'
+      # react/no-multi-comp:
+      #   - 'error'
+      #   - ignoreStateless: true
+      # react/no-this-in-sfc: 'error'
+      # react/no-unstable-nested-components: 'off'
+      # react/style-prop-object: 'error'
+      # react/jsx-handler-names: 'error'
+      # # react/jsx-no-bind: 'error'
+      # react/jsx-no-constructed-context-values: 'error'
+      # react/jsx-pascal-case: 'error'
+      # react/boolean-prop-naming: 'error'
+      # react/function-component-definition:
+      #   - 'error'
+      #   - namedComponents: 'arrow-function'
+      # react/jsx-uses-react: 'off'
+      # react/react-in-jsx-scope: 'off'
+      # react/no-array-index-key: 'error'
+      # react/jsx-boolean-value: 'error'
+      # react/jsx-fragments: 'error'
+      # react/destructuring-assignment: 'warn'
+      # react/sort-comp:
+      #   - 'error'
+      #   - order:
+      #       - 'static-variables'
+      #       - 'static-methods'
+      #       - 'lifecycle'
+      #       - 'everything-else'
+      #       - 'rendering'
+      #     groups:
+      #       rendering:
+      #         - '/^render.+$/'
+      #         - 'render'
+      # react/sort-prop-types: 'warn'
+      # react/jsx-closing-tag-location: 'error'
+      # react/jsx-curly-newline: 'error'
+      # react/jsx-curly-spacing: 'error'
+      # react/jsx-equals-spacing: 'error'
+      # react/jsx-indent:
+      #   - 'warn'
+      #   - 2
+      #   - indentLogicalExpressions: false
+      # react/jsx-indent-props:
+      #   - 'warn'
+      #   - indentMode: 2
+      #     ignoreTernaryOperator: false
+
+  - # Raw js files (from root)...
+    files: '**/*.js'
+    parser: '@babel/eslint-parser'
+    # parserOptions:
+    #   requireConfigFile: false
+    env:
+      node: true
+      commonjs: true
+      es6: true
+      # amd: true
+    extends:
+      - 'eslint:recommended'
+      - 'plugin:prettier/recommended'
+      # - 'plugin:import/recommended'
+    plugins:
+      - 'prettier' # prettier: Slighly slower (+~0.3s)
+    # globals:
+    #   require: true
+    #   process: true
+    rules:
+      prettier/prettier: 'warn'
+      no-unused-vars:
+        - 'warn'
+        - #
+          argsIgnorePattern: '^_'
+          varsIgnorePattern: '^_'
+      no-console: 'warn'
+      # no-console: 0
+      no-debugger: 'warn'
+      no-extra-semi: 'warn'
+      no-redeclare: 'warn'
+      no-undef: 'error'
+      no-unreachable: 'warn'
+      prefer-const: 'warn'
+      semi:
+        - 'warn'
+        - 'always'
+
+  - # Raw mjs files (from root)...
+    files: '**/*.mjs'
+    parser: '@babel/eslint-parser'
+    parserOptions:
+      sourceType: 'module'
+    env:
+      node: true
+      # commonjs: true
+      es6: true
+      # amd: true
+    extends:
+      - 'eslint:recommended'
+      - 'plugin:prettier/recommended'
+      - 'plugin:import/recommended'
+    plugins:
+      - 'prettier' # prettier: Slighly slower (+~0.3s)
+    rules:
+      prettier/prettier: 'warn'
+      no-unused-vars:
+        - 'warn'
+        - #
+          argsIgnorePattern: '^_'
+          varsIgnorePattern: '^_'
+      no-console: 'warn'
+      no-debugger: 'warn'
+      no-extra-semi: 'warn'
+      no-redeclare: 'warn'
+      no-undef: 'error'
+      no-unreachable: 'warn'
+      prefer-const: 'warn'
+      semi:
+        - 'warn'
+        - 'always'
+
+  - # Raw js project files...
+    files: 'src/**/*.js'
+    # parser: '@babel/eslint-parser'
+    parser: null
+    env:
+      es6: true
+      browser: true
+      # jest: true
+      # jest/globals: true
+    globals:
+      modules: true
+    extends:
+      - 'eslint:recommended'
+      - 'plugin:prettier/recommended'
+    plugins:
+      - 'prettier' # prettier: Slighly slower (+~0.3s)
+    rules:
+      no-var: 'warn'
+      prettier/prettier: 'warn'
+      no-unused-vars:
+        - 'warn'
+        - #
+          argsIgnorePattern: '^_'
+          varsIgnorePattern: '^_'
+      no-console: 'warn'
+      no-debugger: 'warn'
+      no-extra-semi: 'warn'
+      no-redeclare: 'warn'
+      no-undef: 'error'
+      no-unreachable: 'warn'
+      prefer-const: 'warn'
+      semi:
+        - 'warn'
+        - 'always'
+
+  - # json files (@see https://www.npmjs.com/package/eslint-plugin-json)...
+    files: '**/*.json'
+    extends:
+      - 'plugin:json/recommended'
+    rules:
+      prettier/prettier: 'warn'
+
+  - # jsonc files - commented json (@see https://www.npmjs.com/package/eslint-plugin-jsonc)...
+    files: '**/*.jsonc'
+    extends:
+      - 'plugin:jsonc/recommended-with-jsonc'
+    rules:
+      prettier/prettier: 'warn'
+
+  - # yaml files - commented json (@see https://www.npmjs.com/package/eslint-plugin-yaml)...
+    files: '**/*.+(yml|yaml)'
+    extends:
+      - 'plugin:yaml/recommended'
+    rules:
+      prettier/prettier: 'warn'

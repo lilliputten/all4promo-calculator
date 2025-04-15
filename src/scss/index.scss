@@ -1,0 +1,9 @@
+@import '~bootstrap/scss/bootstrap';
+@import 'base/vars';
+@import 'base/reset';
+@import 'base/print';
+@import 'base/fonts';
+@import 'base/mixins';
+
+@import 'main';
+@import 'pages/index';

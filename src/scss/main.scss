@@ -1,0 +1,146 @@
+html {
+  font-size: 16px;
+  @include media-breakpoint-down(xxl) {
+    font-size: 14px;
+  }
+  @include media-breakpoint-down(xl) {
+    font-size: 11px;
+  }
+  @include media-breakpoint-down(lg) {
+    font-size: 8px;
+  }
+  @include media-breakpoint-down(md) {
+    font-size: 11px;
+  }
+}
+body {
+  * {
+    font-family: 'Muli', arial, serif;
+    font-size: $fz16;
+    color: $black;
+    @include media-breakpoint-down(md) {
+      font-size: $fz16;
+    }
+  }
+  a {
+    color: $blue;
+    transition: all 200ms !important;
+    text-decoration: none;
+  }
+}
+.fw-500 {
+  font-weight: 500;
+}
+.grayBg {
+  background-color: $gray;
+}
+.blueBg {
+  background-color: $blue;
+}
+.blueColor {
+  color: $blue;
+}
+h1 {
+  font-size: $fz48;
+  text-transform: uppercase;
+  line-height: 1.3;
+  margin-bottom: 1rem;
+  font-weight: 900;
+}
+h2 {
+  font-size: $fz32;
+  text-transform: uppercase;
+  line-height: 1.3;
+  margin-bottom: 1.5rem;
+  font-weight: 900;
+}
+h3 {
+  font-size: $fz20;
+  text-transform: uppercase;
+  line-height: 1.3;
+  margin-bottom: 1.5rem;
+  font-weight: 900;
+}
+
+.fz14 {
+  font-size: $fz14;
+}
+.fz16 {
+  font-size: $fz16;
+  @include media-breakpoint-down(md) {
+    font-size: $fz20;
+  }
+}
+.fz20 {
+  font-size: $fz20;
+  @include media-breakpoint-down(md) {
+    font-size: $fz22;
+  }
+}
+.fz24 {
+  font-size: $fz24;
+}
+.fz32 {
+  font-size: $fz32;
+}
+.fz48 {
+  font-size: $fz48;
+}
+.preloader {
+  position: fixed;
+  z-index: 20;
+  width: 100%;
+  height: 100%;
+  background: #ebeff2;
+  top: 0;
+  transition: all 200ms;
+  opacity: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  img {
+    width: 200px;
+  }
+  &.hide {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+.preloader {
+  position: fixed;
+  z-index: 20;
+  width: 100%;
+  height: 100%;
+  background: #ebeff2;
+  top: 0;
+  transition: all 200ms;
+  opacity: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  img {
+    width: 200px;
+  }
+  &.hide {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+@include media-breakpoint-up(md) {
+  /* scrollbar */
+  ::-webkit-scrollbar {
+    height: 8px;
+    width: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    box-shadow: none;
+    border-radius: 10px;
+    background: #ebeff2;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #686868;
+    border-radius: 10px;
+  }
+}
