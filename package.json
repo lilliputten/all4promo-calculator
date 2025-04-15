@@ -1,7 +1,7 @@
 {
   "name": "all4promo-calculator",
   "description": "all4promo Vue.js Clothes Constructor & Calculator",
-  "version": "0.0.1",
+  "version": "0.0.0",
   "license": "MIT",
   "private": false,
   "target": "web",
