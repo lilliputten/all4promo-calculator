@@ -24,6 +24,8 @@ node_modules/
 
 # Output
 dist/
+publish/
+.gitmodules
 
 # Unused & temp files
 \!UNUSED

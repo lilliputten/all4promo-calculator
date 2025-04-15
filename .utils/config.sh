@@ -13,10 +13,10 @@ if [ -z "$CONFIG_IMPORTED" ]; then
   APP_ID=`git ls-remote --get-url | xargs basename -s .git`
 
   # Project structure setup
-  # BUILD_FOLDER="build"
+  BUILD_FOLDER="dist"
   # PUBLIC_FOLDER="public"
-  # PUBLISH_FOLDER="publish-${APP_ID}"
-  # PUBLISH_BRANCH="publish-${APP_ID}"
+  PUBLISH_FOLDER="publish"
+  PUBLISH_BRANCH="publish"
   # DIST_REPO comes from the actual git configuration
 
   # This file is a project-wide source of truth for version info

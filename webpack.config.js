@@ -127,6 +127,12 @@ module.exports = {
     new CopyWebpackPlugin({
       patterns: [
         {
+          context: path.resolve(environment.paths.source),
+          from: 'project-*.txt',
+          to: path.resolve(environment.paths.output),
+          toType: 'dir',
+        },
+        {
           from: path.resolve(environment.paths.source, 'images', 'content'),
           to: path.resolve(environment.paths.output, 'images', 'content'),
           toType: 'dir',
