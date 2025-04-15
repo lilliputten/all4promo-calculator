@@ -35,6 +35,14 @@ Use pnpm/npm commands (see `package.json`, `scripts` section`):
 Shell maintenance utilities are located in the `.utils` folder:
 
 - `clean-all.sh`
+- `config-check.sh`
+- `config.sh`
 - `increment-version.sh`
+- `publish-init.sh`
+- `publish-push-with-tags.sh`
+- `publish-uninit.sh`
+- `publish-update.sh`
+- `publish.sh`
+- `push-test-deploy.sh`
 - `push-with-tags.sh`
 - `update-build-variables.sh`

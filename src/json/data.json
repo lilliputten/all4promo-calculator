@@ -4,7 +4,6 @@
     {
       "name": "Худи",
       "svg": "./images/content/hoodie_0_0.svg",
-
       "selected": false,
       "types": [
         {
@@ -380,7 +379,6 @@
             }
           ]
         },
-
         {
           "title": "Карман",
           "colors": [
@@ -1301,7 +1299,6 @@
     {
       "name": "Футболка",
       "svg": "./images/content/t-shirt_0_0.svg",
-
       "selected": false,
       "types": [
         {
@@ -1805,7 +1802,6 @@
     {
       "name": "Лонгслив",
       "svg": "./images/content/long_0_0.svg",
-
       "selected": false,
       "types": [
         {
