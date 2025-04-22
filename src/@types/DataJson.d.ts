@@ -57,7 +57,7 @@ interface TypeOption {
   selectionsChoose?: string;
   count?: number;
   /** Svg file path */
-  svg: string;
+  svg?: string;
   /** Loaded svg data */
   svgNew?: string;
 }

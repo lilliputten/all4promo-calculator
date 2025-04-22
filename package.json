@@ -83,7 +83,7 @@
   "scripts": {
     "prettier": "echo --Run prettier-- && prettier --write --cache . | grep -v '(unchanged)' || true",
     "stylelint": "echo --Lint styles-- && stylelint ./**/*.{css,scss,less}",
-    "stylelint-fix": "echo --Lint styles-- && stylelint ./**/*.{css,scss,less} --fix",
+    "stylelint-fix": "echo --Lint styles-- && stylelint --fix ./**/*.{css,scss,less}",
     "lint-debug": "echo --Lint sources with eslint in debug mode-- && cross-env DEBUG=eslint:cli-engine eslint . --ext js,ts,tsx",
     "lint": "echo --Lint sources-- && eslint . --ext js,ts,tsx",
     "type-check": "echo --Run typescript linter-- && tsc --pretty --noEmit",
