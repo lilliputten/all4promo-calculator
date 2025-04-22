@@ -3,7 +3,7 @@
   "types": [
     {
       "name": "Худи",
-      "svg": "./images/content/hoodie_0_0.svg",
+      "svg": "images/content/hoodie_0_0.svg",
       "selected": false,
       "types": [
         {
@@ -88,12 +88,12 @@
           "options": [
             {
               "name": "Стандарт",
-              "svg": "./images/content/hoodie_1_0.svg",
+              "svg": "images/content/hoodie_1_0.svg",
               "selected": false
             },
             {
               "name": "Оверсайз",
-              "svg": "./images/content/hoodie_1_1.svg",
+              "svg": "images/content/hoodie_1_1.svg",
               "selected": false
             }
           ]
@@ -180,17 +180,17 @@
           "options": [
             {
               "name": "Стандарт",
-              "svg": "./images/content/hoodie_2_0.svg",
+              "svg": "images/content/hoodie_2_0.svg",
               "selected": false
             },
             {
               "name": "Спущеный",
-              "svg": "./images/content/hoodie_2_2.svg",
+              "svg": "images/content/hoodie_2_2.svg",
               "selected": false
             },
             {
               "name": "Реглан",
-              "svg": "./images/content/hoodie_2_1.svg",
+              "svg": "images/content/hoodie_2_1.svg",
               "selected": false
             }
           ]
@@ -277,12 +277,12 @@
           "options": [
             {
               "name": "Есть",
-              "svg": "./images/content/hoodie_3_0.svg",
+              "svg": "images/content/hoodie_3_0.svg",
               "selected": false
             },
             {
               "name": "Нет",
-              "svg": "./images/content/hoodie_3_1.svg",
+              "svg": "images/content/hoodie_3_1.svg",
               "selected": false
             }
           ]
@@ -369,12 +369,12 @@
           "options": [
             {
               "name": "Двухдетальный",
-              "svg": "./images/content/hoodie_4_0.svg",
+              "svg": "images/content/hoodie_4_0.svg",
               "selected": false
             },
             {
               "name": "Трехдетальный",
-              "svg": "./images/content/hoodie_4_1.svg",
+              "svg": "images/content/hoodie_4_1.svg",
               "selected": false
             }
           ]
@@ -461,12 +461,12 @@
           "options": [
             {
               "name": "Есть",
-              "svg": "./images/content/hoodie_k_0.svg",
+              "svg": "images/content/hoodie_k_0.svg",
               "selected": false
             },
             {
               "name": "Нет",
-              "svg": "./images/content/hoodie_k_1.svg",
+              "svg": "images/content/hoodie_k_1.svg",
               "selected": false
             }
           ]
@@ -476,12 +476,12 @@
           "options": [
             {
               "name": "Нет",
-              "svg": "./images/content/hoodie_m_1.svg",
+              "svg": "images/content/hoodie_m_1.svg",
               "selected": false
             },
             {
               "name": "Есть",
-              "svg": "./images/content/hoodie_m_0.svg",
+              "svg": "images/content/hoodie_m_0.svg",
               "selected": false
             }
           ]
@@ -568,12 +568,12 @@
           "options": [
             {
               "name": "Кашкорсе",
-              "svg": "./images/content/hoodie_5_0.svg",
+              "svg": "images/content/hoodie_5_0.svg",
               "selected": false
             },
             {
               "name": "Рибана",
-              "svg": "./images/content/hoodie_5_1.svg",
+              "svg": "images/content/hoodie_5_1.svg",
               "selected": false
             }
           ]
@@ -796,7 +796,7 @@
     },
     {
       "name": "Свитшот",
-      "svg": "./images/content/sweatshirt_0_0.svg",
+      "svg": "images/content/sweatshirt_0_0.svg",
       "selected": false,
       "types": [
         {
@@ -880,13 +880,13 @@
           ],
           "options": [
             {
-              "svg": "./images/content/sweatshirt_1_0.svg",
+              "svg": "images/content/sweatshirt_1_0.svg",
               "name": "Стандарт",
               "selected": false
             },
             {
               "name": "Оверсайз",
-              "svg": "./images/content/sweatshirt_1_1.svg",
+              "svg": "images/content/sweatshirt_1_1.svg",
               "selected": false
             }
           ]
@@ -972,17 +972,17 @@
           ],
           "options": [
             {
-              "svg": "./images/content/sweatshirt_2_0.svg",
+              "svg": "images/content/sweatshirt_2_0.svg",
               "name": "Стандарт",
               "selected": false
             },
             {
-              "svg": "./images/content/sweatshirt_2_1.svg",
+              "svg": "images/content/sweatshirt_2_1.svg",
               "name": "Спущеный",
               "selected": false
             },
             {
-              "svg": "./images/content/sweatshirt_2_2.svg",
+              "svg": "images/content/sweatshirt_2_2.svg",
               "name": "Реглан",
               "selected": false
             }
@@ -1069,12 +1069,12 @@
           ],
           "options": [
             {
-              "svg": "./images/content/sweatshirt_3_0.svg",
+              "svg": "images/content/sweatshirt_3_0.svg",
               "name": "Кашкорсе",
               "selected": false
             },
             {
-              "svg": "./images/content/sweatshirt_3_1.svg",
+              "svg": "images/content/sweatshirt_3_1.svg",
               "name": "Рибана",
               "selected": false
             }
@@ -1298,7 +1298,7 @@
     },
     {
       "name": "Футболка",
-      "svg": "./images/content/t-shirt_0_0.svg",
+      "svg": "images/content/t-shirt_0_0.svg",
       "selected": false,
       "types": [
         {
@@ -1383,17 +1383,17 @@
           "options": [
             {
               "name": "Стандарт",
-              "svg": "./images/content/t-shirt_1_0.svg",
+              "svg": "images/content/t-shirt_1_0.svg",
               "selected": false
             },
             {
               "name": "Приталенный",
-              "svg": "./images/content/t-shirt_1_1.svg",
+              "svg": "images/content/t-shirt_1_1.svg",
               "selected": false
             },
             {
               "name": "Оверсайз",
-              "svg": "./images/content/t-shirt_1_2.svg",
+              "svg": "images/content/t-shirt_1_2.svg",
               "selected": false
             }
           ]
@@ -1479,17 +1479,17 @@
           ],
           "options": [
             {
-              "svg": "./images/content/t-shirt_2_0.svg",
+              "svg": "images/content/t-shirt_2_0.svg",
               "name": "Стандарт",
               "selected": false
             },
             {
-              "svg": "./images/content/t-shirt_2_1.svg",
+              "svg": "images/content/t-shirt_2_1.svg",
               "name": "Спущеный",
               "selected": false
             },
             {
-              "svg": "./images/content/t-shirt_2_2.svg",
+              "svg": "images/content/t-shirt_2_2.svg",
               "name": "Реглан",
               "selected": false
             }
@@ -1576,12 +1576,12 @@
           ],
           "options": [
             {
-              "svg": "./images/content/t-shirt_3_0.svg",
+              "svg": "images/content/t-shirt_3_0.svg",
               "name": "Рибана",
               "selected": false
             },
             {
-              "svg": "./images/content/t-shirt_3_1.svg",
+              "svg": "images/content/t-shirt_3_1.svg",
               "name": "Кашкорсе",
               "selected": false
             }
@@ -1801,7 +1801,7 @@
     },
     {
       "name": "Лонгслив",
-      "svg": "./images/content/long_0_0.svg",
+      "svg": "images/content/long_0_0.svg",
       "selected": false,
       "types": [
         {
@@ -1886,17 +1886,17 @@
           "options": [
             {
               "name": "Стандарт",
-              "svg": "./images/content/long_1_0.svg",
+              "svg": "images/content/long_1_0.svg",
               "selected": false
             },
             {
               "name": "Приталенный",
-              "svg": "./images/content/long_1_1.svg",
+              "svg": "images/content/long_1_1.svg",
               "selected": false
             },
             {
               "name": "Оверсайз",
-              "svg": "./images/content/long_1_2.svg",
+              "svg": "images/content/long_1_2.svg",
               "selected": false
             }
           ]
@@ -1982,17 +1982,17 @@
           ],
           "options": [
             {
-              "svg": "./images/content/long_2_0.svg",
+              "svg": "images/content/long_2_0.svg",
               "name": "Стандарт",
               "selected": false
             },
             {
-              "svg": "./images/content/long_2_1.svg",
+              "svg": "images/content/long_2_1.svg",
               "name": "Спущеный",
               "selected": false
             },
             {
-              "svg": "./images/content/long_2_2.svg",
+              "svg": "images/content/long_2_2.svg",
               "name": "Реглан",
               "selected": false
             }
@@ -2079,12 +2079,12 @@
           ],
           "options": [
             {
-              "svg": "./images/content/t-shirt_3_0.svg",
+              "svg": "images/content/t-shirt_3_0.svg",
               "name": "Рибана",
               "selected": false
             },
             {
-              "svg": "./images/content/t-shirt_3_1.svg",
+              "svg": "images/content/t-shirt_3_1.svg",
               "name": "Кашкорсе",
               "selected": false
             }

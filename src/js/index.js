@@ -9,10 +9,12 @@ import 'swiper/css';
 import axios from 'axios';
 import html2canvas from 'html2canvas';
 
-import dataJson from '../json/data.json';
 import { getDocument } from '../pdf.mjs';
 
 import '../scss/index.scss';
+
+import dataJson from '../data/data.yaml';
+// import dataJson from '../data/data.json';
 
 // const createApp2: import('vue').CreateAppFunction<Element>;
 
