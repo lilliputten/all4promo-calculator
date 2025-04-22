@@ -16,18 +16,123 @@ import '../scss/index.scss';
 
 // const createApp2: import('vue').CreateAppFunction<Element>;
 
+const NL = '\n';
+const SP = '    ';
+
+/**
+ * @param {TypeSelection} data
+ * @param {string} prefix
+ * @param {number} level
+ */
+function showSelection(data, prefix, level) {
+  const sp = SP.repeat(level);
+  const name = data.name;
+  // name = 'Selection: ' + name;
+  let s = '';
+  if (prefix) {
+    s = prefix + ' / ' + name + NL;
+  } else {
+    sp + '- ' + name + NL;
+  }
+  return s;
+}
+/**
+ * @param {TypeOption} data
+ * @param {string} prefix
+ * @param {number} level
+ */
+function showOption(data, prefix, level) {
+  const sp = SP.repeat(level);
+  const name = data.name;
+  // name = 'Option: ' + name;
+  let s = '';
+  if (prefix) {
+    prefix += ' / ' + name;
+  } else {
+    s += sp + '- ' + name + NL;
+  }
+  if (data.selections) {
+    s += data.selections.map((it) => showSelection(it, prefix, level + 1)).join('');
+  } else {
+    s += prefix + NL;
+  }
+  return s;
+}
+/**
+ * @param {TypeType} data
+ * @param {string} prefix
+ * @param {number} level
+ */
+function showSubTypes(data, prefix, level) {
+  const sp = SP.repeat(level);
+  let name = data.title;
+  // name = 'SubType: ' + name;
+  const attrs = [
+    // Attrs..
+    data.colors && 'цвет',
+    data.checkbox && 'чекбокс',
+  ].filter(Boolean);
+  if (attrs.length) {
+    name += ' (' + attrs.join(', ') + ')';
+  }
+  let s = '';
+  if (prefix) {
+    prefix += ' / ' + name;
+  } else {
+    s += sp + '- ' + name + NL;
+  }
+  if (data.options) {
+    s += data.options.map((it) => showOption(it, prefix, level + 1)).join('');
+  } else if (prefix) {
+    s += prefix + NL;
+  }
+  return s;
+}
+/**
+ * @param {DataType} data
+ * @param {boolean} showPrefix
+ * @param {number} level
+ */
+function showTopLevel(data, showPrefix, level) {
+  const sp = SP.repeat(level);
+  const name = data.name;
+  // name = 'TopLevel: ' + name;
+  let s = '';
+  const prefix = showPrefix ? name : '';
+  if (!showPrefix) {
+    s += sp + '- ' + name + NL;
+  }
+  s += data.types.map((it) => showSubTypes(it, prefix, level + 1)).join('');
+  return s;
+}
+/**
+ * @param {DataJson} data
+ * @param {boolean} showPrefix
+ * @param {number} level
+ */
+function showDataStruct(data, showPrefix = false, level = 0) {
+  // const sp = SP.repeat(level);
+  // const name = data.title;
+  let s = '';
+  // if (!showPrefix) {
+  //   s += sp + '- ' + name + NL;
+  // }
+  s += data.types.map((it) => showTopLevel(it, showPrefix, level)).join('');
+  return s;
+}
+
 // Create Vue app
 export const globalApp = createApp({
   data(_app) {
     return {
       preloaded: false,
       title: null,
-      edition: null,
+      edition: null, // number of items to produce
       logo: null,
       comment: null,
       price: null,
-      data: null,
       date: new Date(),
+      data: null, // DataJson
     };
   },
   components: {
@@ -45,9 +150,13 @@ export const globalApp = createApp({
   async mounted() {
     const app = this;
     console.log('[mounted]', {
-      app: {...app},
+      app: { ...app },
     });
     this.data = /** @type {DataJson} */ (dataJson);
+    const showOptions = true;
+    const title = showOptions ? 'Options' : 'Structure';
+    const struct = showDataStruct(dataJson, showOptions);
+    console.log(title + ':\n' + struct);
     // Selecte first top-level type
     this.setList(0);
     setTimeout(() => {
@@ -66,10 +175,10 @@ export const globalApp = createApp({
       const dragElement =
         /** @param {HTMLElement} elmnt */
         (elmnt) => {
-          var pos1 = 0,
-            pos2 = 0,
-            pos3 = 0,
-            pos4 = 0;
+          let pos1 = 0;
+          let pos2 = 0;
+          let pos3 = 0;
+          let pos4 = 0;
           const garabber = /** @type {HTMLElement} */ (elmnt.querySelector('.element'));
           if (document.getElementById(elmnt.id + 'header')) {
             const node = document.getElementById(elmnt.id + 'header');
@@ -206,8 +315,8 @@ export const globalApp = createApp({
         hasSvgNew,
         num,
         arr: [...arr],
-        it: {...it},
-        mainobj: {...mainobj},
+        it: { ...it },
+        mainobj: { ...mainobj },
       });
       if (isCheckbox) {
         it.selected = !it.selected;
@@ -244,7 +353,6 @@ export const globalApp = createApp({
         if (nWindow) {
           nWindow.document.head.appendChild(style);
           nWindow.document.body.appendChild(canvas);
-          debugger;
           nWindow.focus();
           nWindow.print();
         }
@@ -281,14 +389,14 @@ export const globalApp = createApp({
      */
     onEditionChange(e) {
       const node = /** @type {HTMLInputElement} */ (e.target);
-      let value = Number(node.value);
+      const value = Number(node.value);
       if (isNaN(value)) {
         return;
       }
       console.log('[onEditionChange]', {
         edition: this.edition,
         value,
-      })
+      });
       // TODO: Just multiple price?
       this.calcPrice();
     },
@@ -297,13 +405,13 @@ export const globalApp = createApp({
      */
     onFileChange(e) {
       // @ts-ignore
-      let files = e.target?.files || e.dataTransfer.files;
+      const files = e.target?.files || e.dataTransfer.files;
       if (!files.length) return;
       this.createImage(files[0]);
     },
     /** @param {Blob} file */
     createImage(file) {
-      let reader = new FileReader();
+      const reader = new FileReader();
       reader.onload = (e) => {
         this.logo = '';
         if (file.type === 'application/pdf') {
@@ -311,24 +419,25 @@ export const globalApp = createApp({
             .promise.then(
               /** @param {import('pdfjs-dist').PDFDocumentProxy} pdf */
               (pdf) => {
-              pdf.getPage(1).then((page) => {
-                const scale = 1.5;
-                const viewport = page.getViewport({ scale: scale });
-                const canvas = document.createElement('canvas');
-                const context = canvas.getContext('2d');
-                if (context) {
-                  canvas.height = viewport.height;
-                  canvas.width = viewport.width;
-                  const renderContext = {
-                    canvasContext: context,
-                    viewport: viewport,
-                  };
-                  page.render(renderContext).promise.then(() => {
-                    this.logo = canvas.toDataURL();
-                  });
-                }
-              });
-            })
+                pdf.getPage(1).then((page) => {
+                  const scale = 1.5;
+                  const viewport = page.getViewport({ scale: scale });
+                  const canvas = document.createElement('canvas');
+                  const context = canvas.getContext('2d');
+                  if (context) {
+                    canvas.height = viewport.height;
+                    canvas.width = viewport.width;
+                    const renderContext = {
+                      canvasContext: context,
+                      viewport: viewport,
+                    };
+                    page.render(renderContext).promise.then(() => {
+                      this.logo = canvas.toDataURL();
+                    });
+                  }
+                });
+              },
+            )
             .catch((/** @type {Error | string} */ reason) => {
               console.error(reason);
             });
@@ -338,7 +447,7 @@ export const globalApp = createApp({
       };
       reader.readAsDataURL(file);
     },
-    removeImage: function (/** @type {Event} */ e) {
+    removeImage: function (/** @type {Event} */ _e) {
       this.$refs.logoUpload.value = null;
       this.logo = '';
     },
