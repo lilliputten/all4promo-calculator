@@ -1,0 +1,30 @@
+// ex: set ft=jsonc :
+// @changed 2025.04.22, 18:40
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit:
+  // https://code.visualstudio.com/docs/editor/debugging#_launch-configurations
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Node: gulp",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceRoot}/node_modules/gulp/bin/gulp.js",
+      "console": "integratedTerminal",
+      "args": ["combineData"]
+    },
+    {
+      "name": "current file",
+      "program": "${file}",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "node",
+      "args": [
+        // "--help",
+        // "--tz=Europe/Moscow"
+      ]
+    }
+  ]
+}

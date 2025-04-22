@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "timetag": "250415-1907",
   "timestamp": "2025.04.15 19:07:13 +0300",
-  "changed": "2025.04.15, 19:07",
+  "changed": "2025.04.22, 19:08",
   "license": "MIT",
   "private": false,
   "target": "web",
@@ -52,6 +52,9 @@
     "eslint-plugin-react": "^7.27.0",
     "eslint-plugin-react-hooks": "^4.3.0",
     "eslint-plugin-yaml": "^0.5.0",
+    "gulp": "^5.0.0",
+    "gulp-concat": "^2.6.1",
+    "gulp-modify-file": "^1.0.1",
     "html-webpack-plugin": "^5.5.0",
     "image-minimizer-webpack-plugin": "^3.2.3",
     "imagemin": "^8.0.1",
@@ -96,6 +99,8 @@
     "build": "echo --Create production build-- && webpack --config configuration/webpack.prod.config.js --mode=production",
     "publish": "echo --Publish build /posix commands and uplevel utils branch are used/-- && sh .utils/publish.sh",
     "build-and-publish": "echo --Build and publish-- && npm-run-all build publish",
+    "combine-data": "echo --Combine products data file-- && gulp combineData",
+    "combine-data-watch": "echo --Combine and watch products data file-- && gulp combineDataWatch",
     "stats": "webpack --config configuration/webpack.prod.config.js --mode=production --json > dist/stats.json && webpack-bundle-analyzer dist/stats.json"
   }
 }

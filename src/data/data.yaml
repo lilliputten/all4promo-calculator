@@ -1,9 +1,32 @@
+# DataJson
 title: 'Тип изделия'
-types:
-  - name: 'Худи'
+types: # DataType[]
+
+  - name: 'Худи' # DataType
     svg: 'images/content/hoodie_0_0.svg'
     selected: false
-    types:
+    basePrices:
+      - material: 'киперная лента'
+        units: 'м'
+        unitMaterial: 0.25
+        basicCost: 25.80
+        unitCost: 6.45
+      - material: 'нитки'
+        units: 'боб'
+        unitMaterial: 0.07
+        basicCost: 187.00
+        unitCost: 13.09
+      - material: 'пакет'
+        units: 'шт'
+        unitMaterial: 1
+        basicCost: 4.80
+        unitCost: 4.80
+      - material: 'пошив'
+        units: 'усл'
+        unitMaterial: 1
+        basicCost: 550.00
+        unitCost: 550.00
+    types: # TypeType[]
       - title: 'Силуэт'
         colors:
           - name: 'Белый'
@@ -446,7 +469,8 @@ types:
               - name: 'Жаккард'
               - name: 'Другое'
             selectionsChoose: 'Силикон'
-  - name: 'Свитшот'
+  
+  - name: 'Свитшот' # DataType
     svg: 'images/content/sweatshirt_0_0.svg'
     selected: false
     types:
@@ -722,7 +746,8 @@ types:
               - name: 'Жаккард'
               - name: 'Другое'
             selectionsChoose: 'Силикон'
-  - name: 'Футболка'
+  
+  - name: 'Футболка' # DataType
     svg: 'images/content/t-shirt_0_0.svg'
     selected: false
     types:
@@ -998,7 +1023,8 @@ types:
               - name: 'Жаккард'
               - name: 'Другое'
             selectionsChoose: 'Силикон'
-  - name: 'Лонгслив'
+  
+  - name: 'Лонгслив' # DataType
     svg: 'images/content/long_0_0.svg'
     selected: false
     types:
@@ -1274,3 +1300,4 @@ types:
               - name: 'Жаккард'
               - name: 'Другое'
             selectionsChoose: 'Силикон'
+  

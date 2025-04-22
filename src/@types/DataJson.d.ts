@@ -12,8 +12,11 @@ interface DataType {
   svg: string;
   /** Loaded svg data */
   svgNew?: string;
-  /** Does it exist here? */
-  // colors?: Color[];
+  /* [>* Does it exist here? <]
+   * colors?: Color[];
+   */
+  /** Static proces for the product */
+  basePrices?: PriceItem[];
 }
 
 /* The 2nd level: the item features */
@@ -64,4 +67,12 @@ interface TypeOption {
 
 interface TypeSelection {
   name: string;
+}
+
+interface PriceItem {
+  material: string;
+  units: string;
+  unitMaterial: number;
+  basicCost: number;
+  unitCost: number;
 }
