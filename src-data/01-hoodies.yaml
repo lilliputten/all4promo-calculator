@@ -1,7 +1,7 @@
 - name: 'Худи' # DataType
   svg: 'images/content/hoodie_0_0.svg'
   selected: false
-  basePrices:
+  prices:
     - material: 'киперная лента'
       units: 'м'
       unitMaterial: 0.25
@@ -9,7 +9,7 @@
       unitCost: 6.45
     - material: 'нитки'
       units: 'боб'
-      unitMaterial: 0.07
+      unitMaterial: 0.0-7
       basicCost: 187.00
       unitCost: 13.09
     - material: 'пакет'
@@ -22,6 +22,156 @@
       unitMaterial: 1
       basicCost: 550.00
       unitCost: 550.00
+    # Misc...
+    - conditions:
+        - 'Шнурки / Есть'
+      material: 'шнур'
+      units: 'м'
+      unitMaterial: 1.3
+      basicCost: 15.00
+      unitCost: 19.50
+    - conditions:
+        - 'Шнурки / Есть'
+      material: 'люверсы (2 шт)'
+      units: 'комп'
+      unitMaterial: 1
+      basicCost: 4.50
+      unitCost: 4.50
+    - conditions:
+        - 'Молния / Есть'
+      material: 'молния (75 см)'
+      units: 'шт'
+      unitMaterial: 1
+      basicCost: 150.00
+      unitCost: 150.00
+    - conditions:
+        - 'Отделка низ и рукава / Рибана'
+      material: 'рибана'
+      units: 'кг'
+      unitMaterial: 0.17
+      basicCost: 1,160.00
+      unitCost: 197.20
+    - conditions:
+        - 'Отделка низ и рукава / Кашкорсе'
+      material: 'кашкорсе'
+      units: 'кг'
+      unitMaterial: 0.17
+      basicCost: 1,160.00
+      unitCost: 197.20
+    # Силуэт / Стандарт
+    - conditions:
+        - 'Силуэт / Стандарт'
+        - 'Выбор ткани / Футер 2х нитка без начеса / 240-260 гр'
+      material: 'футер 2-х нитка 240-260г без начеса'
+      units: 'кг'
+      unitMaterial: 0.5
+      basicCost: 1550.00
+      unitCost: 775.00
+    - conditions:
+        - 'Силуэт / Стандарт'
+        - 'Выбор ткани / Футер 2х нитка с начесом / 240-260 гр'
+      material: 'футер 2-х нитка 240-260г с начесом'
+      units: 'кг'
+      unitMaterial: 0.45
+      basicCost: 1550.00
+      unitCost: 697.50
+    - conditions:
+        - 'Силуэт / Стандарт'
+        - 'Выбор ткани / Футер 3х нитка без начеса / 320 гр'
+      material: 'футер 3-х нитка 320г без начеса'
+      units: 'кг'
+      unitMaterial: 0.7
+      basicCost: 1100.00
+      unitCost: 770.00
+    - conditions:
+        - 'Силуэт / Стандарт'
+        - 'Выбор ткани / Футер 3х нитка с начесом / 320 гр'
+      material: 'футер 3-х нитка 320г с начесом'
+      units: 'кг'
+      unitMaterial: 0.6
+      basicCost: 1100.00
+      unitCost: 660.00
+    - conditions:
+        - 'Силуэт / Стандарт'
+        - 'Выбор ткани / Футер 3х нитка без начеса / 350 гр'
+      material: 'футер 3-х нитка 350г без начеса'
+      units: 'кг'
+      unitMaterial: 0.8
+      basicCost: 1500.00
+      unitCost: 1200.00
+    - conditions:
+        - 'Силуэт / Стандарт'
+        - 'Выбор ткани / Футер 3х нитка с начесом / 350 гр'
+      material: 'футер 3-х нитка 350г с начесом'
+      units: 'кг'
+      unitMaterial: 0.75
+      basicCost: 1500.00
+      unitCost: 1125.00
+    - conditions:
+        - 'Силуэт / Стандарт'
+        - 'Выбор ткани / Футер 3х нитка без начеса / 420 гр'
+      material: 'футер 3-х нитка 420г без начеса'
+      units: 'кг'
+      unitMaterial: 1.2
+      basicCost: 1500.00
+      unitCost: 1800.00
+    # Силуэт / Оверсайз
+    - conditions:
+        - 'Силуэт / Оверсайз'
+        - 'Выбор ткани / Футер 2х нитка без начеса / 240-260 гр'
+      material: 'футер 2-х нитка 240-260г без начеса'
+      units: 'кг'
+      unitMaterial: 0.65
+      basicCost: 1550.00
+      unitCost: 1007.50
+    - conditions:
+        - 'Силуэт / Оверсайз'
+        - 'Выбор ткани / Футер 2х нитка с начесом / 240-260 гр'
+      material: 'футер 2-х нитка 240-260г с начесом'
+      units: 'кг'
+      unitMaterial: 0.6
+      basicCost: 1550.00
+      unitCost: 930.00
+    - conditions:
+        - 'Силуэт / Оверсайз'
+        - 'Выбор ткани / Футер 3х нитка без начеса / 320 гр'
+      material: 'футер 3-х нитка 320г без начеса'
+      units: 'кг'
+      unitMaterial: 0.75
+      basicCost: 1100.00
+      unitCost: 825.00
+    - conditions:
+        - 'Силуэт / Оверсайз'
+        - 'Выбор ткани / Футер 3х нитка с начесом / 320 гр'
+      material: 'футер 3-х нитка 320г с начесом'
+      units: 'кг'
+      unitMaterial: 0.7
+      basicCost: 1100.00
+      unitCost: 770.00
+    - conditions:
+        - 'Силуэт / Оверсайз'
+        - 'Выбор ткани / Футер 3х нитка без начеса / 350 гр'
+      material: 'футер 3-х нитка 350г без начеса'
+      units: 'кг'
+      unitMaterial: 0.8
+      basicCost: 1500.00
+      unitCost: 1200.00
+    - conditions:
+        - 'Силуэт / Оверсайз'
+        - 'Выбор ткани / Футер 3х нитка с начесом / 350 гр'
+      material: 'футер 3-х нитка 350г с начесом'
+      units: 'кг'
+      unitMaterial: 0.75
+      basicCost: 1500.00
+      unitCost: 1125.00
+    - conditions:
+        - 'Силуэт / Оверсайз'
+        - 'Выбор ткани / Футер 3х нитка без начеса / 420 гр'
+      material: 'футер 3-х нитка 420г без начеса'
+      units: 'кг'
+      unitMaterial: 1.2
+      basicCost: 1500.00
+      unitCost: 1800.00
   types: # TypeType[]
     - title: 'Силуэт'
       colors:

@@ -28,6 +28,7 @@ publish/
 .gitmodules
 
 # Unused & temp files
+*.UNUSED
 \!UNUSED
 ~*
 *_

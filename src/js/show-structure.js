@@ -1,9 +1,78 @@
 // @ts-check
 
+const DELIM = ' / ';
 const NL = '\n';
 const SP = '    ';
 
-// DEBUG: Get the data structure tree/options routines. See the entry point function `showDataStruct` below.
+/**
+ * @param {TypeOption} data
+ * @param {string} prefix
+ */
+export function getTypeOptionSelectedItems(data, prefix = '') {
+  const name = data.name;
+  const selectionsChoose = data.selectionsChoose;
+  /** @type {string[]} */
+  const arr = [];
+  prefix = [prefix, name].filter(Boolean).join(DELIM);
+  if (data.selected) {
+    arr.push(prefix);
+  }
+  const selections = data.selections;
+  const selection = selections?.find(({ name }) => name === selectionsChoose);
+  if (selection) {
+    arr.push(prefix + DELIM + selection.name);
+  }
+  return arr;
+}
+
+/**
+ * @param {TypeType} data
+ * @param {string} prefix
+ */
+export function getTypeTypeSelectedItems(data, prefix = '') {
+  const name = data.title;
+  // name = 'TypeType: ' + name;
+  /** @type {string[]} */
+  const arr = [];
+  prefix = [prefix, name].filter(Boolean).join(DELIM);
+  const options = data.options;
+  options
+    .filter(({ selected }) => selected)
+    .forEach((it) => {
+      /** @type {string[]} */
+      const items = getTypeOptionSelectedItems(it, prefix);
+      if (items && items.length) {
+        Array.prototype.push.apply(arr, items);
+      }
+    });
+  return arr;
+}
+
+/**
+ * @param {DataType} data
+ * @param {string} prefix
+ * @param {object} opts
+ * @param {boolean} [opts.topLevelPrefix]
+ */
+export function getDataTypeSelectedItems(data, prefix = '', opts = {}) {
+  const name = data.name;
+  /** @type {string[]} */
+  const arr = [];
+  if (opts.topLevelPrefix) {
+    prefix = [prefix, name].filter(Boolean).join(DELIM);
+  }
+  const typeTypes = data.types;
+  typeTypes.forEach((it) => {
+    /** @type {string[]} */
+    const items = getTypeTypeSelectedItems(it, prefix);
+    if (items && items.length) {
+      Array.prototype.push.apply(arr, items);
+    }
+  });
+  return arr;
+}
+
+// DEBUG: Below are the data structure tree/options getters. See the entry point function `showDataStruct` below.
 
 /**
  * @param {TypeSelection} data
@@ -16,7 +85,7 @@ function showSelection(data, prefix, level) {
   // name = 'Selection: ' + name;
   let s = '';
   if (prefix) {
-    s = prefix + ' / ' + name + NL;
+    s = prefix + DELIM + name + NL;
   } else {
     sp + '- ' + name + NL;
   }
@@ -33,7 +102,7 @@ function showOption(data, prefix, level) {
   // name = 'Option: ' + name;
   let s = '';
   if (prefix) {
-    prefix += ' / ' + name;
+    prefix += DELIM + name;
   } else {
     s += sp + '- ' + name + NL;
   }
@@ -51,19 +120,19 @@ function showOption(data, prefix, level) {
  */
 function showSubTypes(data, prefix, level) {
   const sp = SP.repeat(level);
-  let name = data.title;
+  const name = data.title;
   // name = 'SubType: ' + name;
-  const attrs = [
-    // Attrs..
-    data.colors && 'цвет',
-    data.checkbox && 'чекбокс',
-  ].filter(Boolean);
-  if (attrs.length) {
-    name += ' (' + attrs.join(', ') + ')';
-  }
+  // const attrs = [
+  //   // Attrs..
+  //   data.colors && 'цвет',
+  //   data.checkbox && 'чекбокс',
+  // ].filter(Boolean);
+  // if (attrs.length) {
+  //   name += ' (' + attrs.join(', ') + ')';
+  // }
   let s = '';
   if (prefix) {
-    prefix += ' / ' + name;
+    prefix += DELIM + name;
   } else {
     s += sp + '- ' + name + NL;
   }
@@ -79,12 +148,13 @@ function showSubTypes(data, prefix, level) {
  * @param {boolean} showPrefix
  * @param {number} level
  */
-function showTopLevel(data, showPrefix, level) {
+export function showTopLevel(data, showPrefix, level) {
   const sp = SP.repeat(level);
   const name = data.name;
   // name = 'TopLevel: ' + name;
   let s = '';
   const prefix = showPrefix ? name : '';
+  // s += prefix + NL;
   if (!showPrefix) {
     s += sp + '- ' + name + NL;
   }
@@ -97,12 +167,5 @@ function showTopLevel(data, showPrefix, level) {
  * @param {number} level
  */
 export function showDataStruct(data, showPrefix = false, level = 0) {
-  // const sp = SP.repeat(level);
-  // const name = data.title;
-  let s = '';
-  // if (!showPrefix) {
-  //   s += sp + '- ' + name + NL;
-  // }
-  s += data.types.map((it) => showTopLevel(it, showPrefix, level)).join('');
-  return s;
+  return data.types.map((it) => showTopLevel(it, showPrefix, level)).join('');
 }

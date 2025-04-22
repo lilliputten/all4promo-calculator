@@ -12,11 +12,8 @@ interface DataType {
   svg: string;
   /** Loaded svg data */
   svgNew?: string;
-  /* [>* Does it exist here? <]
-   * colors?: Color[];
-   */
   /** Static proces for the product */
-  basePrices?: PriceItem[];
+  prices?: PriceItem[];
 }
 
 /* The 2nd level: the item features */
@@ -28,6 +25,8 @@ interface TypeType {
   checkbox?: boolean;
   /** Loaded svg data */
   svgNew?: string;
+  // [>* Static proces for the product <]
+  // prices?: PriceItem[];
 }
 
 interface TypeColor {
@@ -63,6 +62,8 @@ interface TypeOption {
   svg?: string;
   /** Loaded svg data */
   svgNew?: string;
+  /** Static proces for the product */
+  prices?: PriceItem[];
 }
 
 interface TypeSelection {
@@ -70,6 +71,7 @@ interface TypeSelection {
 }
 
 interface PriceItem {
+  conditions?: string[];
   material: string;
   units: string;
   unitMaterial: number;

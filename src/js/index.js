@@ -11,10 +11,13 @@ import html2canvas from 'html2canvas';
 
 import { getDocument } from '../pdf.mjs';
 
-import { showDataStruct } from './show-structure';
+import { getDataTypeSelectedItems, showDataStruct } from './show-structure';
+import { periodizeNumber } from './strings';
 
+/** The data
+ * @type {DataJson}
+ */
 import dataJson from '../data/data.yaml';
-// import dataJson from '../data/data.json';
 
 import '../scss/index.scss';
 
@@ -35,10 +38,12 @@ export const globalApp = createApp({
     return {
       preloaded: false,
       title: null,
-      edition: null, // number of items to produce
+      edition: 10, // number of items to produce
       logo: null,
       comment: null,
-      price: null,
+      priceUnit: null,
+      priceTotal: null,
+      filteredPrices: [], // PriceItem[]
       date: new Date(),
       data: null, // DataJson
     };
@@ -56,13 +61,15 @@ export const globalApp = createApp({
     };
   },
   async mounted() {
-    const app = this;
     const data = /** @type {DataJson} */ (dataJson);
     debugDataStruct(data, true);
-    console.log('[mounted]', {
-      test: data.types[0].basePrices,
-      app: { ...app },
-    });
+    /* // DEBUG
+     * const app = this;
+     * console.log('[mounted]', {
+     *   test: data.types[0].prices,
+     *   app: { ...app },
+     * });
+     */
     this.data = data;
     // Select the first top-level type
     this.setList(0);
@@ -130,9 +137,66 @@ export const globalApp = createApp({
     }, 2000);
   },
   methods: {
-    calcPrice() {
-      this.price = 77.5;
-      // TODO?
+    /**
+     * @param {number} val
+     */
+    formatPrice(val) {
+      if (typeof val === 'string') {
+        return val;
+      }
+      if (!val) {
+        return '0.00';
+      }
+      let numStr = val.toFixed(2);
+      const parsed = numStr.match(/^(\d+)[,.](\d+)$/);
+      if (!parsed) {
+        return periodizeNumber(numStr);
+      }
+      numStr = periodizeNumber(parsed[1]) + '.' + parsed[2];
+      return numStr;
+    },
+    /**
+     * @param {string} reason
+     */
+    calcPrice(reason, reasonId = '') {
+      /** @type {DataJson} */
+      const data = this.data;
+      /** Selected data type
+       * @type {DataType | undefined}
+       */
+      const dataType = data.types.find(({ selected }) => !!selected);
+      if (!dataType) {
+        console.warn('[calcPrice]', reason, reasonId, 'No data type selected!');
+        debugger;
+        return;
+      }
+      const selectedItems = getDataTypeSelectedItems(dataType);
+      const { prices } = dataType;
+      const filteredPrices = prices?.filter(({ conditions }) => {
+        if (!conditions) {
+          return true;
+        }
+        // Unfilter a price entry if any of conditions aren't presented in currently selected items
+        for (const condItem of conditions) {
+          if (!selectedItems.includes(condItem)) {
+            return false;
+          }
+        }
+        return true;
+      });
+      console.log('[calcPrice]', reason, reasonId, {
+        filteredPrices,
+        prices: { ...prices },
+        selectedItems,
+        dataType: { ...dataType },
+        data: { ...data },
+      });
+      this.filteredPrices = filteredPrices;
+      this.priceUnit = filteredPrices?.reduce((summ, price) => {
+        return isNaN(price.unitCost) ? summ : summ + price.unitCost;
+      }, 0);
+      const count = !this.edition || isNaN(this.edition) ? 1 : this.edition;
+      this.priceTotal = isNaN(this.priceUnit) ? 0 : this.priceUnit * count;
     },
     /** Set the topmost level type (DataType)
      * @param {number} num
@@ -140,8 +204,14 @@ export const globalApp = createApp({
     async setList(num) {
       console.log('[setList]', num);
       const data = /** @type {DataJson} */ (this.data);
+      /** @type {string | undefined} */
+      let reasonId;
       data.types.forEach((_el, index) => {
-        data.types[index].selected = num === index;
+        const isSelected = num === index;
+        data.types[index].selected = isSelected;
+        if (isSelected) {
+          reasonId = data.types[index].name;
+        }
       });
       const item = data.types[num];
       // item.selected = true;
@@ -154,15 +224,15 @@ export const globalApp = createApp({
        */
       if (item?.types?.length) {
         item.types.forEach((el) => {
-          el.options.forEach((/** @type {TypeOption} */ option, /** @type {number} */ i) => {
-            option.selected = !i;
+          el.options.forEach((/** @type {TypeOption} */ option, /** @type {number} */ idx) => {
+            option.selected = !idx;
             if (option.count) {
               option.count = 0;
             }
           });
           if (el?.colors) {
-            el.colors.forEach((color, i) => {
-              color.selected = !i;
+            el.colors.forEach((color, idx) => {
+              color.selected = !idx;
             });
           }
         });
@@ -204,7 +274,7 @@ export const globalApp = createApp({
         ),
       );
       // TODO: Invoke the method after all the above async op's?
-      this.calcPrice();
+      this.calcPrice('setList', reasonId);
     },
     /** The main property change funciton
      * @param {Array<TypeColor>} arr
@@ -216,7 +286,32 @@ export const globalApp = createApp({
       const isCheckbox = !!mainobj?.checkbox;
       const hasColors = !!mainobj?.colors;
       const hasSvgNew = !!mainobj?.svgNew;
+      if (!mainobj) {
+        // XXX: Is ti possible to have unset mainobj?
+        debugger;
+      }
+      if (isCheckbox) {
+        it.selected = !it.selected;
+      } else {
+        arr.forEach((el, index) => {
+          el.selected = num === index;
+        });
+      }
+      const reasonValue = arr
+        .filter(({ selected }) => selected)
+        .map(({ name }) => name)
+        .join(', ');
+      const reasonId = [
+        //
+        mainobj?.title,
+        hasColors && arr === mainobj.colors ? 'Color' : 'Option',
+        reasonValue,
+      ]
+        .filter(Boolean)
+        .join(': ');
       console.log('[setProp]', mainobj?.title, num, it?.name, {
+        reasonId,
+        // reasonValue,
         isCheckbox,
         hasColors,
         hasSvgNew,
@@ -225,13 +320,6 @@ export const globalApp = createApp({
         it: { ...it },
         mainobj: { ...mainobj },
       });
-      if (isCheckbox) {
-        it.selected = !it.selected;
-      } else {
-        arr.forEach((el, index) => {
-          el.selected = num === index;
-        });
-      }
       if (hasColors) {
         const colorCode = this.getSelected(mainobj.colors)?.code;
         if (hasSvgNew) {
@@ -243,6 +331,7 @@ export const globalApp = createApp({
           );
         }
       }
+      this.calcPrice('setProp', reasonId);
     },
     /**
      * @param {any[]} arr
@@ -294,18 +383,53 @@ export const globalApp = createApp({
     /**
      * @param {InputEvent} e
      */
+    onValueChange(e) {
+      const node = /** @type {HTMLInputElement} */ (e.target);
+      const type = node.dataset.type;
+      const name = node.dataset.name;
+      const value = node.value;
+      const reasonId = [type, name, value].filter(Boolean).join(': ');
+      console.log('[onValueChange]', {
+        reasonId,
+        name,
+        type,
+        value,
+      });
+      this.calcPrice('onValueChange', reasonId);
+    },
+    /**
+     * @param {InputEvent} e
+     */
+    onSelectChange(e) {
+      const node = /** @type {HTMLSelectElement} */ (e.target);
+      const selectedIndex = Number(node.selectedIndex);
+      const selectedOptions = node.selectedOptions;
+      const type = node.dataset.type;
+      const name = node.dataset.name;
+      const option = selectedOptions[0];
+      const value = option.value;
+      const reasonId = [type, name, value].filter(Boolean).join(': ');
+      console.log('[onSelectChange]', {
+        reasonId,
+        option,
+        node,
+        selectedIndex,
+        selectedOptions,
+      });
+      this.calcPrice('onSelectChange', reasonId);
+    },
+    /**
+     * @param {InputEvent} e
+     */
     onEditionChange(e) {
       const node = /** @type {HTMLInputElement} */ (e.target);
       const value = Number(node.value);
-      if (isNaN(value)) {
-        return;
-      }
       console.log('[onEditionChange]', {
         edition: this.edition,
         value,
       });
-      // TODO: Just multiple price?
-      this.calcPrice();
+      // TODO: Just to multiply price?
+      this.calcPrice('onEditionChange', 'count: ' + value);
     },
     /**
      * @param {InputEvent} e

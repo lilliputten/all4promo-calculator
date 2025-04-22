@@ -104,7 +104,13 @@
                       <div>{{el.name}}</div>
                     </div>
                     <div v-if="el.selections && el.selected">
-                      <select class="form-select" v-model="el.selectionsChoose">
+                      <select
+                        :data-type="type.title"
+                        :data-name="el.name"
+                        class="form-select"
+                        v-model="el.selectionsChoose"
+                        v-on:change="onSelectChange"
+                      >
                         <option v-for="(sel, selindex) in el.selections" :value="sel.name">
                           {{sel.name}}
                         </option>
@@ -112,7 +118,14 @@
                     </div>
                     <div v-if="type.size && el.selected">
                       <p class="count">Кол-во штук:</p>
-                      <input class="form-control" type="number" v-model="el.count" />
+                      <input
+                        :data-type="type.title"
+                        :data-name="el.name"
+                        class="form-control"
+                        type="number"
+                        v-model="el.count"
+                        v-on:change="onValueChange"
+                      />
                     </div>
                   </swiper-slide>
                 </swiper>
@@ -147,7 +160,51 @@
       <button class="btn btn-primary my-5 py-3 w-100" @click="printHtml">Печать документа</button>
 
       <section id="capture">
+        <!-- Title -->
+        <div class="d-flex align-items-center justify-content-between mx-2">
+          <h1 class="result-title main-title pb-3 m-0">РПК «Пи-Ай-Ви»</h1>
+          <span class="d-flex aling-items-center fw-bold">
+            {{date.getDate()+'.'+String(date.getMonth()+1).padStart(2, '0')+'.'+date.getFullYear()}}
+          </span>
+        </div>
+
+        <h2 class="result-title subtitle mx-2 mt-5">Бланк для производства</h2>
+
+        <table class="table price-table">
+          <thead>
+            <tr>
+              <th class="material">Материал</th>
+              <th class="units">Ед. измерения</th>
+              <th class="unitMaterial">Расход материала за ед</th>
+              <th class="basicCost">Стоимость за м, кг, шт, усл</th>
+              <th class="unitCost">Стоимость за ед.</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="price in filteredPrices">
+              <td class="material">{{ price.material }}</td>
+              <td class="units">{{ price.units }}</td>
+              <td class="unitMaterial">{{ price.unitMaterial }}</td>
+              <td class="basicCost">{{ formatPrice(price.basicCost) }}</td>
+              <td class="unitCost">{{ formatPrice(price.unitCost) }}</td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr class="priceUnit">
+              <td class="material" colspan="4">Стоимость за ед. для клиента с НДС</td>
+              <td class="unitCost">{{ formatPrice(priceUnit) }}</td>
+            </tr>
+            <tr class="priceTotal">
+              <td class="material" colspan="4">Стоимость для клиента за тираж с НДС</td>
+              <td class="unitCost">{{ formatPrice(priceTotal) }}</td>
+            </tr>
+          </tfoot>
+        </table>
+
+        <h2 class="result-title subtitle mx-2 mt-5">Старая таблица</h2>
+
         <table class="table">
+          <!--
           <tr>
             <td colspan="2">
               <div class="d-flex align-items-center justify-content-between">
@@ -164,6 +221,7 @@
               <p class="mb-2"><span class="fw-bold">Стоимость:</span> {{price}}</p>
             </td>
           </tr>
+          -->
           <tr>
             <td>
               <p class="mb-2"><span class="fw-bold">Клиент:</span> {{title}}</p>
