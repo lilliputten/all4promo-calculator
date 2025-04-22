@@ -1,1 +1,1 @@
-all4promo-calculator v.0.0.0 / 2025.04.15 19:07:13 +0300
+all4promo-calculator v.0.0.1 / 2025.04.23 00:36:39 +0300
