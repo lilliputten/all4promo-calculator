@@ -74,7 +74,9 @@ interface PriceItem {
   conditions?: string[];
   material: string;
   units: string;
-  unitMaterial: number;
-  basicCost: number;
-  unitCost: number;
+  // The numbers here could be formatted ones in a form like `1,123.99`
+  unitMaterial: number | string;
+  basicCost: number | string;
+  unitCost: number | string;
+  _idx?: number;
 }

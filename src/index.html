@@ -42,7 +42,7 @@
                     class="form-control mb-5"
                     type="text"
                     v-model="edition"
-                    v-on:input="onEditionChange"
+                    v-on:change="onEditionChange"
                   />
                 </div>
                 <div class="col-4">
@@ -168,35 +168,58 @@
           </span>
         </div>
 
-        <h2 class="result-title subtitle mx-2 mt-5">Бланк для производства</h2>
+        <h2 class="result-title subtitle mx-2 mt-5">
+          Бланк для {{ fullMode ? 'производства' : 'менеджера' }}
+        </h2>
 
         <!-- price-table -->
         <table class="table price-table">
           <thead>
             <tr>
-              <th class="material">Материал</th>
-              <th class="units">Ед. измерения</th>
-              <th class="unitMaterial">Расход материала за ед</th>
-              <th class="basicCost">Стоимость за м, кг, шт, усл</th>
-              <th class="unitCost">Стоимость за ед.</th>
+              <th v-if="fullMode" class="material">Материал</th>
+              <th v-else="fullMode" class="info"></th>
+              <th v-if="fullMode" class="units">Ед. измерения</th>
+              <th v-if="fullMode" class="unitMaterial">Расход материала за ед</th>
+              <th v-if="fullMode" class="basicCost">Стоимость за м, кг, шт, усл</th>
+              <th v-if="fullMode" class="unitCost">Стоимость за ед.</th>
+              <th v-else="fullMode" class="unitCost">Стоимость</th>
             </tr>
           </thead>
-          <tbody>
-            <tr v-for="price in filteredPrices">
+          <tbody v-if="fullMode">
+            <tr v-for="price in filteredPrices" :data-idx="price._idx">
               <td class="material">{{ price.material }}</td>
               <td class="units">{{ price.units }}</td>
               <td class="unitMaterial">{{ price.unitMaterial }}</td>
-              <td class="basicCost">{{ formatPrice(price.basicCost) }}</td>
+              <td class="basicCost" :data-value="price.basicCost">
+                <input
+                  :data-idx="price._idx"
+                  class="form-control basicCostValue"
+                  _type="number"
+                  _v-model="price.basicCost"
+                  :value="formatPrice(price.basicCost)"
+                  v-on:change="onBasicCostChange"
+                />
+              </td>
               <td class="unitCost">{{ formatPrice(price.unitCost) }}</td>
             </tr>
           </tbody>
           <tfoot>
             <tr class="priceUnit">
-              <td class="material" colspan="4">Стоимость за ед. для клиента с НДС</td>
+              <td
+                v-bind:class="fullMode ? 'material' : 'info'"
+                v-bind:colspan="fullMode ? 4 : null"
+              >
+                Стоимость за ед. для клиента с НДС
+              </td>
               <td class="unitCost">{{ formatPrice(priceUnit) }}</td>
             </tr>
             <tr class="priceTotal">
-              <td class="material" colspan="4">Стоимость для клиента за тираж с НДС</td>
+              <td
+                v-bind:class="fullMode ? 'material' : 'info'"
+                v-bind:colspan="fullMode ? 4 : null"
+              >
+                Стоимость для клиента за тираж с НДС
+              </td>
               <td class="unitCost">{{ formatPrice(priceTotal) }}</td>
             </tr>
           </tfoot>

@@ -12,7 +12,8 @@ import html2canvas from 'html2canvas';
 import { getDocument } from '../pdf.mjs';
 
 import { getDataTypeSelectedItems, showDataStruct } from './show-structure';
-import { periodizeNumber } from './strings';
+import { formatPriceToStr, parsePriceFromStr } from './numbers';
+import { parseQuery } from './urls';
 
 /** The data
  * @type {DataJson}
@@ -20,6 +21,9 @@ import { periodizeNumber } from './strings';
 import dataJson from '../data/data.yaml';
 
 import '../scss/index.scss';
+
+const urlParams = parseQuery(window.location.search);
+const fullMode = urlParams.mode == 'full';
 
 /** Print the data structure tree/options
  * @param {DataJson} data
@@ -36,6 +40,7 @@ function debugDataStruct(data, showOptions) {
 export const globalApp = createApp({
   data(_app) {
     return {
+      fullMode,
       preloaded: false,
       title: null,
       edition: 10, // number of items to produce
@@ -141,24 +146,12 @@ export const globalApp = createApp({
      * @param {number} val
      */
     formatPrice(val) {
-      if (typeof val === 'string') {
-        return val;
-      }
-      if (!val) {
-        return '0.00';
-      }
-      let numStr = val.toFixed(2);
-      const parsed = numStr.match(/^(\d+)[,.](\d+)$/);
-      if (!parsed) {
-        return periodizeNumber(numStr);
-      }
-      numStr = periodizeNumber(parsed[1]) + '.' + parsed[2];
-      return numStr;
+      return formatPriceToStr(val);
     },
     /**
-     * @param {string} reason
+     * @return {DataType | undefined}
      */
-    calcPrice(reason, reasonId = '') {
+    getCurrentDataType() {
       /** @type {DataJson} */
       const data = this.data;
       /** Selected data type
@@ -166,37 +159,113 @@ export const globalApp = createApp({
        */
       const dataType = data.types.find(({ selected }) => !!selected);
       if (!dataType) {
+        console.warn('[getCurrentDataType] No data type selected!');
+        return undefined;
+      }
+      return dataType;
+    },
+    /**
+     * @param {string} reason
+     */
+    calcPrice(reason, reasonId = '') {
+      /** Selected data type
+       * @type {DataType | undefined}
+       */
+      const dataType = this.getCurrentDataType(); // data.types.find(({ selected }) => !!selected);
+      if (!dataType) {
+        // eslint-disable-next-line no-console
         console.warn('[calcPrice]', reason, reasonId, 'No data type selected!');
-        debugger;
+        debugger; // eslint-disable-line no-debugger
         return;
       }
       const selectedItems = getDataTypeSelectedItems(dataType);
       const { prices } = dataType;
-      const filteredPrices = prices?.filter(({ conditions }) => {
-        if (!conditions) {
-          return true;
-        }
-        // Unfilter a price entry if any of conditions aren't presented in currently selected items
-        for (const condItem of conditions) {
-          if (!selectedItems.includes(condItem)) {
-            return false;
-          }
-        }
-        return true;
-      });
+      const filteredPrices = /** @type {PriceItem[] | undefined} */ (
+        prices
+          ?.map((price, idx) => {
+            const { conditions } = price;
+            if (conditions) {
+              // Unfilter a price entry if any of conditions aren't presented in currently selected items
+              for (const condItem of conditions) {
+                if (!selectedItems.includes(condItem)) {
+                  return null;
+                }
+              }
+            }
+            return /** @type {PriceItem} */ ({
+              _idx: idx,
+              ...price,
+            });
+          })
+          .filter(Boolean)
+      );
+      const count = !this.edition || isNaN(this.edition) ? 1 : this.edition;
       console.log('[calcPrice]', reason, reasonId, {
         filteredPrices,
         prices: { ...prices },
         selectedItems,
         dataType: { ...dataType },
-        data: { ...data },
+        count,
       });
       this.filteredPrices = filteredPrices;
       this.priceUnit = filteredPrices?.reduce((summ, price) => {
-        return isNaN(price.unitCost) ? summ : summ + price.unitCost;
+        return summ + parsePriceFromStr(price.unitCost);
       }, 0);
-      const count = !this.edition || isNaN(this.edition) ? 1 : this.edition;
       this.priceTotal = isNaN(this.priceUnit) ? 0 : this.priceUnit * count;
+    },
+    /**
+     * @param {InputEvent} e
+     */
+    onBasicCostChange(e) {
+      /** Selected data type
+       * @type {DataType | undefined}
+       */
+      const dataType = this.getCurrentDataType(); // data.types.find(({ selected }) => !!selected);
+      if (!dataType) {
+        // eslint-disable-next-line no-console
+        console.error('[onBasicCostChange] No data type selected!');
+        debugger; // eslint-disable-line no-debugger
+        return;
+      }
+      const prices = dataType.prices;
+      if (!prices) {
+        // eslint-disable-next-line no-console
+        console.error('[onBasicCostChange] Prices data not defined for the DataType!');
+        debugger; // eslint-disable-line no-debugger
+        return;
+      }
+      const node = /** @type {HTMLInputElement} */ (e.target);
+      const { dataset } = node;
+      const idx = dataset.idx;
+      if (idx == undefined || idx == '' || isNaN(Number(idx))) {
+        // eslint-disable-next-line no-console
+        console.error('[onBasicCostChange] Prices data not defined for the DataType!');
+        debugger; // eslint-disable-line no-debugger
+        return;
+      }
+      const idxN = Number(idx);
+      /** @type {PriceItem | undefined } */
+      const price = prices[idxN];
+      if (!price) {
+        // eslint-disable-next-line no-console
+        console.error('[onBasicCostChange] Not found price item for idx: ' + idx);
+        debugger; // eslint-disable-line no-debugger
+        return;
+      }
+      const value = node.value;
+      const parsedValue = parsePriceFromStr(value);
+      price.basicCost = parsedValue;
+      price.unitCost = parsePriceFromStr(price.unitMaterial) * parsedValue;
+      const reasonId = ['basicCost', idx, value].filter(Boolean).join(': ');
+      console.log('[onBasicCostChange]', reasonId, {
+        parsedValue,
+        value,
+        idxN,
+        idx,
+        prices,
+        dataType: { ...dataType },
+      });
+      this.calcPrice('onBasicCostChange', reasonId);
     },
     /** Set the topmost level type (DataType)
      * @param {number} num
@@ -470,6 +539,7 @@ export const globalApp = createApp({
               },
             )
             .catch((/** @type {Error | string} */ reason) => {
+              // eslint-disable-next-line no-console
               console.error(reason);
             });
         } else {

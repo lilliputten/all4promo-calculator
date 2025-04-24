@@ -14,4 +14,16 @@
   .basicCost {
     background-color: #eee;
   }
+  .unitMaterial,
+  .basicCost,
+  .unitCost {
+    width: 15%;
+    min-width: 10em;
+  }
+  .basicCost {
+    width: 100%;
+    input {
+      text-align: right;
+    }
+  }
 }
