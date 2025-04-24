@@ -1,9 +1,9 @@
 {
   "name": "all4promo-calculator",
   "description": "all4promo Vue.js Clothes Constructor & Calculator",
-  "version": "0.0.0",
-  "timetag": "250415-1907",
-  "timestamp": "2025.04.15 19:07:13 +0300",
+  "version": "0.0.1",
+  "timetag": "250424-1735",
+  "timestamp": "2025.04.24 17:35:27 +0300",
   "changed": "2025.04.22, 19:08",
   "license": "MIT",
   "private": false,
