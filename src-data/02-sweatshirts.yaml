@@ -1,0 +1,276 @@
+- name: 'Свитшот' # DataType
+  svg: 'images/content/sweatshirt_0_0.svg'
+  selected: false
+  types:
+    - title: 'Силуэт'
+      colors:
+        - name: 'Белый'
+          code: '#fff'
+          selected: false
+        - name: 'Черный'
+          code: '#000'
+          selected: false
+        - name: 'Красный'
+          code: '#f00'
+          selected: false
+        - name: 'Синий'
+          code: '#00f'
+          selected: false
+        - name: 'Синий'
+          code: '#0f0'
+          selected: false
+        - name: 'Желтый'
+          code: '#ff0'
+          selected: false
+        - name: 'Оранжевый'
+          code: '#FFA500'
+          selected: false
+        - name: 'Фиолетовый'
+          code: '#800080'
+          selected: false
+        - name: 'Голубой'
+          code: '#00bfff'
+          selected: false
+        - name: 'Салатовый'
+          code: '#7fff00'
+          selected: false
+        - name: 'Серый'
+          code: '#808080'
+          selected: false
+        - name: 'Серый меланж'
+          code: '#87827d'
+          selected: false
+        - name: 'Темно-серый (графит)'
+          code: '#494d4e'
+          selected: false
+        - name: 'Хакки'
+          code: '#78866b'
+          selected: false
+        - name: 'Розовый'
+          code: '#ff1493'
+          selected: false
+      options:
+        - svg: 'images/content/sweatshirt_1_0.svg'
+          name: 'Стандарт'
+          selected: false
+        - name: 'Оверсайз'
+          svg: 'images/content/sweatshirt_1_1.svg'
+          selected: false
+    - title: 'Рукав'
+      colors:
+        - name: 'Белый'
+          code: '#fff'
+          selected: false
+        - name: 'Черный'
+          code: '#000'
+          selected: false
+        - name: 'Красный'
+          code: '#f00'
+          selected: false
+        - name: 'Синий'
+          code: '#00f'
+          selected: false
+        - name: 'Синий'
+          code: '#0f0'
+          selected: false
+        - name: 'Желтый'
+          code: '#ff0'
+          selected: false
+        - name: 'Оранжевый'
+          code: '#FFA500'
+          selected: false
+        - name: 'Фиолетовый'
+          code: '#800080'
+          selected: false
+        - name: 'Голубой'
+          code: '#00bfff'
+          selected: false
+        - name: 'Салатовый'
+          code: '#7fff00'
+          selected: false
+        - name: 'Серый'
+          code: '#808080'
+          selected: false
+        - name: 'Серый меланж'
+          code: '#87827d'
+          selected: false
+        - name: 'Темно-серый (графит)'
+          code: '#494d4e'
+          selected: false
+        - name: 'Хакки'
+          code: '#78866b'
+          selected: false
+        - name: 'Розовый'
+          code: '#ff1493'
+          selected: false
+      options:
+        - svg: 'images/content/sweatshirt_2_0.svg'
+          name: 'Стандарт'
+          selected: false
+        - svg: 'images/content/sweatshirt_2_1.svg'
+          name: 'Спущеный'
+          selected: false
+        - svg: 'images/content/sweatshirt_2_2.svg'
+          name: 'Реглан'
+          selected: false
+    - title: 'Отделка низ и рукава'
+      colors:
+        - name: 'Белый'
+          code: '#fff'
+          selected: false
+        - name: 'Черный'
+          code: '#000'
+          selected: false
+        - name: 'Красный'
+          code: '#f00'
+          selected: false
+        - name: 'Синий'
+          code: '#00f'
+          selected: false
+        - name: 'Синий'
+          code: '#0f0'
+          selected: false
+        - name: 'Желтый'
+          code: '#ff0'
+          selected: false
+        - name: 'Оранжевый'
+          code: '#FFA500'
+          selected: false
+        - name: 'Фиолетовый'
+          code: '#800080'
+          selected: false
+        - name: 'Голубой'
+          code: '#00bfff'
+          selected: false
+        - name: 'Салатовый'
+          code: '#7fff00'
+          selected: false
+        - name: 'Серый'
+          code: '#808080'
+          selected: false
+        - name: 'Серый меланж'
+          code: '#87827d'
+          selected: false
+        - name: 'Темно-серый (графит)'
+          code: '#494d4e'
+          selected: false
+        - name: 'Хакки'
+          code: '#78866b'
+          selected: false
+        - name: 'Розовый'
+          code: '#ff1493'
+          selected: false
+      options:
+        - svg: 'images/content/sweatshirt_3_0.svg'
+          name: 'Кашкорсе'
+          selected: false
+        - svg: 'images/content/sweatshirt_3_1.svg'
+          name: 'Рибана'
+          selected: false
+    - title: 'Нанесение'
+      options:
+        - name: 'Да'
+          selected: false
+        - name: 'Нет'
+          selected: false
+    - title: 'Сигнальный образец'
+      options:
+        - name: 'Да'
+          selected: false
+        - name: 'Нет'
+          selected: false
+    - title: 'Выбор ткани'
+      options:
+        - name: 'Футер 2х нитка с начесом'
+          selected: false
+          selections:
+            - name: '240-260 гр'
+          selectionsChoose: '240-260 гр'
+        - name: 'Футер 2х нитка без начеса'
+          selected: false
+          selections:
+            - name: '240-260 гр'
+          selectionsChoose: '240-260 гр'
+        - name: 'Футер 3х нитка с начесом'
+          selected: false
+          selections:
+            - name: '320 гр'
+            - name: '350 гр'
+          selectionsChoose: '320 гр'
+        - name: 'Футер 3х нитка без начеса'
+          selected: false
+          selections:
+            - name: '320 гр'
+            - name: '350 гр'
+            - name: '420 гр'
+          selectionsChoose: '320 гр'
+    - title: 'Размеры одежды'
+      size: true
+      checkbox: true
+      options:
+        - name: 'S (Small) 44-46'
+          selected: false
+          count: 0
+        - name: 'M (Medium) 48-50'
+          selected: false
+          count: 0
+        - name: 'L (Large) 52-54'
+          selected: false
+          count: 0
+        - name: 'XL (Extra Large) 56-58'
+          selected: false
+          count: 0
+        - name: 'XXL (Double Extra Large) 60-62'
+          selected: false
+          count: 0
+        - name: 'XXXL (Triple Extra Large) 64-66'
+          selected: false
+          count: 0
+        - name: '4XL (Four Extra Large) 68-70'
+          selected: false
+          count: 0
+        - name: '5XL (Five Extra Large) 72-74'
+          selected: false
+          count: 0
+        - name: '6XL (Six Extra Large) 76-78'
+          selected: false
+          count: 0
+        - name: '7XL (Seven Extra Large) 80-82'
+          selected: false
+          count: 0
+    - title: 'Бирки'
+      checkbox: true
+      options:
+        - name: 'Размерник'
+          selected: false
+          count: 0
+          selections:
+            - name: 'Силикон'
+            - name: 'Сатин с печатью'
+            - name: 'Жаккард'
+            - name: 'Другое'
+          selectionsChoose: 'Силикон'
+        - name: 'Уход'
+          selected: false
+          count: 0
+          selections:
+            - name: 'Силикон'
+            - name: 'Сатин с печатью'
+            - name: 'Жаккард'
+            - name: 'Другое'
+          selectionsChoose: 'Силикон'
+        - name: 'Логотип производителя'
+          selected: false
+          count: 0
+          selections:
+            - name: 'Жаккард'
+          selectionsChoose: 'Жаккард'
+        - name: 'Логотип клиента'
+          selected: false
+          count: 0
+          selections:
+            - name: 'Силикон'
+            - name: 'Сатин с печатью'
+            - name: 'Жаккард'
+            - name: 'Другое'
+          selectionsChoose: 'Силикон'

@@ -10,7 +10,7 @@ vim: ft=jsonc
     "module": "es6",
     "sourceMap": true,
     "moduleResolution": "node",
-    "noImplicitAny": true,
+    "noImplicitAny": false,
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "skipLibCheck": true,

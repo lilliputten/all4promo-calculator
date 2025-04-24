@@ -33,6 +33,14 @@ const htmlPluginEntries = templateFiles.map(
     }),
 );
 
+const globOptions = {
+  ignore: [
+    '*.DS_Store',
+    'Thumbs.db',
+    // Temp files...
+    '**/*.swp',
+  ],
+};
 module.exports = {
   entry: {
     app: path.resolve(environment.paths.source, 'js', 'app.js'),
@@ -76,6 +84,10 @@ module.exports = {
         generator: {
           filename: 'images/design/[name].[hash:6][ext]',
         },
+      },
+      {
+        test: /\.ya?ml$/,
+        use: 'yaml-loader',
       },
     ],
   },
@@ -127,28 +139,28 @@ module.exports = {
     new CopyWebpackPlugin({
       patterns: [
         {
+          context: path.resolve(environment.paths.source),
+          from: 'project-*.txt',
+          to: path.resolve(environment.paths.output),
+          toType: 'dir',
+        },
+        {
           from: path.resolve(environment.paths.source, 'images', 'content'),
           to: path.resolve(environment.paths.output, 'images', 'content'),
           toType: 'dir',
-          globOptions: {
-            ignore: ['*.DS_Store', 'Thumbs.db'],
-          },
+          globOptions,
         },
         {
-          from: path.resolve(environment.paths.source, 'json'),
-          to: path.resolve(environment.paths.output, 'json'),
+          from: path.resolve(environment.paths.source, 'data'),
+          to: path.resolve(environment.paths.output, 'data'),
           toType: 'dir',
-          globOptions: {
-            ignore: ['*.DS_Store', 'Thumbs.db'],
-          },
+          globOptions,
         },
         {
           from: path.resolve(environment.paths.source, 'script'),
           to: path.resolve(environment.paths.output, 'script'),
           toType: 'dir',
-          globOptions: {
-            ignore: ['*.DS_Store', 'Thumbs.db'],
-          },
+          globOptions,
         },
       ],
     }),

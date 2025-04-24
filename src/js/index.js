@@ -1,24 +1,51 @@
-// Import statements
-import '../scss/index.scss';
+// @ts-check
+
 import { createApp } from 'vue/dist/vue.esm-bundler';
+// import { createApp } from '@vue/runtime-dom';
+
 import { Swiper, SwiperSlide } from 'swiper/vue';
 import 'swiper/css';
+
 import axios from 'axios';
 import html2canvas from 'html2canvas';
-import dataJson from '../json/data.json';
-import * as pdfjs from '../pdf.mjs';
+
+import { getDocument } from '../pdf.mjs';
+
+import { getDataTypeSelectedItems, showDataStruct } from './show-structure';
+import { periodizeNumber } from './strings';
+
+/** The data
+ * @type {DataJson}
+ */
+import dataJson from '../data/data.yaml';
+
+import '../scss/index.scss';
+
+/** Print the data structure tree/options
+ * @param {DataJson} data
+ * @param {boolean} showOptions
+ */
+function debugDataStruct(data, showOptions) {
+  const title = showOptions ? 'Options' : 'Structure';
+  const struct = showDataStruct(data, showOptions);
+  // eslint-disable-next-line no-console
+  console.log(title + ':\n' + struct);
+}
 
 // Create Vue app
-const app = createApp({
-  data() {
+export const globalApp = createApp({
+  data(_app) {
     return {
       preloaded: false,
       title: null,
-      edition: null,
+      edition: 10, // number of items to produce
       logo: null,
       comment: null,
-      data: null,
+      priceUnit: null,
+      priceTotal: null,
+      filteredPrices: [], // PriceItem[]
       date: new Date(),
+      data: null, // DataJson
     };
   },
   components: {
@@ -26,19 +53,32 @@ const app = createApp({
     SwiperSlide,
   },
   setup() {
-    const onSwiper = (_swiper) => {};
+    const onSwiper =
+      /** @param {Swiper} _swiper */
+      (_swiper) => {};
     return {
       onSwiper,
     };
   },
   async mounted() {
-    this.data = dataJson;
+    const data = /** @type {DataJson} */ (dataJson);
+    debugDataStruct(data, true);
+    /* // DEBUG
+     * const app = this;
+     * console.log('[mounted]', {
+     *   test: data.types[0].prices,
+     *   app: { ...app },
+     * });
+     */
+    this.data = data;
+    // Select the first top-level type
     this.setList(0);
     setTimeout(() => {
       this.preloaded = true;
-      let observerLogo = new MutationObserver((mutations) => {
+      const observerLogo = new MutationObserver((mutations) => {
         mutations.forEach((mutationRecord) => {
-          let mutation = mutationRecord.target.getAttribute('style');
+          const node = /** @type {HTMLElement} */ (mutationRecord.target);
+          const mutation = node.getAttribute('style');
           this.$refs.logoElementBottom.setAttribute('style', mutation);
         });
       });
@@ -46,115 +86,243 @@ const app = createApp({
       const targetLogo = this.$refs.logoElement;
       observerLogo.observe(targetLogo, { attributes: true, attributeFilter: ['style'] });
 
-      const dragElement = (elmnt) => {
-        var pos1 = 0,
-          pos2 = 0,
-          pos3 = 0,
-          pos4 = 0;
-        const garabber = elmnt.querySelector('.element');
-        if (document.getElementById(elmnt.id + 'header')) {
-          document.getElementById(elmnt.id + 'header').onmousedown = dragMouseDown;
-        } else {
-          garabber.onmousedown = dragMouseDown;
-        }
+      const dragElement =
+        /** @param {HTMLElement} elmnt */
+        (elmnt) => {
+          let pos1 = 0;
+          let pos2 = 0;
+          let pos3 = 0;
+          let pos4 = 0;
+          const garabber = /** @type {HTMLElement} */ (elmnt.querySelector('.element'));
+          if (document.getElementById(elmnt.id + 'header')) {
+            const node = document.getElementById(elmnt.id + 'header');
+            if (node) {
+              node.onmousedown = dragMouseDown;
+            }
+          } else {
+            if (garabber) {
+              garabber.onmousedown = dragMouseDown;
+            }
+          }
 
-        function dragMouseDown(e) {
-          e = e || window.event;
-          e.preventDefault();
-          pos3 = e.clientX;
-          pos4 = e.clientY;
-          document.onmouseup = closeDragElement;
-          document.onmousemove = elementDrag;
-        }
+          /** @param {MouseEvent} e */
+          function dragMouseDown(e) {
+            e = e || window.event;
+            e.preventDefault();
+            pos3 = e.clientX;
+            pos4 = e.clientY;
+            document.onmouseup = closeDragElement;
+            document.onmousemove = elementDrag;
+          }
 
-        function elementDrag(e) {
-          e = e || window.event;
-          e.preventDefault();
-          pos1 = pos3 - e.clientX;
-          pos2 = pos4 - e.clientY;
-          pos3 = e.clientX;
-          pos4 = e.clientY;
-          elmnt.style.top = elmnt.offsetTop - pos2 + 'px';
-          elmnt.style.left = elmnt.offsetLeft - pos1 + 'px';
-        }
+          /** @param {MouseEvent} e */
+          function elementDrag(e) {
+            e = e || window.event;
+            e.preventDefault();
+            pos1 = pos3 - e.clientX;
+            pos2 = pos4 - e.clientY;
+            pos3 = e.clientX;
+            pos4 = e.clientY;
+            elmnt.style.top = elmnt.offsetTop - pos2 + 'px';
+            elmnt.style.left = elmnt.offsetLeft - pos1 + 'px';
+          }
 
-        function closeDragElement() {
-          document.onmouseup = null;
-          document.onmousemove = null;
-        }
-      };
+          function closeDragElement() {
+            document.onmouseup = null;
+            document.onmousemove = null;
+          }
+        };
 
       dragElement(targetLogo);
     }, 2000);
   },
   methods: {
-    async setList(num) {
-      this.data.types.forEach((el, index) => {
-        this.data.types[index].selected = false;
-      });
-      this.data.types[num].selected = true;
-      if (this.data.types[num]?.colors?.length) {
-        this.data.types[num].colors.forEach((el, index) => {
-          el.selected = !index;
-        });
+    /**
+     * @param {number} val
+     */
+    formatPrice(val) {
+      if (typeof val === 'string') {
+        return val;
       }
-      if (this.data.types[num]?.types?.length) {
-        this.data.types[num].types.forEach((el) => {
-          el.options.forEach((option, i) => {
-            option.selected = !i;
+      if (!val) {
+        return '0.00';
+      }
+      let numStr = val.toFixed(2);
+      const parsed = numStr.match(/^(\d+)[,.](\d+)$/);
+      if (!parsed) {
+        return periodizeNumber(numStr);
+      }
+      numStr = periodizeNumber(parsed[1]) + '.' + parsed[2];
+      return numStr;
+    },
+    /**
+     * @param {string} reason
+     */
+    calcPrice(reason, reasonId = '') {
+      /** @type {DataJson} */
+      const data = this.data;
+      /** Selected data type
+       * @type {DataType | undefined}
+       */
+      const dataType = data.types.find(({ selected }) => !!selected);
+      if (!dataType) {
+        console.warn('[calcPrice]', reason, reasonId, 'No data type selected!');
+        debugger;
+        return;
+      }
+      const selectedItems = getDataTypeSelectedItems(dataType);
+      const { prices } = dataType;
+      const filteredPrices = prices?.filter(({ conditions }) => {
+        if (!conditions) {
+          return true;
+        }
+        // Unfilter a price entry if any of conditions aren't presented in currently selected items
+        for (const condItem of conditions) {
+          if (!selectedItems.includes(condItem)) {
+            return false;
+          }
+        }
+        return true;
+      });
+      console.log('[calcPrice]', reason, reasonId, {
+        filteredPrices,
+        prices: { ...prices },
+        selectedItems,
+        dataType: { ...dataType },
+        data: { ...data },
+      });
+      this.filteredPrices = filteredPrices;
+      this.priceUnit = filteredPrices?.reduce((summ, price) => {
+        return isNaN(price.unitCost) ? summ : summ + price.unitCost;
+      }, 0);
+      const count = !this.edition || isNaN(this.edition) ? 1 : this.edition;
+      this.priceTotal = isNaN(this.priceUnit) ? 0 : this.priceUnit * count;
+    },
+    /** Set the topmost level type (DataType)
+     * @param {number} num
+     */
+    async setList(num) {
+      console.log('[setList]', num);
+      const data = /** @type {DataJson} */ (this.data);
+      /** @type {string | undefined} */
+      let reasonId;
+      data.types.forEach((_el, index) => {
+        const isSelected = num === index;
+        data.types[index].selected = isSelected;
+        if (isSelected) {
+          reasonId = data.types[index].name;
+        }
+      });
+      const item = data.types[num];
+      // item.selected = true;
+      /* // We don't have colors on the top level of `DataType`
+       * if (item?.colors?.length) {
+       *   item?.colors?.forEach((el, index) => {
+       *     el.selected = !index;
+       *   });
+       * }
+       */
+      if (item?.types?.length) {
+        item.types.forEach((el) => {
+          el.options.forEach((/** @type {TypeOption} */ option, /** @type {number} */ idx) => {
+            option.selected = !idx;
             if (option.count) {
               option.count = 0;
             }
           });
           if (el?.colors) {
-            el.colors.forEach((color, i) => {
-              color.selected = !i;
+            el.colors.forEach((color, idx) => {
+              color.selected = !idx;
             });
           }
         });
       }
       let color = '';
       await Promise.all(
-        this.data.types.map(async (type) => {
-          if (type.svg) {
-            color = type.colors ? this.getSelected(type.colors)?.code : null;
-            if (type.svgNew) {
-              type.svgNew = this.changeColor(type.svgNew, color);
-            } else {
-              type.svgNew = await this.fetchSvg(type.svg, color);
+        data.types.map(
+          /** @param {DataType & TypeType} type */
+          async (type) => {
+            if (type.svg) {
+              color = type.colors ? this.getSelected(type.colors)?.code : null;
+              if (type.svgNew) {
+                type.svgNew = this.changeColor(type.svgNew, color);
+              } else {
+                type.svgNew = await this.fetchSvg(type.svg, color);
+              }
+              /* console.log('XXX', {
+               *   type: {...type},
+               * });
+               */
             }
-          }
-          await Promise.all(
-            type.types.map(async (t) => {
-              await Promise.all(
-                t.options.map(async (option) => {
-                  if (option.svg) {
-                    color = t.colors ? this.getSelected(t.colors)?.code : null;
-                    if (option.svgNew) {
-                      option.svgNew = this.changeColor(option.svgNew, color);
-                    } else {
-                      option.svgNew = await this.fetchSvg(option.svg, color);
+            await Promise.all(
+              type.types.map(async (t) => {
+                await Promise.all(
+                  t.options.map(async (option) => {
+                    if (option.svg) {
+                      color = t.colors ? this.getSelected(t.colors)?.code : null;
+                      if (option.svgNew) {
+                        option.svgNew = this.changeColor(option.svgNew, color);
+                      } else {
+                        option.svgNew = await this.fetchSvg(option.svg, color);
+                      }
                     }
-                  }
-                }),
-              );
-            }),
-          );
-        }),
+                  }),
+                );
+              }),
+            );
+          },
+        ),
       );
+      // TODO: Invoke the method after all the above async op's?
+      this.calcPrice('setList', reasonId);
     },
+    /** The main property change funciton
+     * @param {Array<TypeColor>} arr
+     * @param {number} num
+     * @param {TypeType | null} mainobj
+     */
     setProp(arr, num, mainobj = null) {
-      if (mainobj.checkbox) {
-        arr[num].selected = !arr[num].selected;
+      const it = arr[num];
+      const isCheckbox = !!mainobj?.checkbox;
+      const hasColors = !!mainobj?.colors;
+      const hasSvgNew = !!mainobj?.svgNew;
+      if (!mainobj) {
+        // XXX: Is ti possible to have unset mainobj?
+        debugger;
+      }
+      if (isCheckbox) {
+        it.selected = !it.selected;
       } else {
         arr.forEach((el, index) => {
           el.selected = num === index;
         });
       }
-      if (mainobj?.colors) {
+      const reasonValue = arr
+        .filter(({ selected }) => selected)
+        .map(({ name }) => name)
+        .join(', ');
+      const reasonId = [
+        //
+        mainobj?.title,
+        hasColors && arr === mainobj.colors ? 'Color' : 'Option',
+        reasonValue,
+      ]
+        .filter(Boolean)
+        .join(': ');
+      console.log('[setProp]', mainobj?.title, num, it?.name, {
+        reasonId,
+        // reasonValue,
+        isCheckbox,
+        hasColors,
+        hasSvgNew,
+        num,
+        arr: [...arr],
+        it: { ...it },
+        mainobj: { ...mainobj },
+      });
+      if (hasColors) {
         const colorCode = this.getSelected(mainobj.colors)?.code;
-
-        if (mainobj?.svgNew) {
+        if (hasSvgNew) {
           mainobj.svgNew = this.changeColor(mainobj.svgNew, colorCode);
         } else if (this.getSelected(mainobj.options).svgNew) {
           this.getSelected(mainobj.options).svgNew = this.changeColor(
@@ -163,24 +331,34 @@ const app = createApp({
           );
         }
       }
+      this.calcPrice('setProp', reasonId);
     },
+    /**
+     * @param {any[]} arr
+     */
     getSelected(arr) {
       return arr.find((el) => el.selected);
     },
     printHtml() {
-      const cl = document.querySelector('#capture');
-      document.querySelector('html').classList.add('prntbl');
+      const cl = /** @type {HTMLElement} */ (document.querySelector('#capture'));
+      document.querySelector('html')?.classList.add('prntbl');
       html2canvas(cl).then((canvas) => {
         const nWindow = window.open('');
-        let style = document.createElement('style');
+        const style = document.createElement('style');
         style.innerHTML = 'canvas{width: 100%!important; height: auto!important;}';
-        nWindow.document.head.appendChild(style);
-        nWindow.document.body.appendChild(canvas);
-        nWindow.focus();
-        nWindow.print();
-        document.querySelector('html').classList.remove('prntbl');
+        if (nWindow) {
+          nWindow.document.head.appendChild(style);
+          nWindow.document.body.appendChild(canvas);
+          nWindow.focus();
+          nWindow.print();
+        }
+        document.querySelector('html')?.classList.remove('prntbl');
       });
     },
+    /**
+     * @param {string} link
+     * @param {string | null} color
+     */
     fetchSvg(link, color = null) {
       return new Promise((resolve) => {
         axios.get(link).then((svg) => {
@@ -188,48 +366,119 @@ const app = createApp({
         });
       });
     },
+    /**
+     * @param {string} svg
+     * @param {any} color
+     */
     changeColor(svg, color) {
       return color ? svg.replace(/fill="[#,a-z,A-Z,0-9]+"/gm, `fill="${color}"`) : svg;
     },
+    getEditionCount() {
+      let value = Number(this.edition);
+      if (isNaN(value) || value < 1) {
+        value = 1;
+      }
+      return value;
+    },
+    /**
+     * @param {InputEvent} e
+     */
+    onValueChange(e) {
+      const node = /** @type {HTMLInputElement} */ (e.target);
+      const type = node.dataset.type;
+      const name = node.dataset.name;
+      const value = node.value;
+      const reasonId = [type, name, value].filter(Boolean).join(': ');
+      console.log('[onValueChange]', {
+        reasonId,
+        name,
+        type,
+        value,
+      });
+      this.calcPrice('onValueChange', reasonId);
+    },
+    /**
+     * @param {InputEvent} e
+     */
+    onSelectChange(e) {
+      const node = /** @type {HTMLSelectElement} */ (e.target);
+      const selectedIndex = Number(node.selectedIndex);
+      const selectedOptions = node.selectedOptions;
+      const type = node.dataset.type;
+      const name = node.dataset.name;
+      const option = selectedOptions[0];
+      const value = option.value;
+      const reasonId = [type, name, value].filter(Boolean).join(': ');
+      console.log('[onSelectChange]', {
+        reasonId,
+        option,
+        node,
+        selectedIndex,
+        selectedOptions,
+      });
+      this.calcPrice('onSelectChange', reasonId);
+    },
+    /**
+     * @param {InputEvent} e
+     */
+    onEditionChange(e) {
+      const node = /** @type {HTMLInputElement} */ (e.target);
+      const value = Number(node.value);
+      console.log('[onEditionChange]', {
+        edition: this.edition,
+        value,
+      });
+      // TODO: Just to multiply price?
+      this.calcPrice('onEditionChange', 'count: ' + value);
+    },
+    /**
+     * @param {InputEvent} e
+     */
     onFileChange(e) {
-      let files = e.target.files || e.dataTransfer.files;
+      // @ts-ignore
+      const files = e.target?.files || e.dataTransfer.files;
       if (!files.length) return;
       this.createImage(files[0]);
     },
+    /** @param {Blob} file */
     createImage(file) {
-      let reader = new FileReader();
+      const reader = new FileReader();
       reader.onload = (e) => {
         this.logo = '';
         if (file.type === 'application/pdf') {
-          pdfjs
-            .getDocument(e.target.result)
-            .promise.then((pdf) => {
-              pdf.getPage(1).then((page) => {
-                const scale = 1.5;
-                const viewport = page.getViewport({ scale: scale });
-                const canvas = document.createElement('canvas');
-                const context = canvas.getContext('2d');
-                canvas.height = viewport.height;
-                canvas.width = viewport.width;
-                const renderContext = {
-                  canvasContext: context,
-                  viewport: viewport,
-                };
-                page.render(renderContext).promise.then(() => {
-                  this.logo = canvas.toDataURL();
+          getDocument(e.target?.result)
+            .promise.then(
+              /** @param {import('pdfjs-dist').PDFDocumentProxy} pdf */
+              (pdf) => {
+                pdf.getPage(1).then((page) => {
+                  const scale = 1.5;
+                  const viewport = page.getViewport({ scale: scale });
+                  const canvas = document.createElement('canvas');
+                  const context = canvas.getContext('2d');
+                  if (context) {
+                    canvas.height = viewport.height;
+                    canvas.width = viewport.width;
+                    const renderContext = {
+                      canvasContext: context,
+                      viewport: viewport,
+                    };
+                    page.render(renderContext).promise.then(() => {
+                      this.logo = canvas.toDataURL();
+                    });
+                  }
                 });
-              });
-            })
-            .catch((reason) => {
+              },
+            )
+            .catch((/** @type {Error | string} */ reason) => {
               console.error(reason);
             });
         } else {
-          this.logo = e.target.result;
+          this.logo = e.target?.result;
         }
       };
       reader.readAsDataURL(file);
     },
-    removeImage: function (e) {
+    removeImage: function (/** @type {Event} */ _e) {
       this.$refs.logoUpload.value = null;
       this.logo = '';
     },

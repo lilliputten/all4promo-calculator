@@ -1,0 +1,17 @@
+.price-table {
+  th {
+    border: 1px solid #444;
+    font-weight: bold;
+  }
+  .priceUnit,
+  .priceTotal {
+    font-weight: bold;
+  }
+  .basicCost,
+  .unitCost {
+    text-align: right;
+  }
+  .basicCost {
+    background-color: #eee;
+  }
+}
