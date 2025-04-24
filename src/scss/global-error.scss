@@ -1,0 +1,36 @@
+.global-error {
+  position: fixed;
+  $padding: 2rem;
+  padding: $padding;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  background-color: red;
+  &:not(.visible) {
+    display: none;
+  }
+  &,
+  .error-title,
+  .error-details {
+    color: #fff;
+    text-align: center;
+  }
+  .error-title {
+    text-transform: none;
+    font-size: 2rem;
+    font-weight: normal;
+  }
+  .error-details {
+    font-size: 1rem;
+  }
+}
+
+body.with-error {
+  overflow: hidden;
+}
