@@ -36,7 +36,7 @@ function debugDataStruct(data, showOptions) {
   console.log(title + ':\n' + struct);
 }
 
-const debugInitialChanges = true;
+const debugInitialChanges = false;
 
 /** @param {DataJson} serverData */
 function createGlobalApp(serverData) {
@@ -336,12 +336,11 @@ function createGlobalApp(serverData) {
           // yamlData,
           data,
         });
-        debugger;
         try {
           const res = await fetch(reqUrl, reqInit);
           const { ok, status, statusText } = res;
           // eslint-disable-next-line no-console
-          console.log('[saveCostChanges] Received response', {
+          console.log('[saveCostChanges] response', {
             ok,
             status,
             statusText,
@@ -354,15 +353,28 @@ function createGlobalApp(serverData) {
               .join(' ');
             throw new Error(msg);
           }
-          const resData = await res.json();
+          const resText = await res.text(); // res.json();
           // eslint-disable-next-line no-console
-          console.log('[saveCostChanges] success: Got data', {
-            resData,
-          });
-          debugger;
-          this.pricesHasChanged = false;
-          this.procesChangedDataTypes = [];
-          showSuccessToast('Данные сохранены');
+          console.log('[saveCostChanges] success: Got data (raw)', resText);
+          if (resText.startsWith('{') || resText.startsWith('[')) {
+            const resData = JSON.parse(resText);
+            const { error } = resData;
+            if (error) {
+              const msg = ['Ошибка сервера', error].filter(Boolean).join(': ');
+              throw new Error(msg);
+            }
+            // eslint-disable-next-line no-console
+            console.log('[saveCostChanges] success: Got data (parsed json)', {
+              resData,
+            });
+            debugger;
+            this.pricesHasChanged = false;
+            this.procesChangedDataTypes = [];
+            showSuccessToast('Данные сохранены');
+          } else {
+            debugger;
+            // TODO: Process plain text error
+          }
         } catch (err) {
           const details = getErrorText(err);
           const error = new ServerDataError('Ошибка сохранения данных', details);
@@ -686,7 +698,7 @@ async function loadServerData() {
     const res = await fetch(url);
     const { ok, status, statusText } = res;
     // eslint-disable-next-line no-console
-    console.log('[loadServerData] Received response', {
+    console.log('[loadServerData] Got response', {
       ok,
       status,
       statusText,
