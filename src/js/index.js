@@ -1,7 +1,8 @@
 // @ts-check
 
 import { createApp } from 'vue/dist/vue.esm-bundler';
-// import { createApp } from '@vue/runtime-dom';
+
+// import 'bootstrap';
 
 import { Swiper, SwiperSlide } from 'swiper/vue';
 import 'swiper/css';
@@ -15,14 +16,11 @@ import { getDocument } from '../pdf.mjs';
 import { getDataTypeSelectedItems, showDataStruct } from './show-structure';
 import { formatPriceToStr, parsePriceFromStr } from './numbers';
 import { parseQuery } from './urls';
-
-/** The data
- * @type {DataJson}
- */
-// import dataJson from '../data/data.yaml';
+import { getErrorText } from './strings';
+import { defaultContentType, isDev, updatePricesUrl, yamlDataUrl } from './config';
+import { showErrorToast, showSuccessToast } from './toast';
 
 import '../scss/index.scss';
-import { getErrorText } from './strings';
 
 const urlParams = parseQuery(window.location.search);
 const fullMode = urlParams.mode == 'full';
@@ -38,13 +36,19 @@ function debugDataStruct(data, showOptions) {
   console.log(title + ':\n' + struct);
 }
 
+const debugInitialChanges = true;
+
 /** @param {DataJson} serverData */
 function createGlobalApp(serverData) {
   // Create Vue app
   window.globalApp = createApp({
     data(_app) {
       return {
-        fullMode,
+        isDev,
+        fullMode, // boolean,
+        pricesHasChanged: isDev && debugInitialChanges, // boolean
+        procesChangedDataTypes: isDev && debugInitialChanges ? [0] : [], // number[]
+        data: null, // DataJson
         preloaded: false,
         title: null,
         edition: 10, // number of items to produce
@@ -52,9 +56,8 @@ function createGlobalApp(serverData) {
         comment: null,
         priceUnit: null,
         priceTotal: null,
-        filteredPrices: [], // PriceItem[]
+        filteredPrices: [], // PriceItem[], Actual prices for the current DataType node
         date: new Date(),
-        data: null, // DataJson
       };
     },
     components: {
@@ -70,6 +73,18 @@ function createGlobalApp(serverData) {
       };
     },
     async mounted() {
+      /* // Toasts test
+       * showToast({
+       *   type: 'error',
+       *   body: 'Long body text',
+       * });
+       * setTimeout(() => {
+       *   showToast({
+       *     type: 'success',
+       *     body: 'Success text',
+       *   });
+       * }, 7000);
+       */
       const data = serverData;
       debugDataStruct(data, true);
       /* // DEBUG
@@ -153,6 +168,16 @@ function createGlobalApp(serverData) {
         return formatPriceToStr(val);
       },
       /**
+       * @return {number}
+       */
+      getCurrentDataTypeIndex() {
+        /** @type {DataJson} */
+        const data = this.data;
+        /** @type {number} */
+        const idx = data.types.findIndex(({ selected }) => !!selected);
+        return idx;
+      },
+      /**
        * @return {DataType | undefined}
        */
       getCurrentDataType() {
@@ -218,14 +243,16 @@ function createGlobalApp(serverData) {
         }, 0);
         this.priceTotal = isNaN(this.priceUnit) ? 0 : this.priceUnit * count;
       },
-      /**
+      /** Handle update of a basic cost field
        * @param {InputEvent} e
        */
       onBasicCostChange(e) {
+        /** @type {number} */
+        const dataTypeIdx = this.getCurrentDataTypeIndex();
         /** Selected data type
          * @type {DataType | undefined}
          */
-        const dataType = this.getCurrentDataType(); // data.types.find(({ selected }) => !!selected);
+        const dataType = this.data.types[dataTypeIdx]; // getCurrentDataType(); // data.types.find(({ selected }) => !!selected);
         if (!dataType) {
           // eslint-disable-next-line no-console
           console.error('[onBasicCostChange] No data type selected!');
@@ -261,6 +288,10 @@ function createGlobalApp(serverData) {
         const parsedValue = parsePriceFromStr(value);
         price.basicCost = parsedValue;
         price.unitCost = parsePriceFromStr(price.unitMaterial) * parsedValue;
+        this.pricesHasChanged = true;
+        if (!this.procesChangedDataTypes.includes(dataTypeIdx)) {
+          this.procesChangedDataTypes.push(dataTypeIdx);
+        }
         const reasonId = ['basicCost', idx, value].filter(Boolean).join(': ');
         console.log('[onBasicCostChange]', reasonId, {
           parsedValue,
@@ -271,6 +302,79 @@ function createGlobalApp(serverData) {
           dataType: { ...dataType },
         });
         this.calcPrice('onBasicCostChange', reasonId);
+      },
+      /** Save changed data on the server */
+      async saveCostChanges() {
+        /** @type {DataJson} */
+        const data = this.data;
+        /** @type {number[]} */
+        const procesChangedDataTypes = this.procesChangedDataTypes;
+        const changedPricesData = procesChangedDataTypes.map((idx) => {
+          return {
+            idx,
+            data: data.types[idx].prices,
+          };
+        });
+        // const pricesData = data.types.map((dataType) => {
+        //   return dataType.prices;
+        // });
+        // const yamlData = YAML.stringify(data);
+        const reqUrl = updatePricesUrl;
+        /** @type {RequestInit} */
+        const reqInit = {
+          method: 'POST',
+          headers: {
+            Accept: defaultContentType,
+            'Content-Type': defaultContentType,
+          },
+          body: JSON.stringify(changedPricesData),
+        };
+        console.log('[saveCostChanges] start', {
+          changedPricesData,
+          reqInit,
+          reqUrl,
+          // yamlData,
+          data,
+        });
+        debugger;
+        try {
+          const res = await fetch(reqUrl, reqInit);
+          const { ok, status, statusText } = res;
+          // eslint-disable-next-line no-console
+          console.log('[saveCostChanges] Received response', {
+            ok,
+            status,
+            statusText,
+            res,
+          });
+          if (!ok) {
+            const reason = [status, statusText].filter(Boolean).join(', ');
+            const msg = ['Ошибка отправки запроса', reason && `(${reason})`]
+              .filter(Boolean)
+              .join(' ');
+            throw new Error(msg);
+          }
+          const resData = await res.json();
+          // eslint-disable-next-line no-console
+          console.log('[saveCostChanges] success: Got data', {
+            resData,
+          });
+          debugger;
+          this.pricesHasChanged = false;
+          this.procesChangedDataTypes = [];
+          showSuccessToast('Данные сохранены');
+        } catch (err) {
+          const details = getErrorText(err);
+          const error = new ServerDataError('Ошибка сохранения данных', details);
+          // eslint-disable-next-line no-console
+          console.error('[saveCostChanges] Network error', error.message, {
+            details,
+            err,
+            error,
+          });
+          debugger; // eslint-disable-line no-debugger
+          showErrorToast(error);
+        }
       },
       /** Set the topmost level type (DataType)
        * @param {number} num
@@ -575,7 +679,7 @@ class ServerDataError extends Error {
 
 /** @return {Promise<DataJson>} */
 async function loadServerData() {
-  const url = './data/data.yaml';
+  const url = yamlDataUrl;
   /** @type {string|undefined} */
   let text;
   try {
@@ -591,7 +695,7 @@ async function loadServerData() {
     if (!ok) {
       const reason = [status, statusText].filter(Boolean).join(', ');
       const msg = [
-        'Ошибка загрузки',
+        'Ошибка отправки запроса',
         // Reson?
         reason && `(${reason})`,
       ]
@@ -673,8 +777,10 @@ async function start() {
       error,
     });
     debugger; // eslint-disable-line no-debugger
+    // Show error pane over the application
     showGlobalError(error);
-    // TODO: Show error toast?
+    // Show error toast?
+    showErrorToast(error);
   }
 }
 

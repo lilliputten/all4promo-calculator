@@ -53,6 +53,10 @@ module.exports = {
   module: {
     rules: [
       {
+        test: /\.woff2?$/,
+        type: 'asset/resource',
+      },
+      {
         test: /\.((c|sa|sc)ss)$/i,
         use: [MiniCssExtractPlugin.loader, 'css-loader', 'postcss-loader', 'sass-loader'],
       },
@@ -74,7 +78,7 @@ module.exports = {
         },
       },
       {
-        test: /\.(eot|ttf|woff|woff2)$/,
+        test: /\.(eot|ttf|woff)$/,
         type: 'asset',
         parser: {
           dataUrlCondition: {

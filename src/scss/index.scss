@@ -1,4 +1,9 @@
 @import '~bootstrap/scss/bootstrap';
+
+$bootstrap-icons-font-dir: '~bootstrap-icons/font/fonts';
+
+@import '~bootstrap-icons/font/bootstrap-icons';
+
 @import 'base/vars';
 @import 'base/reset';
 @import 'base/print';
@@ -11,3 +16,4 @@
 
 @import 'customize-swiper';
 @import 'global-error';
+@import 'toast';

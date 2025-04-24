@@ -36,6 +36,7 @@
     "@typescript-eslint/eslint-plugin": "^8.8.0",
     "autoprefixer": "^10.4.0",
     "babel-loader": "^9.1.0",
+    "bootstrap-icons": "^1.11.3",
     "clean-webpack-plugin": "^4.0.0",
     "copy-webpack-plugin": "^11.0.0",
     "cross-env": "^7.0.3",
