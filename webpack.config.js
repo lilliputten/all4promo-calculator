@@ -26,7 +26,7 @@ const htmlPluginEntries = templateFiles.map(
   (template) =>
     new HTMLWebpackPlugin({
       inject: true,
-      hash: true,
+      // hash: true,
       filename: template.output,
       template: path.resolve(environment.paths.source, template.input),
       favicon: path.resolve(environment.paths.source, 'images', 'favicon.ico'),
@@ -34,10 +34,12 @@ const htmlPluginEntries = templateFiles.map(
     }),
 );
 
-const isDev = process.env.NODE_ENV === 'development';
+const isDev = process.argv.includes('--mode=development') || process.env.NODE_ENV === 'development';
 const minimizeAssets = !isDev;
 
 const globOptions = {
+  dot: true,
+  gitignore: !isDev,
   ignore: [
     '*.DS_Store',
     'Thumbs.db',
@@ -57,18 +59,11 @@ module.exports = {
     index: path.resolve(environment.paths.source, 'js', 'index.js'),
   },
   output: {
-    filename: 'js/[name].[hash:6].js',
+    filename: 'js/[name].[fullhash:6].js',
     path: environment.paths.output,
   },
   module: {
     rules: [
-      // {
-      //   test: /\.woff2?$/,
-      //   type: 'asset/resource',
-      //   generator: {
-      //     filename: 'images/design/[name].[hash:6][ext]',
-      //   },
-      // },
       {
         test: /\.(eot|ttf|woff|woff2)$/,
         type: 'asset',
@@ -78,7 +73,7 @@ module.exports = {
           },
         },
         generator: {
-          filename: 'assets/fonts/[name].[hash:6][ext]',
+          filename: 'assets/fonts/[name].[fullhash:6][ext]',
         },
       },
       {
@@ -154,7 +149,7 @@ module.exports = {
           },
         },
         generator: {
-          filename: 'images/[name].[hash:6][ext]',
+          filename: 'images/[name].[fullhash:6][ext]',
         },
       },
       {
@@ -211,7 +206,7 @@ module.exports = {
   },
   plugins: [
     new MiniCssExtractPlugin({
-      filename: 'css/[name].[hash:6].css',
+      filename: 'css/[name].[fullhash:6].css',
     }),
     new CleanWebpackPlugin({
       verbose: true,
@@ -219,17 +214,12 @@ module.exports = {
     }),
     new CopyWebpackPlugin({
       patterns: [
-        // {
-        //   context: path.resolve(__dirname),
-        //   from: 'favicon.ico',
-        //   to: path.resolve(environment.paths.output),
-        //   toType: 'dir',
-        // },
         {
           context: path.resolve(__dirname, 'public/'),
-          from: '*',
+          from: '**/*',
           to: path.resolve(environment.paths.output),
           toType: 'dir',
+          globOptions,
         },
         {
           context: path.resolve(environment.paths.source),
@@ -240,12 +230,6 @@ module.exports = {
         {
           from: path.resolve(environment.paths.source, 'images', 'content'),
           to: path.resolve(environment.paths.output, 'images', 'content'),
-          toType: 'dir',
-          globOptions,
-        },
-        {
-          from: path.resolve(environment.paths.source, 'data'),
-          to: path.resolve(environment.paths.output, 'data'),
           toType: 'dir',
           globOptions,
         },

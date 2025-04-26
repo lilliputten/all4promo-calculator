@@ -1,10 +1,11 @@
 <?php
 /**
- * @descr Mail configuration
- * @changed 2024.10.21, 12:43
+ * @descr Application configuration
+ * @changed 2025.04.26, 17:53
  */
 
-$yamlFileName = 'data/data.yaml';
+$dataFileName = 'data/data.json';
+$sampleUpdatePricesDataFileName = 'data/sample-update-data.json';
 
 /** Return error if sent from another address */
 $checkUrlPrefix = 'https://constructor.all4promo.ru/';

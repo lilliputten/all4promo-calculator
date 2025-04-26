@@ -3,7 +3,7 @@
 export const nodeDev = process.env.NODE_ENV;
 export const isDev = nodeDev === 'development';
 
-export const yamlDataUrl = './data/data.yaml';
+export const dataFileUrl = './data/data.json';
 
 export const updatePricesUrl = './update-prices.php';
 

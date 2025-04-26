@@ -2,39 +2,27 @@
 
 import { createApp } from 'vue/dist/vue.esm-bundler';
 
-// import 'bootstrap';
-
 import { Swiper, SwiperSlide } from 'swiper/vue';
-import 'swiper/css';
 
 import axios from 'axios';
 import html2canvas from 'html2canvas';
-import YAML from 'yaml';
 
 import { getDocument } from '../pdf.mjs';
 
-import { getDataTypeSelectedItems, showDataStruct } from './show-structure';
+import { getDataTypeSelectedItems } from './show-structure';
 import { formatPriceToStr, parsePriceFromStr } from './numbers';
-import { parseQuery } from './urls';
 import { getErrorText } from './strings';
-import { defaultContentType, isDev, updatePricesUrl, yamlDataUrl } from './config';
+import { isDev } from './config';
 import { showErrorToast, showSuccessToast } from './toast';
+import { ServerDataError } from './ServerDataError';
+import { loadServerData, saveCostChangesToServer } from './data';
+import { checkFullMode, debugDataStruct } from './helpers';
+
+import 'swiper/css';
 
 import '../scss/index.scss';
 
-const urlParams = parseQuery(window.location.search);
-const fullMode = urlParams.mode == 'full';
-
-/** Print the data structure tree/options
- * @param {DataJson} data
- * @param {boolean} showOptions
- */
-function debugDataStruct(data, showOptions) {
-  const title = showOptions ? 'Options' : 'Structure';
-  const struct = showDataStruct(data, showOptions);
-  // eslint-disable-next-line no-console
-  console.log(title + ':\n' + struct);
-}
+const fullMode = checkFullMode();
 
 const debugInitialChanges = false;
 
@@ -47,7 +35,7 @@ function createGlobalApp(serverData) {
         isDev,
         fullMode, // boolean,
         pricesHasChanged: isDev && debugInitialChanges, // boolean
-        procesChangedDataTypes: isDev && debugInitialChanges ? [0] : [], // number[]
+        pricesChangedDataTypes: isDev && debugInitialChanges ? [0] : [], // number[]
         data: null, // DataJson
         preloaded: false,
         title: null,
@@ -289,8 +277,8 @@ function createGlobalApp(serverData) {
         price.basicCost = parsedValue;
         price.unitCost = parsePriceFromStr(price.unitMaterial) * parsedValue;
         this.pricesHasChanged = true;
-        if (!this.procesChangedDataTypes.includes(dataTypeIdx)) {
-          this.procesChangedDataTypes.push(dataTypeIdx);
+        if (!this.pricesChangedDataTypes.includes(dataTypeIdx)) {
+          this.pricesChangedDataTypes.push(dataTypeIdx);
         }
         const reasonId = ['basicCost', idx, value].filter(Boolean).join(': ');
         console.log('[onBasicCostChange]', reasonId, {
@@ -308,73 +296,16 @@ function createGlobalApp(serverData) {
         /** @type {DataJson} */
         const data = this.data;
         /** @type {number[]} */
-        const procesChangedDataTypes = this.procesChangedDataTypes;
-        const changedPricesData = procesChangedDataTypes.map((idx) => {
-          return {
-            idx,
-            data: data.types[idx].prices,
-          };
-        });
-        // const pricesData = data.types.map((dataType) => {
-        //   return dataType.prices;
-        // });
-        // const yamlData = YAML.stringify(data);
-        const reqUrl = updatePricesUrl;
-        /** @type {RequestInit} */
-        const reqInit = {
-          method: 'POST',
-          headers: {
-            Accept: defaultContentType,
-            'Content-Type': defaultContentType,
-          },
-          body: JSON.stringify(changedPricesData),
-        };
-        console.log('[saveCostChanges] start', {
-          changedPricesData,
-          reqInit,
-          reqUrl,
-          // yamlData,
-          data,
-        });
+        const pricesChangedDataTypes = this.pricesChangedDataTypes;
         try {
-          const res = await fetch(reqUrl, reqInit);
-          const { ok, status, statusText } = res;
-          // eslint-disable-next-line no-console
-          console.log('[saveCostChanges] response', {
-            ok,
-            status,
-            statusText,
-            res,
+          const resData = await saveCostChangesToServer(data, pricesChangedDataTypes);
+          console.log('[saveCostChanges] success: Got data (parsed json)', {
+            resData,
           });
-          if (!ok) {
-            const reason = [status, statusText].filter(Boolean).join(', ');
-            const msg = ['Ошибка отправки запроса', reason && `(${reason})`]
-              .filter(Boolean)
-              .join(' ');
-            throw new Error(msg);
-          }
-          const resText = await res.text(); // res.json();
-          // eslint-disable-next-line no-console
-          console.log('[saveCostChanges] success: Got data (raw)', resText);
-          if (resText.startsWith('{') || resText.startsWith('[')) {
-            const resData = JSON.parse(resText);
-            const { error } = resData;
-            if (error) {
-              const msg = ['Ошибка сервера', error].filter(Boolean).join(': ');
-              throw new Error(msg);
-            }
-            // eslint-disable-next-line no-console
-            console.log('[saveCostChanges] success: Got data (parsed json)', {
-              resData,
-            });
-            debugger;
-            this.pricesHasChanged = false;
-            this.procesChangedDataTypes = [];
-            showSuccessToast('Данные сохранены');
-          } else {
-            debugger;
-            // TODO: Process plain text error
-          }
+          debugger;
+          this.pricesHasChanged = false;
+          this.pricesChangedDataTypes = [];
+          showSuccessToast('Данные сохранены');
         } catch (err) {
           const details = getErrorText(err);
           const error = new ServerDataError('Ошибка сохранения данных', details);
@@ -677,77 +608,6 @@ function createGlobalApp(serverData) {
   }).mount('#app');
 }
 
-class ServerDataError extends Error {
-  /**
-   * @param {string} message
-   * @param {string} details
-   */
-  constructor(message, details) {
-    super(message);
-    this.name = 'ServerDataError';
-    this.details = details;
-  }
-}
-
-/** @return {Promise<DataJson>} */
-async function loadServerData() {
-  const url = yamlDataUrl;
-  /** @type {string|undefined} */
-  let text;
-  try {
-    const res = await fetch(url);
-    const { ok, status, statusText } = res;
-    // eslint-disable-next-line no-console
-    console.log('[loadServerData] Got response', {
-      ok,
-      status,
-      statusText,
-      res,
-    });
-    if (!ok) {
-      const reason = [status, statusText].filter(Boolean).join(', ');
-      const msg = [
-        'Ошибка отправки запроса',
-        // Reson?
-        reason && `(${reason})`,
-      ]
-        .filter(Boolean)
-        .join(' ');
-      throw new Error(msg);
-    }
-    text = await res.text();
-    // eslint-disable-next-line no-console
-    console.log('[loadServerData] success: Got data', {
-      text,
-    });
-  } catch (err) {
-    const details = getErrorText(err);
-    const error = new ServerDataError('Невозможно получить файл данных', details);
-    // eslint-disable-next-line no-console
-    console.error('[loadServerData] Network error', error.message, {
-      details,
-      err,
-      error,
-    });
-    debugger; // eslint-disable-line no-debugger
-    throw error;
-  }
-  try {
-    return YAML.parse(text);
-  } catch (err) {
-    const details = getErrorText(err);
-    const error = new ServerDataError('Ошибка чтения данных', details);
-    // eslint-disable-next-line no-console
-    console.error('[loadServerData] Data error', error.message, {
-      details,
-      err,
-      error,
-    });
-    debugger; // eslint-disable-line no-debugger
-    throw error;
-  }
-}
-
 /** @param {ServerDataError|Error|string} err */
 function showGlobalError(err) {
   const errorNode = document.getElementById('global-error');
@@ -763,7 +623,7 @@ function showGlobalError(err) {
   const detailsNode = /** @type {HTMLElement} */ (errorNode.querySelector('.error-details'));
   if (titleNode && detailsNode) {
     titleNode.innerText = title;
-    detailsNode.innerText = details;
+    detailsNode.innerText = details || '';
   } else {
     errorNode.innerText = [title, details].filter(Boolean).join('\n\n');
   }
