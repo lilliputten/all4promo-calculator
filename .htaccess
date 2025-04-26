@@ -15,24 +15,24 @@ AuthUserFile /home/g/goldenjeru/.security/.htpasswd
 
 # Fake manage page (uses the same code as root one) -- should require authorization
 RewriteBase "/"
-RewriteRule "manage" "" [PT]
+RewriteRule "^manage$" "" [PT]
 
 AuthType Basic
 AuthName "Site Access"
 
-# first, allow everybody
+# Allow everybody
 Order Allow,Deny
 Satisfy any
 Allow from all
 Require valid-user
 
-# TODO?
+# TODO: Deny some arguments
 # RewriteCond %{QUERY_STRING} mode=full
 # RewriteRule ^ - [E=auth:1]
 
 SetEnvIf Request_URI ^/(manage|.*\.(log|php))$ auth=true
 
-# Deny auth'ed files
+# Deny authorized files
 Deny from env=auth
 
 # <Files ~ "\.(php|log)$">
