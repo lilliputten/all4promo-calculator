@@ -1,4 +1,4 @@
-# @changed 2025.04.26, 22:55
+# @changed 2025.04.26, 22:58
 
 Options -Indexes
 
@@ -13,7 +13,7 @@ php_flag register_globals on
 # htpasswd -b .htpasswd {user} {pass}
 AuthUserFile /home/g/goldenjeru/.security/.htpasswd
 
-# Fake manage page (uses the same code as root one)
+# Fake manage page (uses the same code as root one) -- should require authorization
 RewriteBase "/"
 RewriteRule "manage" "" [PT]
 
@@ -32,10 +32,10 @@ Require valid-user
 
 SetEnvIf Request_URI ^/(manage|.*\.(log|php))$ auth=true
 
-# then, deny only if required
+# Deny auth'ed files
 Deny from env=auth
 
-<Files ~ "\.(php|log)$">
-Require valid-user
-#Require Group admin
-</Files>
+# <Files ~ "\.(php|log)$">
+# Require valid-user
+# #Require Group admin
+# </Files>
