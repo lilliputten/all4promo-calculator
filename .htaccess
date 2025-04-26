@@ -13,7 +13,7 @@ php_flag register_globals on
 AuthUserFile ./.htpasswd
 
 AuthType Basic
-AuthName Site Access
+AuthName SiteAccess
 
 <Files ~ "^([\.!_].*\.)(php|log)$">
 Require valid-user
