@@ -5,6 +5,240 @@
       "name": "Худи",
       "svg": "images/content/hoodie_0_0.svg",
       "selected": false,
+      "prices": [
+        {
+          "material": "киперная лента",
+          "units": "м",
+          "unitMaterial": 0.25,
+          "basicCost": 25.8,
+          "unitCost": 6.45
+        },
+        {
+          "material": "нитки",
+          "units": "боб",
+          "unitMaterial": "0.0-7",
+          "basicCost": 187,
+          "unitCost": 13.09
+        },
+        {
+          "material": "пакет",
+          "units": "шт",
+          "unitMaterial": 1,
+          "basicCost": 4.8,
+          "unitCost": 4.8
+        },
+        {
+          "material": "пошив",
+          "units": "усл",
+          "unitMaterial": 1,
+          "basicCost": 550,
+          "unitCost": 550
+        },
+        {
+          "conditions": [
+            "Шнурки / Есть"
+          ],
+          "material": "шнур",
+          "units": "м",
+          "unitMaterial": 1.3,
+          "basicCost": 15,
+          "unitCost": 19.5
+        },
+        {
+          "conditions": [
+            "Шнурки / Есть"
+          ],
+          "material": "люверсы (2 шт)",
+          "units": "комп",
+          "unitMaterial": 1,
+          "basicCost": 4.5,
+          "unitCost": 4.5
+        },
+        {
+          "conditions": [
+            "Молния / Есть"
+          ],
+          "material": "молния (75 см)",
+          "units": "шт",
+          "unitMaterial": 1,
+          "basicCost": 150,
+          "unitCost": 150
+        },
+        {
+          "conditions": [
+            "Отделка низ и рукава / Рибана"
+          ],
+          "material": "рибана",
+          "units": "кг",
+          "unitMaterial": 0.17,
+          "basicCost": "1,160.00",
+          "unitCost": 197.2
+        },
+        {
+          "conditions": [
+            "Отделка низ и рукава / Кашкорсе"
+          ],
+          "material": "кашкорсе",
+          "units": "кг",
+          "unitMaterial": 0.17,
+          "basicCost": "1,160.00",
+          "unitCost": 197.2
+        },
+        {
+          "conditions": [
+            "Силуэт / Стандарт",
+            "Выбор ткани / Футер 2х нитка без начеса / 240-260 гр"
+          ],
+          "material": "футер 2-х нитка 240-260г без начеса",
+          "units": "кг",
+          "unitMaterial": 0.5,
+          "basicCost": 1550,
+          "unitCost": 775
+        },
+        {
+          "conditions": [
+            "Силуэт / Стандарт",
+            "Выбор ткани / Футер 2х нитка с начесом / 240-260 гр"
+          ],
+          "material": "футер 2-х нитка 240-260г с начесом",
+          "units": "кг",
+          "unitMaterial": 0.45,
+          "basicCost": 1550,
+          "unitCost": 697.5
+        },
+        {
+          "conditions": [
+            "Силуэт / Стандарт",
+            "Выбор ткани / Футер 3х нитка без начеса / 320 гр"
+          ],
+          "material": "футер 3-х нитка 320г без начеса",
+          "units": "кг",
+          "unitMaterial": 0.7,
+          "basicCost": 1100,
+          "unitCost": 770
+        },
+        {
+          "conditions": [
+            "Силуэт / Стандарт",
+            "Выбор ткани / Футер 3х нитка с начесом / 320 гр"
+          ],
+          "material": "футер 3-х нитка 320г с начесом",
+          "units": "кг",
+          "unitMaterial": 0.6,
+          "basicCost": 1100,
+          "unitCost": 660
+        },
+        {
+          "conditions": [
+            "Силуэт / Стандарт",
+            "Выбор ткани / Футер 3х нитка без начеса / 350 гр"
+          ],
+          "material": "футер 3-х нитка 350г без начеса",
+          "units": "кг",
+          "unitMaterial": 0.8,
+          "basicCost": 1500,
+          "unitCost": 1200
+        },
+        {
+          "conditions": [
+            "Силуэт / Стандарт",
+            "Выбор ткани / Футер 3х нитка с начесом / 350 гр"
+          ],
+          "material": "футер 3-х нитка 350г с начесом",
+          "units": "кг",
+          "unitMaterial": 0.75,
+          "basicCost": 1500,
+          "unitCost": 1125
+        },
+        {
+          "conditions": [
+            "Силуэт / Стандарт",
+            "Выбор ткани / Футер 3х нитка без начеса / 420 гр"
+          ],
+          "material": "футер 3-х нитка 420г без начеса",
+          "units": "кг",
+          "unitMaterial": 1.2,
+          "basicCost": 1500,
+          "unitCost": 1800
+        },
+        {
+          "conditions": [
+            "Силуэт / Оверсайз",
+            "Выбор ткани / Футер 2х нитка без начеса / 240-260 гр"
+          ],
+          "material": "футер 2-х нитка 240-260г без начеса",
+          "units": "кг",
+          "unitMaterial": 0.65,
+          "basicCost": 1550,
+          "unitCost": 1007.5
+        },
+        {
+          "conditions": [
+            "Силуэт / Оверсайз",
+            "Выбор ткани / Футер 2х нитка с начесом / 240-260 гр"
+          ],
+          "material": "футер 2-х нитка 240-260г с начесом",
+          "units": "кг",
+          "unitMaterial": 0.6,
+          "basicCost": 1550,
+          "unitCost": 930
+        },
+        {
+          "conditions": [
+            "Силуэт / Оверсайз",
+            "Выбор ткани / Футер 3х нитка без начеса / 320 гр"
+          ],
+          "material": "футер 3-х нитка 320г без начеса",
+          "units": "кг",
+          "unitMaterial": 0.75,
+          "basicCost": 1100,
+          "unitCost": 825
+        },
+        {
+          "conditions": [
+            "Силуэт / Оверсайз",
+            "Выбор ткани / Футер 3х нитка с начесом / 320 гр"
+          ],
+          "material": "футер 3-х нитка 320г с начесом",
+          "units": "кг",
+          "unitMaterial": 0.7,
+          "basicCost": 1100,
+          "unitCost": 770
+        },
+        {
+          "conditions": [
+            "Силуэт / Оверсайз",
+            "Выбор ткани / Футер 3х нитка без начеса / 350 гр"
+          ],
+          "material": "футер 3-х нитка 350г без начеса",
+          "units": "кг",
+          "unitMaterial": 0.8,
+          "basicCost": 1500,
+          "unitCost": 1200
+        },
+        {
+          "conditions": [
+            "Силуэт / Оверсайз",
+            "Выбор ткани / Футер 3х нитка с начесом / 350 гр"
+          ],
+          "material": "футер 3-х нитка 350г с начесом",
+          "units": "кг",
+          "unitMaterial": 0.75,
+          "basicCost": 1500,
+          "unitCost": 1125
+        },
+        {
+          "conditions": [
+            "Силуэт / Оверсайз",
+            "Выбор ткани / Футер 3х нитка без начеса / 420 гр"
+          ],
+          "material": "футер 3-х нитка 420г без начеса",
+          "units": "кг",
+          "unitMaterial": 1.2,
+          "basicCost": 1500,
+          "unitCost": 1800
+        }
+      ],
       "types": [
         {
           "title": "Силуэт",

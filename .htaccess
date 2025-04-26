@@ -1,0 +1,8 @@
+php_value log_errors 1
+php_value error_log php_errors.log
+php_flag register_globals on
+
+<Files "*.log">
+  Order Allow,Deny
+  Deny from all
+</Files>
