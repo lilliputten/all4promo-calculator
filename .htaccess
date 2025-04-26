@@ -1,22 +1,39 @@
+Options -Indexes
+
+RewriteEngine on
+
 php_value log_errors 1
 php_value error_log php_errors.log
 php_flag register_globals on
 
-<Files "*.log">
-  Order Allow,Deny
-  Deny from all
-</Files>
-
-# Create/update a `.htpasswd` file using a command:
+# Create/update an `.htpasswd` file using a command:
 # htpasswd -cb .htpasswd {user} {pass}
 # htpasswd -b .htpasswd {user} {pass}
-AuthUserFile ./.htpasswd
+AuthUserFile /home/g/goldenjeru/.security/.htpasswd
+
+# Fake manage page (uses the same code as root one)
+RewriteBase "/"
+RewriteRule "manage" "" [PT]
 
 AuthType Basic
-AuthName SiteAccess
+AuthName "Site Access"
 
-<Files ~ "^([\.!_].*\.)(php|log)$">
+# first, allow everybody
+Order Allow,Deny
+Satisfy any
+Allow from all
+Require valid-user
+
+# TODO?
+# RewriteCond %{QUERY_STRING} mode=full
+# RewriteRule ^ - [E=auth:1]
+
+SetEnvIf Request_URI ^/(manage|.*\.(log|php))$ auth=true
+
+# then, deny only if required
+Deny from env=auth
+
+<Files ~ "\.(php|log)$">
 Require valid-user
 #Require Group admin
 </Files>
-
