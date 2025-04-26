@@ -62,16 +62,10 @@ function createGlobalApp(serverData) {
     },
     async mounted() {
       /* // Toasts test
-       * showToast({
-       *   type: 'error',
-       *   body: 'Long body text',
-       * });
-       * setTimeout(() => {
-       *   showToast({
-       *     type: 'success',
-       *     body: 'Success text',
-       *   });
-       * }, 7000);
+       * showSuccessToast('Success text');
+       * // setTimeout(() => {
+       * //   showErrorToast('Long body text');
+       * // }, 7000);
        */
       const data = serverData;
       debugDataStruct(data, true);

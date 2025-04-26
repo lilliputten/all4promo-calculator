@@ -73,7 +73,7 @@ module.exports = {
           },
         },
         generator: {
-          filename: 'assets/fonts/[name].[fullhash:6][ext]',
+          filename: 'assets/fonts/[name].[hash:6][ext]',
         },
       },
       {
@@ -149,7 +149,7 @@ module.exports = {
           },
         },
         generator: {
-          filename: 'images/[name].[fullhash:6][ext]',
+          filename: 'images/[name].[hash:6][ext]',
         },
       },
       {

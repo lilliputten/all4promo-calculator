@@ -8,9 +8,6 @@ import { defaultContentType, updatePricesUrl } from './config';
 /** @return {Promise<DataJson>} */
 export async function loadServerData() {
   const url = dataFileUrl;
-  console.log('[loadServerData] Start', {
-    url,
-  });
   /** @type {string|undefined} */
   let text;
   try {
@@ -59,7 +56,6 @@ export async function loadServerData() {
     console.log('[loadServerData] success: Got parsed data', {
       data,
     });
-    debugger;
     return data;
   } catch (err) {
     const details = getErrorText(err);
