@@ -16,7 +16,7 @@
 /node_modules
 /.venv
 /public
-/public-src
+!/public/data
 /publish
 /tests
 /types
