@@ -1,4 +1,4 @@
-# @changed 2025.04.26, 22:58
+# @changed 2025.04.26, 23:09
 
 Options -Indexes
 
@@ -16,6 +16,10 @@ AuthUserFile /home/g/goldenjeru/.security/.htpasswd
 # Fake manage page (uses the same code as root one) -- should require authorization
 RewriteBase "/"
 RewriteRule "^manage$" "" [PT]
+
+# Remove html extensions
+RewriteCond %{REQUEST_FILENAME}.html -f
+RewriteRule !.*\.html$ %{REQUEST_FILENAME}.html [L]
 
 AuthType Basic
 AuthName "Site Access"
