@@ -82,10 +82,6 @@ export async function saveCostChangesToServer(data, pricesChangedDataTypes) {
       prices: data.types[idx].prices,
     };
   });
-  // const pricesData = data.types.map((dataType) => {
-  //   return dataType.prices;
-  // });
-  // const yamlData = YAML.stringify(data);
   const reqUrl = updatePricesUrl;
   /** @type {RequestInit} */
   const reqInit = {
@@ -96,13 +92,14 @@ export async function saveCostChangesToServer(data, pricesChangedDataTypes) {
     },
     body: JSON.stringify({ changedPrices: changedPricesData }),
   };
-  console.log('[saveCostChangesToServer] start', {
-    changedPricesData,
-    reqInit,
-    reqUrl,
-    // yamlData,
-    data,
-  });
+  /* console.log('[saveCostChangesToServer] start', {
+   *   changedPricesData,
+   *   reqInit,
+   *   reqUrl,
+   *   // yamlData,
+   *   data,
+   * });
+   */
   const res = await fetch(reqUrl, reqInit);
   const { ok, status, statusText } = res;
   // eslint-disable-next-line no-console
@@ -127,10 +124,10 @@ export async function saveCostChangesToServer(data, pricesChangedDataTypes) {
       const msg = ['Ошибка сервера', error].filter(Boolean).join(': ');
       throw new Error(msg);
     }
-    console.log('[saveCostChangesToServer] success: Got data (parsed json)', {
-      resData,
-    });
-    debugger;
+    /* console.log('[saveCostChangesToServer] success: Got data (parsed json)', {
+     *   resData,
+     * });
+     */
     return resData;
   } else {
     const error = new ServerDataError('Неверный формат данных');

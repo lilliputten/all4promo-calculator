@@ -212,13 +212,14 @@ function createGlobalApp(serverData) {
             .filter(Boolean)
         );
         const count = !this.edition || isNaN(this.edition) ? 1 : this.edition;
-        console.log('[calcPrice]', reason, reasonId, {
-          filteredPrices,
-          prices: { ...prices },
-          selectedItems,
-          dataType: { ...dataType },
-          count,
-        });
+        /* console.log('[calcPrice]', reason, reasonId, {
+         *   filteredPrices,
+         *   prices: { ...prices },
+         *   selectedItems,
+         *   dataType: { ...dataType },
+         *   count,
+         * });
+         */
         this.filteredPrices = filteredPrices;
         this.priceUnit = filteredPrices?.reduce((summ, price) => {
           return summ + parsePriceFromStr(price.unitCost);
@@ -275,14 +276,15 @@ function createGlobalApp(serverData) {
           this.pricesChangedDataTypes.push(dataTypeIdx);
         }
         const reasonId = ['basicCost', idx, value].filter(Boolean).join(': ');
-        console.log('[onBasicCostChange]', reasonId, {
-          parsedValue,
-          value,
-          idxN,
-          idx,
-          prices,
-          dataType: { ...dataType },
-        });
+        /* console.log('[onBasicCostChange]', reasonId, {
+         *   parsedValue,
+         *   value,
+         *   idxN,
+         *   idx,
+         *   prices,
+         *   dataType: { ...dataType },
+         * });
+         */
         this.calcPrice('onBasicCostChange', reasonId);
       },
       /** Save changed data on the server */
@@ -292,11 +294,12 @@ function createGlobalApp(serverData) {
         /** @type {number[]} */
         const pricesChangedDataTypes = this.pricesChangedDataTypes;
         try {
-          const resData = await saveCostChangesToServer(data, pricesChangedDataTypes);
-          console.log('[saveCostChanges] success: Got data (parsed json)', {
-            resData,
-          });
-          debugger;
+          const _resData = await saveCostChangesToServer(data, pricesChangedDataTypes);
+          /*
+           * console.log('[saveCostChanges] success: Got data (parsed json)', {
+           *   resData,
+           * });
+           */
           this.pricesHasChanged = false;
           this.pricesChangedDataTypes = [];
           showSuccessToast('Данные сохранены');
@@ -317,7 +320,6 @@ function createGlobalApp(serverData) {
        * @param {number} num
        */
       async setList(num) {
-        console.log('[setList]', num);
         const data = /** @type {DataJson} */ (this.data);
         /** @type {string | undefined} */
         let reasonId;
@@ -401,10 +403,11 @@ function createGlobalApp(serverData) {
         const isCheckbox = !!mainobj?.checkbox;
         const hasColors = !!mainobj?.colors;
         const hasSvgNew = !!mainobj?.svgNew;
-        if (!mainobj) {
-          // XXX: Is ti possible to have unset mainobj?
-          debugger;
-        }
+        /* if (!mainobj) {
+         *   // XXX: Is ti possible to have unset mainobj?
+         *   debugger;
+         * }
+         */
         if (isCheckbox) {
           it.selected = !it.selected;
         } else {
@@ -424,17 +427,18 @@ function createGlobalApp(serverData) {
         ]
           .filter(Boolean)
           .join(': ');
-        console.log('[setProp]', mainobj?.title, num, it?.name, {
-          reasonId,
-          // reasonValue,
-          isCheckbox,
-          hasColors,
-          hasSvgNew,
-          num,
-          arr: [...arr],
-          it: { ...it },
-          mainobj: { ...mainobj },
-        });
+        /* console.log('[setProp]', mainobj?.title, num, it?.name, {
+         *   reasonId,
+         *   // reasonValue,
+         *   isCheckbox,
+         *   hasColors,
+         *   hasSvgNew,
+         *   num,
+         *   arr: [...arr],
+         *   it: { ...it },
+         *   mainobj: { ...mainobj },
+         * });
+         */
         if (hasColors) {
           const colorCode = this.getSelected(mainobj.colors)?.code;
           if (hasSvgNew) {
@@ -504,12 +508,13 @@ function createGlobalApp(serverData) {
         const name = node.dataset.name;
         const value = node.value;
         const reasonId = [type, name, value].filter(Boolean).join(': ');
-        console.log('[onValueChange]', {
-          reasonId,
-          name,
-          type,
-          value,
-        });
+        /* console.log('[onValueChange]', {
+         *   reasonId,
+         *   name,
+         *   type,
+         *   value,
+         * });
+         */
         this.calcPrice('onValueChange', reasonId);
       },
       /**
@@ -517,20 +522,22 @@ function createGlobalApp(serverData) {
        */
       onSelectChange(e) {
         const node = /** @type {HTMLSelectElement} */ (e.target);
-        const selectedIndex = Number(node.selectedIndex);
         const selectedOptions = node.selectedOptions;
         const type = node.dataset.type;
         const name = node.dataset.name;
         const option = selectedOptions[0];
         const value = option.value;
         const reasonId = [type, name, value].filter(Boolean).join(': ');
-        console.log('[onSelectChange]', {
-          reasonId,
-          option,
-          node,
-          selectedIndex,
-          selectedOptions,
-        });
+        /* // DEBUG
+         * const selectedIndex = Number(node.selectedIndex);
+         * console.log('[onSelectChange]', {
+         *   reasonId,
+         *   option,
+         *   node,
+         *   selectedIndex,
+         *   selectedOptions,
+         * });
+         */
         this.calcPrice('onSelectChange', reasonId);
       },
       /**
@@ -539,10 +546,11 @@ function createGlobalApp(serverData) {
       onEditionChange(e) {
         const node = /** @type {HTMLInputElement} */ (e.target);
         const value = Number(node.value);
-        console.log('[onEditionChange]', {
-          edition: this.edition,
-          value,
-        });
+        /* console.log('[onEditionChange]', {
+         *   edition: this.edition,
+         *   value,
+         * });
+         */
         // TODO: Just to multiply price?
         this.calcPrice('onEditionChange', 'count: ' + value);
       },
