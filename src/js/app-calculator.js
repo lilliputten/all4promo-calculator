@@ -15,21 +15,20 @@ import { getErrorText } from './strings';
 import { isDev } from './config';
 import { showErrorToast, showSuccessToast } from './toast';
 import { ServerDataError } from './ServerDataError';
-import { loadServerData, saveCostChangesToServer } from './data';
-import { checkFullMode, debugDataStruct } from './helpers';
+import { saveCostChangesToServer } from './data';
+import { debugDataStruct } from './helpers';
 
-import 'swiper/css';
-
-import '../scss/index.scss';
-
-const fullMode = checkFullMode();
-
+/** DEBUG: Emulate changes at start */
 const debugInitialChanges = false;
 
-/** @param {DataJson} serverData */
-function createGlobalApp(serverData) {
+/** Create global application
+ * @param {DataJson} serverData
+ * @param {boolean} fullMode
+ * @return {import('vue').App<Element>}
+ */
+export function createCalculatorApp(serverData, fullMode) {
   // Create Vue app
-  window.globalApp = createApp({
+  return createApp({
     data(_app) {
       return {
         isDev,
@@ -68,7 +67,7 @@ function createGlobalApp(serverData) {
        * // }, 7000);
        */
       const data = serverData;
-      debugDataStruct(data, true);
+      debugDataStruct(data);
       /* // DEBUG
        * const app = this;
        * console.log('[mounted]', {
@@ -614,55 +613,5 @@ function createGlobalApp(serverData) {
         this.logo = '';
       },
     },
-  }).mount('#app');
+  });
 }
-
-/** @param {ServerDataError|Error|string} err */
-function showGlobalError(err) {
-  const errorNode = document.getElementById('global-error');
-  if (!errorNode) {
-    // TODO: To create the node?
-    return;
-  }
-  document.body.classList.toggle('with-error', true);
-  errorNode.classList.toggle('visible', true);
-  const title = getErrorText(err);
-  const details = err instanceof ServerDataError ? err.details : '';
-  const titleNode = /** @type {HTMLElement} */ (errorNode.querySelector('.error-title'));
-  const detailsNode = /** @type {HTMLElement} */ (errorNode.querySelector('.error-details'));
-  if (titleNode && detailsNode) {
-    titleNode.innerText = title;
-    detailsNode.innerText = details || '';
-  } else {
-    errorNode.innerText = [title, details].filter(Boolean).join('\n\n');
-  }
-}
-
-async function start() {
-  try {
-    const data = await loadServerData();
-    if (!data) {
-      const error = new Error('Не получено данных с сервера.');
-      // eslint-disable-next-line no-console
-      console.error('[start]', error.message, {
-        error,
-      });
-      debugger; // eslint-disable-line no-debugger
-      throw error;
-    }
-    createGlobalApp(data);
-  } catch (err) {
-    const error = /** @type {ServerDataError|Error|string} */ (err);
-    // eslint-disable-next-line no-console
-    console.error('[start] error', {
-      error,
-    });
-    debugger; // eslint-disable-line no-debugger
-    // Show error pane over the application
-    showGlobalError(error);
-    // Show error toast?
-    showErrorToast(error);
-  }
-}
-
-start();

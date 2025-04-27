@@ -96,18 +96,22 @@
     "lint": "echo --Lint sources-- && eslint . --ext js,ts,tsx",
     "type-check": "echo --Run typescript linter-- && tsc --pretty --noEmit",
     "check-all": "echo --Run all pre-commit check-ups-- && npm-run-all prettier stylelint lint type-check && echo --All check-ups has been passed--",
-    "watch": "webpack --config configuration/webpack.dev.config.js --mode=development --watch",
+    "--watch": "webpack --config configuration/webpack.dev.config.js --mode=development --watch",
+    "watch": "webpack --mode=development --watch",
     "bundle": "npm install && npm run watch",
     "serve-dist": "serve dist",
     "serve-php": "php -S localhost:3000 -t dist",
     "watch-php": "echo --Run php and build servers concurrently-- && concurrently --kill-others \"npm run watch\" \"npm run serve-php\"",
-    "dev": "webpack serve --config configuration/webpack.dev.config.js --mode=development --no-open",
-    "build-dev": "webpack --config configuration/webpack.dev.config.js --mode=development",
+    "--dev": "webpack serve --config configuration/webpack.dev.config.js --mode=development --no-open",
+    "--build-dev": "webpack --config configuration/webpack.dev.config.js --mode=development",
+    "dev": "webpack serve --mode=development --no-open",
+    "build-dev": "webpack --mode=development",
     "build": "echo --Create production build-- && webpack --config configuration/webpack.prod.config.js --mode=production",
     "publish": "echo --Publish build /posix utils are used/-- && sh .utils/publish.sh",
     "build-and-publish": "echo --Build and publish-- && npm-run-all build publish",
     "combine-data": "echo --Combine products data file-- && gulp combineData",
     "combine-data-watch": "echo --Combine and watch products data file-- && gulp combineDataWatch",
-    "stats": "webpack --config configuration/webpack.prod.config.js --mode=production --json > dist/stats.json && webpack-bundle-analyzer dist/stats.json"
+    "--stats": "webpack --config configuration/webpack.prod.config.js --mode=production --json > dist/stats.json && webpack-bundle-analyzer dist/stats.json",
+    "stats": "webpack --mode=production --json > dist/stats.json && webpack-bundle-analyzer dist/stats.json"
   }
 }

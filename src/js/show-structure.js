@@ -15,10 +15,10 @@ function getTypeOptionSelectedItems(data, opts = {}, prefix = '') {
   /** @type {string[]} */
   const arr = [];
   prefix = [prefix, name].filter(Boolean).join(DELIM);
-  if (data.selected) {
+  const selections = data.selections;
+  if ((!selections && opts.getAll) || data.selected) {
     arr.push(prefix);
   }
-  const selections = data.selections;
   if (selections) {
     if (opts.getAll) {
       const items = selections.map(({ name }) => prefix + DELIM + name);
@@ -40,6 +40,9 @@ function getTypeOptionSelectedItems(data, opts = {}, prefix = '') {
  */
 function getTypeTypeSelectedItems(data, opts = {}, prefix = '') {
   const name = data.title;
+  if (name === 'Размеры одежды') {
+    // debugger;
+  }
   // name = 'TypeType: ' + name;
   /** @type {string[]} */
   const arr = [];
@@ -135,7 +138,7 @@ function showOption(data, prefix, level) {
   if (data.selections) {
     s += data.selections.map((it) => showSelection(it, prefix, level + 1)).join('');
   } else {
-    s += prefix + NL;
+    // s += prefix + NL;
   }
   return s;
 }
@@ -165,7 +168,7 @@ function showSubTypes(data, prefix, level) {
   if (data.options) {
     s += data.options.map((it) => showOption(it, prefix, level + 1)).join('');
   } else if (prefix) {
-    s += prefix + NL;
+    // s += prefix + NL;
   }
   return s;
 }

@@ -4,12 +4,18 @@
 
 const path = require('path');
 const fs = require('fs');
+const webpack = require('webpack');
 const TerserPlugin = require('terser-webpack-plugin');
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HTMLWebpackPlugin = require('html-webpack-plugin');
 const ImageMinimizerPlugin = require('image-minimizer-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+
+const isDev = process.argv.includes('--mode=development') || process.env.NODE_ENV === 'development';
+const isProd = !isDev;
+const minimizeAssets = isProd;
 
 const environment = require('./configuration/environment');
 
@@ -22,20 +28,16 @@ const templateFiles = fs
     name: filename.split('.')[0],
   }));
 
-const htmlPluginEntries = templateFiles.map(
-  (template) =>
-    new HTMLWebpackPlugin({
-      inject: true,
-      // hash: true,
-      filename: template.output,
-      template: path.resolve(environment.paths.source, template.input),
-      favicon: path.resolve(environment.paths.source, 'images', 'favicon.ico'),
-      chunks: ['app', template.name],
-    }),
-);
-
-const isDev = process.argv.includes('--mode=development') || process.env.NODE_ENV === 'development';
-const minimizeAssets = !isDev;
+const htmlPluginEntries = templateFiles.map((template) => {
+  return new HTMLWebpackPlugin({
+    inject: true,
+    // hash: true,
+    filename: template.output,
+    template: path.resolve(environment.paths.source, template.input),
+    favicon: path.resolve(environment.paths.source, 'images', 'favicon.ico'),
+    chunks: ['index', template.name],
+  });
+});
 
 const globOptions = {
   dot: true,
@@ -55,12 +57,32 @@ module.exports = {
   mode: isDev ? 'development' : 'production',
   devtool: isDev ? 'inline-source-map' : 'source-map',
   entry: {
-    // app: path.resolve(environment.paths.source, 'js', 'app.js'),
-    index: path.resolve(environment.paths.source, 'js', 'index.js'),
+    index: path.resolve(environment.paths.source, 'index.js'),
   },
   output: {
-    filename: 'js/[name].[fullhash:6].js',
+    filename: '[name].[fullhash:6].js',
     path: environment.paths.output,
+  },
+  /* Development Server Configuration */
+  devServer: {
+    static: {
+      directory: environment.paths.output,
+      publicPath: '/',
+      watch: true,
+    },
+    client: {
+      overlay: true,
+    },
+    open: false,
+    compress: true,
+    hot: true,
+    ...environment.server,
+  },
+  /* File watcher options */
+  watchOptions: {
+    aggregateTimeout: 300,
+    poll: 300,
+    ignored: /node_modules/,
   },
   module: {
     rules: [
@@ -91,10 +113,7 @@ module.exports = {
             loader: 'css-loader',
             options: {
               importLoaders: 1,
-              // modules: true,
               modules: {
-                // compileType: 'icss',
-                // mode: 'local',
                 mode: 'icss',
               },
               sourceMap: true,
@@ -103,30 +122,15 @@ module.exports = {
           },
           {
             loader: 'postcss-loader',
+            options: {
+              sourceMap: true,
+            },
           },
-          /* // UNUSED: resolve-url-loader
-           * {
-           *   loader: 'resolve-url-loader',
-           *   options: {
-           *     sourceMap: true,
-           *   },
-           * },
-           */
           // Compiles Sass to CSS
           {
             loader: 'sass-loader',
             options: {
               sourceMap: true,
-              /* // NOTE: Inject 'use' for math and color features, import common variables and mixins.
-               * additionalData: [
-               *   // '@use "sass:math";',
-               *   // '@use "sass:color";',
-               *   // '@import "src/variables.scss";',
-               *   // '@import "src/mixins.scss";',
-               * ]
-               *   .filter(Boolean)
-               *   .join('\n'),
-               */
               sassOptions: {
                 // @see https://github.com/sass/node-sass#outputstyle
                 outputStyle: minimizeAssets ? 'compressed' : 'expanded',
@@ -168,6 +172,7 @@ module.exports = {
     minimizer: [
       // '...', // ???
       new TerserPlugin({
+        parallel: true,
         extractComments: false,
         // exclude: 'assets',
         terserOptions: {
@@ -176,6 +181,7 @@ module.exports = {
           },
         },
       }),
+      new CssMinimizerPlugin(),
       new ImageMinimizerPlugin({
         minimizer: {
           implementation: ImageMinimizerPlugin.imageminMinify,
@@ -205,12 +211,13 @@ module.exports = {
     ],
   },
   plugins: [
+    isProd &&
+      new CleanWebpackPlugin({
+        verbose: true,
+        cleanOnceBeforeBuildPatterns: ['**/*', '!stats.json'],
+      }),
     new MiniCssExtractPlugin({
-      filename: 'css/[name].[fullhash:6].css',
-    }),
-    new CleanWebpackPlugin({
-      verbose: true,
-      cleanOnceBeforeBuildPatterns: ['**/*', '!stats.json'],
+      filename: '[name].[fullhash:6].css',
     }),
     new CopyWebpackPlugin({
       patterns: [
@@ -241,6 +248,11 @@ module.exports = {
         },
       ],
     }),
-  ].concat(htmlPluginEntries),
+    new webpack.SourceMapDevToolPlugin({
+      filename: '[file].map[query]',
+    }),
+  ]
+    .filter(Boolean)
+    .concat(htmlPluginEntries),
   target: 'web',
 };

@@ -56,6 +56,15 @@ export async function loadServerData() {
     console.log('[loadServerData] success: Got parsed data', {
       data,
     });
+    if (!data) {
+      const error = new Error('Не получено данных с сервера.');
+      // eslint-disable-next-line no-console
+      console.error('[start]', error.message, {
+        error,
+      });
+      debugger; // eslint-disable-line no-debugger
+      throw error;
+    }
     return data;
   } catch (err) {
     const details = getErrorText(err);

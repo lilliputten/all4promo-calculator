@@ -1,7 +1,7 @@
 /*
 vim: ft=jsonc
 @desc Typescript compiler configuration
-@changed 2025.04.15, 18:00
+@changed 2025.04.27, 22:17
 @see https://www.typescriptlang.org/it/tsconfig/
 */
 {
@@ -24,7 +24,7 @@ vim: ft=jsonc
         },
         "outDir": "./static/assets/"
     },
-    "files": ["src/js/index.js"],
+    "files": ["src/index.js"],
     "typeRoots": ["src/@types/**/*"],
     "include": ["src/"]
 }

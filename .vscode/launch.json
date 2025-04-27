@@ -8,6 +8,14 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "Node: webpack",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceRoot}/node_modules/webpack/bin/webpack.js",
+      "console": "integratedTerminal",
+      "args": ["--mode=development"]
+    },
+    {
       "name": "Node: gulp",
       "type": "node",
       "request": "launch",
