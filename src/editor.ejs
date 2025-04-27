@@ -9,156 +9,9 @@
 
     <div class="container pb-5" v-if="data">
       <h1 class="pt-3 mt-3">Редактор</h1>
-      <section id="main">
-        <div class="row">
-          <div class="col-lg-6 img-holder">
-            <div class="svg-holder">
-              <div v-bind:class="(!logo)?'hidden':''" class="logoHolder" ref="logoElement">
-                <img class="element" :src="logo" alt="" />
-              </div>
-              <template v-for="(type, index) in data.types">
-                <template v-if="type?.selected && type?.svgNew">
-                  <template v-for="(el, index) in type.types">
-                    <template v-if="getSelected(el.options)?.svgNew">
-                      <div class="inner" v-html="getSelected(el.options).svgNew"></div>
-                    </template>
-                  </template>
-                </template>
-              </template>
-            </div>
-          </div>
-          <div class="col-lg-6">
-            <div id="grayBlock">
-              <div class="row">
-                <div class="col-4">
-                  <h3>Клиент:</h3>
-                  <input class="form-control mb-5" type="text" v-model="title" />
-                </div>
-                <div class="col-4">
-                  <h3>Тираж:</h3>
-                  <input
-                    class="form-control mb-5"
-                    type="text"
-                    v-model="edition"
-                    v-on:change="onEditionChange"
-                  />
-                </div>
-                <div class="col-4">
-                  <h3>
-                    Логотип:
-                    <span @click="removeImage()" v-if="logo" class="ml-3 crossDel">✖</span>
-                  </h3>
-                  <input
-                    ref="logoUpload"
-                    class="form-control mb-5"
-                    type="file"
-                    v-on:change="onFileChange"
-                  />
-                </div>
-              </div>
-              <h3>{{data.title}}:</h3>
-              <!-- Top level of data set -->
-              <swiper
-                :slides-per-view="1.5"
-                :breakpoints="{ 600:{ slidesPerView:2.5 }, 900:{ slidesPerView:3.5, } }"
-                :space-between="15"
-                @swiper="onSwiper"
-              >
-                <swiper-slide v-for="(type, index) in data.types">
-                  <div class="selected" :class="{ active: type.selected }" @click="setList(index)">
-                    <img v-if="type.svg" :src="type.svg" :alt="type.name" />
-                    <div>{{type.name}}</div>
-                  </div>
-                </swiper-slide>
-              </swiper>
-              <swiper
-                v-if="getSelected(data.types)?.colors"
-                :slides-per-view="2.5"
-                :breakpoints="{ 600:{ slidesPerView:4.5 }, 900:{ slidesPerView:8.5, } }"
-                :space-between="15"
-                @swiper="onSwiper"
-              >
-                <swiper-slide v-for="(el, index) in getSelected(data.types).colors">
-                  <div
-                    class="colors selected"
-                    :class="{ active: el.selected }"
-                    @click="setProp(getSelected(data.types).colors, index, getSelected(data.types))"
-                  >
-                    <div :style="{ backgroundColor: el.code }"></div>
-                  </div>
-                </swiper-slide>
-              </swiper>
-              <div v-for="(type, index) in getSelected(data.types).types">
-                <h3 class="mt-4 mb-2">{{type.title}}:</h3>
-                <swiper :slides-per-view="2.8" :space-between="15" @swiper="onSwiper">
-                  <swiper-slide v-for="(el, index) in type.options">
-                    <div
-                      class="selected"
-                      :class="{ active: el.selected }"
-                      :style="{ backgroundColor: el.code }"
-                      @click="setProp(type.options, index, type)"
-                    >
-                      <img v-if="el.svg" :src="el.svg" :alt="el.name" />
-                      <div>{{el.name}}</div>
-                    </div>
-                    <div v-if="el.selections && el.selected">
-                      <select
-                        :data-type="type.title"
-                        :data-name="el.name"
-                        class="form-select"
-                        v-model="el.selectionsChoose"
-                        v-on:change="onSelectChange"
-                      >
-                        <option v-for="(sel, selindex) in el.selections" :value="sel.name">
-                          {{sel.name}}
-                        </option>
-                      </select>
-                    </div>
-                    <div v-if="type.size && el.selected">
-                      <p class="count">Кол-во штук:</p>
-                      <input
-                        :data-type="type.title"
-                        :data-name="el.name"
-                        class="form-control"
-                        type="number"
-                        v-model="el.count"
-                        v-on:change="onValueChange"
-                      />
-                    </div>
-                  </swiper-slide>
-                </swiper>
-                <swiper
-                  v-if="type?.colors"
-                  :slides-per-view="2.5"
-                  :breakpoints="{ 600:{ slidesPerView:4.5 }, 900:{ slidesPerView:8.5, } }"
-                  :space-between="15"
-                  @swiper="onSwiper"
-                >
-                  <swiper-slide v-for="(el, index) in type.colors">
-                    <div
-                      class="colors selected"
-                      :class="{ active: el.selected }"
-                      @click="setProp(type.colors, index, type)"
-                    >
-                      <div :style="{ backgroundColor: el.code }"></div>
-                    </div>
-                  </swiper-slide>
-                </swiper>
-              </div>
-              <div class="row mt-5">
-                <div class="col-12">
-                  <h3>Комментарий:</h3>
-                  <textarea class="form-control mb-2" type="text" v-model="comment"></textarea>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+
       <div class="actions d-flex gap-2 my-5 py-3">
-        <button class="btn btn-primary" @click="printHtml">Печать документа</button>
         <button
-          v-if="fullMode"
           class="btn btn-success"
           v-bind:disabled="pricesHasChanged ? null : 'disabled'"
           @click="saveCostChanges"
@@ -167,188 +20,59 @@
         </button>
       </div>
 
-      <section id="capture">
-        <!-- Title -->
-        <div class="d-flex align-items-center justify-content-between">
-          <h1 class="result-title main-title pb-3 m-0">РПК «Пи-Ай-Ви»</h1>
-          <span class="d-flex aling-items-center fw-bold">
-            {{ date.getDate() + '.' + String(date.getMonth() + 1).padStart(2, '0') + '.' +
-            date.getFullYear() }}
-          </span>
-        </div>
+      <!-- Title -->
+      <div class="d-flex align-items-center justify-content-between">
+        <h1 class="result-title main-title pb-3 m-0">РПК «Пи-Ай-Ви»</h1>
+        <span class="d-flex aling-items-center fw-bold">
+          {{ date.getDate() + '.' + String(date.getMonth() + 1).padStart(2, '0') + '.' + date.getFullYear() }}
+        </span>
+      </div>
 
-        <h2 class="result-title subtitle mt-5">
-          Бланк для {{ fullMode ? 'производства' : 'менеджера' }}
-        </h2>
+      <!-- price-table -->
+      <table class="table price-table">
+        <thead>
+          <tr>
+            <th class="material">Материал</th>
+            <th class="units">Ед. измерения</th>
+            <th class="unitMaterial">Расход материала за ед</th>
+            <th class="basicCost">Стоимость за м, кг, шт, усл</th>
+            <th class="unitCost">Стоимость за ед.</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="price in filteredPrices" :data-idx="price._idx">
+            <td class="material">{{ price.material }}</td>
+            <td class="units">{{ price.units }}</td>
+            <td class="unitMaterial">{{ price.unitMaterial }}</td>
+            <td class="basicCost" :data-value="price.basicCost">
+              <input
+                :data-idx="price._idx"
+                class="form-control basicCostValue"
+                _type="number"
+                _v-model="price.basicCost"
+                :value="formatPrice(price.basicCost)"
+                v-on:change="onBasicCostChange"
+              />
+            </td>
+            <td class="unitCost">{{ formatPrice(price.unitCost) }}</td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr class="priceUnit">
+            <td class="material" colspan="4">
+              Стоимость за ед. для клиента с НДС
+            </td>
+            <td class="unitCost">{{ formatPrice(priceUnit) }}</td>
+          </tr>
+          <tr class="priceTotal">
+            <td class="material" colspan="4">
+              Стоимость для клиента за тираж с НДС
+            </td>
+            <td class="unitCost">{{ formatPrice(priceTotal) }}</td>
+          </tr>
+        </tfoot>
+      </table>
 
-        <!-- price-table -->
-        <table class="table price-table">
-          <thead>
-            <tr>
-              <th v-if="fullMode" class="material">Материал</th>
-              <th v-else="fullMode" class="info"></th>
-              <th v-if="fullMode" class="units">Ед. измерения</th>
-              <th v-if="fullMode" class="unitMaterial">Расход материала за ед</th>
-              <th v-if="fullMode" class="basicCost">Стоимость за м, кг, шт, усл</th>
-              <th v-if="fullMode" class="unitCost">Стоимость за ед.</th>
-              <th v-else="fullMode" class="unitCost">Стоимость</th>
-            </tr>
-          </thead>
-          <tbody v-if="fullMode">
-            <tr v-for="price in filteredPrices" :data-idx="price._idx">
-              <td class="material">{{ price.material }}</td>
-              <td class="units">{{ price.units }}</td>
-              <td class="unitMaterial">{{ price.unitMaterial }}</td>
-              <td class="basicCost" :data-value="price.basicCost">
-                <input
-                  :data-idx="price._idx"
-                  class="form-control basicCostValue"
-                  _type="number"
-                  _v-model="price.basicCost"
-                  :value="formatPrice(price.basicCost)"
-                  v-on:change="onBasicCostChange"
-                />
-              </td>
-              <td class="unitCost">{{ formatPrice(price.unitCost) }}</td>
-            </tr>
-          </tbody>
-          <tfoot>
-            <tr class="priceUnit">
-              <td
-                v-bind:class="fullMode ? 'material' : 'info'"
-                v-bind:colspan="fullMode ? 4 : null"
-              >
-                Стоимость за ед. для клиента с НДС
-              </td>
-              <td class="unitCost">{{ formatPrice(priceUnit) }}</td>
-            </tr>
-            <tr class="priceTotal">
-              <td
-                v-bind:class="fullMode ? 'material' : 'info'"
-                v-bind:colspan="fullMode ? 4 : null"
-              >
-                Стоимость для клиента за тираж с НДС
-              </td>
-              <td class="unitCost">{{ formatPrice(priceTotal) }}</td>
-            </tr>
-          </tfoot>
-        </table>
-
-        <h2 class="result-title subtitle mt-5">Старая таблица</h2>
-
-        <table class="table">
-          <!--
-          <tr>
-            <td colspan="2">
-              <div class="d-flex align-items-center justify-content-between">
-                <h1 class="pb-3 m-0">РПК «Пи-Ай-Ви»</h1>
-                <span class="d-flex aling-items-center fw-bold">
-                  {{date.getDate()+'.'+String(date.getMonth()+1).padStart(2,
-                  '0')+'.'+date.getFullYear()}}
-                </span>
-              </div>
-            </td>
-          </tr>
-          <tr>
-            <td colspan="2">
-              <p class="mb-2"><span class="fw-bold">Стоимость:</span> {{price}}</p>
-            </td>
-          </tr>
-          -->
-          <tr>
-            <td>
-              <p class="mb-2"><span class="fw-bold">Клиент:</span> {{title}}</p>
-            </td>
-            <td>
-              <p class="mb-2"><span class="fw-bold">Тираж:</span> {{edition}}</p>
-            </td>
-          </tr>
-          <tr>
-            <td colspan="2">
-              <p class="mb-2"><span class="fw-bold">Комментарий:</span> {{comment}}</p>
-            </td>
-          </tr>
-          <tr v-for="index in Math.ceil((getSelected(data.types)?.types.length+1)/2)">
-            <td>
-              <p class="mb-2" v-if="index===1">
-                <span class="fw-bold">{{data.title}}:</span>
-                {{getSelected(data.types)?.name}}
-                <span v-if="getSelected(data.types)?.colors">
-                  - {{getSelected(data.types)?.colors.find(color=>color.selected).name}}
-                </span>
-              </p>
-              <p class="mb-2" v-if="index>1">
-                <span class="fw-bold">{{getSelected(data.types).types[index*2-3].title}}:</span>
-                <span
-                  v-for="(opt,ind) in getSelected(data.types).types[index*2-3].options.filter(option=>option.selected)"
-                  >&nbsp;{{opt.name}}
-                  <span v-if="opt.selectionsChoose">({{opt.selectionsChoose}})</span
-                  ><span v-if="opt.count" class="fw-bold">кол-во - {{opt.count}}</span>
-                  <span
-                    v-if="getSelected(data.types).types[index*2-3].options.filter(option=>option.selected).length != ind+1"
-                    >,&nbsp;&nbsp;</span
-                  >
-                </span>
-
-                <span v-if="getSelected(data.types).types[index*2-3].colors"
-                  >-{{getSelected(data.types).types[index*2-3].colors.find(color=>color.selected).name}}</span
-                >
-              </p>
-            </td>
-            <td>
-              <p class="mb-2" v-if="getSelected(data.types).types[index*2-2]">
-                <span class="fw-bold">{{getSelected(data.types).types[index*2-2].title}}:</span>
-                <span
-                  v-for="(opt,ind) in getSelected(data.types).types[index*2-2].options.filter(option=>option.selected)"
-                  >&nbsp;{{opt.name}}
-                  <span v-if="opt.selectionsChoose">({{opt.selectionsChoose}})</span
-                  ><span v-if="opt.count" class="fw-bold">кол-во - {{opt.count}}</span
-                  ><span
-                    v-if="getSelected(data.types).types[index*2-2].options.filter(option=>option.selected).length != ind+1"
-                    >,&nbsp;&nbsp;</span
-                  ></span
-                >
-                <span v-if="getSelected(data.types).types[index*2-2].colors"
-                  >-{{getSelected(data.types).types[index*2-2].colors.find(color=>color.selected).name}}</span
-                >
-              </p>
-            </td>
-          </tr>
-          <tr>
-            <td colspan="2" class="nobord">
-              <div class="svg-holder">
-                <div
-                  v-bind:class="(!logo)?'hidden':''"
-                  class="logoHolder bottom"
-                  ref="logoElementBottom"
-                >
-                  <img class="element" :src="logo" alt="" />
-                </div>
-                <template v-for="(type, index) in data.types">
-                  <template v-if="type?.selected && type?.svgNew">
-                    <template v-for="(el, index) in type.types">
-                      <template v-if="getSelected(el.options)?.svgNew">
-                        <div class="inner" v-html="getSelected(el.options).svgNew"></div>
-                      </template>
-                    </template>
-                  </template>
-                </template>
-              </div>
-            </td>
-          </tr>
-        </table>
-        <div class="bottom">
-          <p>Утвержденный макет является основание для изготовления тиража</p>
-          <p>
-            Дата «____» ____________ {{date.getFullYear()}}г.
-            ________________________/________________________
-          </p>
-          <p>
-            Изменения, внесенные после согласования макета<br />могут являться основанием для
-            изменения стоимости производства тиража!
-          </p>
-        </div>
-      </section>
     </div>
 
     <%- include partials/preloader.ejs %>

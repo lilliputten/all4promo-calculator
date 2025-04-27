@@ -13,10 +13,11 @@ import { getErrorText } from './strings';
  * @return {AppMode}
  */
 export function getAppMode() {
-  if (window.location.pathname === '/manage' || (isDev && window.location.search === '?manage')) {
+  const { pathname, search } = window.location;
+  if (pathname === '/manage' || (isDev && search === '?manage')) {
     return 'manage';
   }
-  if (window.location.pathname === '/editor' || (isDev && window.location.search === '?editor')) {
+  if (pathname === '/editor' || (isDev && (pathname === '/editor.html' || search === '?editor'))) {
     return 'editor';
   }
   return undefined;

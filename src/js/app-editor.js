@@ -76,68 +76,65 @@ export function createEditorApp(serverData) {
       this.data = data;
       // Select the first top-level type
       this.setList(0);
-      setTimeout(() => {
-        this.preloaded = true;
-        const observerLogo = new MutationObserver((mutations) => {
-          mutations.forEach((mutationRecord) => {
-            const node = /** @type {HTMLElement} */ (mutationRecord.target);
-            const mutation = node.getAttribute('style');
-            this.$refs.logoElementBottom.setAttribute('style', mutation);
-          });
-        });
-
-        const targetLogo = this.$refs.logoElement;
-        observerLogo.observe(targetLogo, { attributes: true, attributeFilter: ['style'] });
-
-        const dragElement =
-          /** @param {HTMLElement} elmnt */
-          (elmnt) => {
-            let pos1 = 0;
-            let pos2 = 0;
-            let pos3 = 0;
-            let pos4 = 0;
-            const garabber = /** @type {HTMLElement} */ (elmnt.querySelector('.element'));
-            if (document.getElementById(elmnt.id + 'header')) {
-              const node = document.getElementById(elmnt.id + 'header');
-              if (node) {
-                node.onmousedown = dragMouseDown;
-              }
-            } else {
-              if (garabber) {
-                garabber.onmousedown = dragMouseDown;
-              }
-            }
-
-            /** @param {MouseEvent} e */
-            function dragMouseDown(e) {
-              e = e || window.event;
-              e.preventDefault();
-              pos3 = e.clientX;
-              pos4 = e.clientY;
-              document.onmouseup = closeDragElement;
-              document.onmousemove = elementDrag;
-            }
-
-            /** @param {MouseEvent} e */
-            function elementDrag(e) {
-              e = e || window.event;
-              e.preventDefault();
-              pos1 = pos3 - e.clientX;
-              pos2 = pos4 - e.clientY;
-              pos3 = e.clientX;
-              pos4 = e.clientY;
-              elmnt.style.top = elmnt.offsetTop - pos2 + 'px';
-              elmnt.style.left = elmnt.offsetLeft - pos1 + 'px';
-            }
-
-            function closeDragElement() {
-              document.onmouseup = null;
-              document.onmousemove = null;
-            }
-          };
-
-        dragElement(targetLogo);
-      }, 2000);
+      this.preloaded = true;
+      /* // UNUSED
+       * setTimeout(() => {
+       *   this.preloaded = true;
+       *   const observerLogo = new MutationObserver((mutations) => {
+       *     mutations.forEach((mutationRecord) => {
+       *       const node = [>* @type {HTMLElement} <] (mutationRecord.target);
+       *       const mutation = node.getAttribute('style');
+       *       this.$refs.logoElementBottom.setAttribute('style', mutation);
+       *     });
+       *   });
+       *   const targetLogo = this.$refs.logoElement;
+       *   observerLogo.observe(targetLogo, { attributes: true, attributeFilter: ['style'] });
+       *   const dragElement =
+       *     [>* @param {HTMLElement} elmnt <]
+       *     (elmnt) => {
+       *       let pos1 = 0;
+       *       let pos2 = 0;
+       *       let pos3 = 0;
+       *       let pos4 = 0;
+       *       const garabber = [>* @type {HTMLElement} <] (elmnt.querySelector('.element'));
+       *       if (document.getElementById(elmnt.id + 'header')) {
+       *         const node = document.getElementById(elmnt.id + 'header');
+       *         if (node) {
+       *           node.onmousedown = dragMouseDown;
+       *         }
+       *       } else {
+       *         if (garabber) {
+       *           garabber.onmousedown = dragMouseDown;
+       *         }
+       *       }
+       *       [>* @param {MouseEvent} e <]
+       *       function dragMouseDown(e) {
+       *         e = e || window.event;
+       *         e.preventDefault();
+       *         pos3 = e.clientX;
+       *         pos4 = e.clientY;
+       *         document.onmouseup = closeDragElement;
+       *         document.onmousemove = elementDrag;
+       *       }
+       *       [>* @param {MouseEvent} e <]
+       *       function elementDrag(e) {
+       *         e = e || window.event;
+       *         e.preventDefault();
+       *         pos1 = pos3 - e.clientX;
+       *         pos2 = pos4 - e.clientY;
+       *         pos3 = e.clientX;
+       *         pos4 = e.clientY;
+       *         elmnt.style.top = elmnt.offsetTop - pos2 + 'px';
+       *         elmnt.style.left = elmnt.offsetLeft - pos1 + 'px';
+       *       }
+       *       function closeDragElement() {
+       *         document.onmouseup = null;
+       *         document.onmousemove = null;
+       *       }
+       *     };
+       *   dragElement(targetLogo);
+       * }, 2000);
+       */
     },
     methods: {
       /**

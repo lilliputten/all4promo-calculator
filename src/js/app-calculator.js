@@ -23,16 +23,16 @@ const debugInitialChanges = false;
 
 /** Create global application
  * @param {DataJson} serverData
- * @param {boolean} fullMode
+ * @param {boolean} isManage
  * @return {import('vue').App<Element>}
  */
-export function createCalculatorApp(serverData, fullMode) {
+export function createCalculatorApp(serverData, isManage) {
   // Create Vue app
   return createApp({
     data(_app) {
       return {
         isDev,
-        fullMode, // boolean,
+        isManage, // boolean,
         pricesHasChanged: isDev && debugInitialChanges, // boolean
         pricesChangedDataTypes: isDev && debugInitialChanges ? [0] : [], // number[]
         data: null, // DataJson
@@ -78,8 +78,8 @@ export function createCalculatorApp(serverData, fullMode) {
       this.data = data;
       // Select the first top-level type
       this.setList(0);
+      this.preloaded = true;
       setTimeout(() => {
-        this.preloaded = true;
         const observerLogo = new MutationObserver((mutations) => {
           mutations.forEach((mutationRecord) => {
             const node = /** @type {HTMLElement} */ (mutationRecord.target);

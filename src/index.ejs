@@ -158,7 +158,7 @@
       <div class="actions d-flex gap-2 my-5 py-3">
         <button class="btn btn-primary" @click="printHtml">Печать документа</button>
         <button
-          v-if="fullMode"
+          v-if="isManage"
           class="btn btn-success"
           v-bind:disabled="pricesHasChanged ? null : 'disabled'"
           @click="saveCostChanges"
@@ -168,33 +168,25 @@
       </div>
 
       <section id="capture">
-        <!-- Title -->
-        <div class="d-flex align-items-center justify-content-between">
-          <h1 class="result-title main-title pb-3 m-0">РПК «Пи-Ай-Ви»</h1>
-          <span class="d-flex aling-items-center fw-bold">
-            {{ date.getDate() + '.' + String(date.getMonth() + 1).padStart(2, '0') + '.' +
-            date.getFullYear() }}
-          </span>
-        </div>
 
         <h2 class="result-title subtitle mt-5">
-          Бланк для {{ fullMode ? 'производства' : 'менеджера' }}
+          Таблица цен (образец)
         </h2>
 
         <!-- price-table -->
         <table class="table price-table">
           <thead>
             <tr>
-              <th v-if="fullMode" class="material">Материал</th>
-              <th v-else="fullMode" class="info"></th>
-              <th v-if="fullMode" class="units">Ед. измерения</th>
-              <th v-if="fullMode" class="unitMaterial">Расход материала за ед</th>
-              <th v-if="fullMode" class="basicCost">Стоимость за м, кг, шт, усл</th>
-              <th v-if="fullMode" class="unitCost">Стоимость за ед.</th>
-              <th v-else="fullMode" class="unitCost">Стоимость</th>
+              <th v-if="isManage" class="material">Материал</th>
+              <th v-else="isManage" class="info"></th>
+              <th v-if="isManage" class="units">Ед. измерения</th>
+              <th v-if="isManage" class="unitMaterial">Расход материала за ед</th>
+              <th v-if="isManage" class="basicCost">Стоимость за м, кг, шт, усл</th>
+              <th v-if="isManage" class="unitCost">Стоимость за ед.</th>
+              <th v-else="isManage" class="unitCost">Стоимость</th>
             </tr>
           </thead>
-          <tbody v-if="fullMode">
+          <tbody v-if="isManage">
             <tr v-for="price in filteredPrices" :data-idx="price._idx">
               <td class="material">{{ price.material }}</td>
               <td class="units">{{ price.units }}</td>
@@ -215,8 +207,8 @@
           <tfoot>
             <tr class="priceUnit">
               <td
-                v-bind:class="fullMode ? 'material' : 'info'"
-                v-bind:colspan="fullMode ? 4 : null"
+                v-bind:class="isManage ? 'material' : 'info'"
+                v-bind:colspan="isManage ? 4 : null"
               >
                 Стоимость за ед. для клиента с НДС
               </td>
@@ -224,8 +216,8 @@
             </tr>
             <tr class="priceTotal">
               <td
-                v-bind:class="fullMode ? 'material' : 'info'"
-                v-bind:colspan="fullMode ? 4 : null"
+                v-bind:class="isManage ? 'material' : 'info'"
+                v-bind:colspan="isManage ? 4 : null"
               >
                 Стоимость для клиента за тираж с НДС
               </td>

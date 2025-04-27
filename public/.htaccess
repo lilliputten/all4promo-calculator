@@ -1,4 +1,4 @@
-# @changed 2025.04.26, 23:09
+# @changed 2025.04.28, 00:01
 
 Options -Indexes
 
@@ -15,7 +15,7 @@ AuthUserFile /home/g/goldenjeru/.security/.htpasswd
 
 # Fake manage page (uses the same code as root one) -- should require authorization
 RewriteBase "/"
-RewriteRule "^(editor)$" "" [PT]
+RewriteRule "^(manage)$" "" [PT]
 
 # Remove html extensions
 RewriteCond %{REQUEST_FILENAME}.html -f

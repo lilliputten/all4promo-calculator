@@ -16,13 +16,10 @@ async function start() {
     const data = await loadServerData();
     const appMode = getAppMode();
     /** @type {import('vue').App} */
-    let app;
-    if (appMode === 'editor') {
-      app = createEditorApp(data);
-    } else {
-      const fullMode = appMode === 'manage';
-      app = createCalculatorApp(data, fullMode);
-    }
+    const app =
+      appMode === 'editor'
+        ? createEditorApp(data)
+        : createCalculatorApp(data, appMode === 'manage');
     window.globalApp = app.mount('#app');
   } catch (err) {
     const error = /** @type {import('src/@types/ErrorLike').ErrorLike} */ (err);
