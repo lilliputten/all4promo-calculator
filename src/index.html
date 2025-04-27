@@ -6,9 +6,8 @@
     <title></title>
   </head>
   <body id="app">
-    <div class="preloader" :class="{ hide: preloaded }">
-      <img src="images/content/preloader.svg" alt="" />
-    </div>
+    <!-- Body begin -->
+
     <div class="container pb-5" v-if="data">
       <h1 class="pt-3 mt-3">Конструктор</h1>
       <section id="main">
@@ -42,7 +41,7 @@
                     class="form-control mb-5"
                     type="text"
                     v-model="edition"
-                    v-on:input="onEditionChange"
+                    v-on:change="onEditionChange"
                   />
                 </div>
                 <div class="col-4">
@@ -157,52 +156,86 @@
           </div>
         </div>
       </section>
-      <button class="btn btn-primary my-5 py-3 w-100" @click="printHtml">Печать документа</button>
+      <div class="actions d-flex gap-2 my-5 py-3">
+        <button class="btn btn-primary" @click="printHtml">Печать документа</button>
+        <button
+          v-if="fullMode"
+          class="btn btn-success"
+          v-bind:disabled="pricesHasChanged ? null : 'disabled'"
+          @click="saveCostChanges"
+        >
+          Сохранить изменения
+        </button>
+      </div>
 
       <section id="capture">
         <!-- Title -->
-        <div class="d-flex align-items-center justify-content-between mx-2">
+        <div class="d-flex align-items-center justify-content-between">
           <h1 class="result-title main-title pb-3 m-0">РПК «Пи-Ай-Ви»</h1>
           <span class="d-flex aling-items-center fw-bold">
-            {{date.getDate()+'.'+String(date.getMonth()+1).padStart(2, '0')+'.'+date.getFullYear()}}
+            {{ date.getDate() + '.' + String(date.getMonth() + 1).padStart(2, '0') + '.' +
+            date.getFullYear() }}
           </span>
         </div>
 
-        <h2 class="result-title subtitle mx-2 mt-5">Бланк для производства</h2>
+        <h2 class="result-title subtitle mt-5">
+          Бланк для {{ fullMode ? 'производства' : 'менеджера' }}
+        </h2>
 
         <!-- price-table -->
         <table class="table price-table">
           <thead>
             <tr>
-              <th class="material">Материал</th>
-              <th class="units">Ед. измерения</th>
-              <th class="unitMaterial">Расход материала за ед</th>
-              <th class="basicCost">Стоимость за м, кг, шт, усл</th>
-              <th class="unitCost">Стоимость за ед.</th>
+              <th v-if="fullMode" class="material">Материал</th>
+              <th v-else="fullMode" class="info"></th>
+              <th v-if="fullMode" class="units">Ед. измерения</th>
+              <th v-if="fullMode" class="unitMaterial">Расход материала за ед</th>
+              <th v-if="fullMode" class="basicCost">Стоимость за м, кг, шт, усл</th>
+              <th v-if="fullMode" class="unitCost">Стоимость за ед.</th>
+              <th v-else="fullMode" class="unitCost">Стоимость</th>
             </tr>
           </thead>
-          <tbody>
-            <tr v-for="price in filteredPrices">
+          <tbody v-if="fullMode">
+            <tr v-for="price in filteredPrices" :data-idx="price._idx">
               <td class="material">{{ price.material }}</td>
               <td class="units">{{ price.units }}</td>
               <td class="unitMaterial">{{ price.unitMaterial }}</td>
-              <td class="basicCost">{{ formatPrice(price.basicCost) }}</td>
+              <td class="basicCost" :data-value="price.basicCost">
+                <input
+                  :data-idx="price._idx"
+                  class="form-control basicCostValue"
+                  _type="number"
+                  _v-model="price.basicCost"
+                  :value="formatPrice(price.basicCost)"
+                  v-on:change="onBasicCostChange"
+                />
+              </td>
               <td class="unitCost">{{ formatPrice(price.unitCost) }}</td>
             </tr>
           </tbody>
           <tfoot>
             <tr class="priceUnit">
-              <td class="material" colspan="4">Стоимость за ед. для клиента с НДС</td>
+              <td
+                v-bind:class="fullMode ? 'material' : 'info'"
+                v-bind:colspan="fullMode ? 4 : null"
+              >
+                Стоимость за ед. для клиента с НДС
+              </td>
               <td class="unitCost">{{ formatPrice(priceUnit) }}</td>
             </tr>
             <tr class="priceTotal">
-              <td class="material" colspan="4">Стоимость для клиента за тираж с НДС</td>
+              <td
+                v-bind:class="fullMode ? 'material' : 'info'"
+                v-bind:colspan="fullMode ? 4 : null"
+              >
+                Стоимость для клиента за тираж с НДС
+              </td>
               <td class="unitCost">{{ formatPrice(priceTotal) }}</td>
             </tr>
           </tfoot>
         </table>
 
-        <h2 class="result-title subtitle mx-2 mt-5">Старая таблица</h2>
+        <h2 class="result-title subtitle mt-5">Старая таблица</h2>
 
         <table class="table">
           <!--
@@ -318,5 +351,43 @@
         </div>
       </section>
     </div>
+
+    <div class="preloader" :class="{ hide: preloaded }">
+      <img src="images/content/preloader.svg" alt="" />
+    </div>
+
+    <!-- Error placeholder -->
+    <div class="global-error" id="global-error">
+      <h1 class="error-title"></h1>
+      <p class="error-details"></p>
+    </div>
+
+    <!-- Shared toast node -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+      <div
+        id="toast-node"
+        class="toast align-items-center bg-error bg-primary border-0"
+        role="alert"
+        aria-live="assertive"
+        aria-atomic="true"
+      >
+        <div class="d-flex align-items-center gap-1 py-2 m-2 ms-3">
+          <span class="toast-icon-wrapper bg-white"
+            ><i class="bi-exclamation text-primary" id="toast-icon"></i
+          ></span>
+          <div class="toast-body text-white" id="toast-body">
+            Hello, world! This is a toast message.
+          </div>
+          <button
+            type="button"
+            class="btn-close btn-close-white me-2 m-auto"
+            data-bs-dismiss="toast"
+            aria-label="Close"
+          ></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Body end -->
   </body>
 </html>

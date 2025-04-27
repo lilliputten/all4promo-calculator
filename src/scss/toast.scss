@@ -1,0 +1,18 @@
+.toast#toast-node {
+  z-index: 200;
+  .toast-icon-wrapper {
+    $iconFoontSize: 2rem;
+    $wrapperSize: $iconFoontSize;
+    width: $wrapperSize;
+    height: $wrapperSize;
+    border-radius: 50%;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    align-content: center;
+    #toast-icon {
+      font-size: $iconFoontSize;
+    }
+  }
+}

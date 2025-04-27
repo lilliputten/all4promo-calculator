@@ -1,0 +1,16 @@
+{
+    "changedPrices": [
+        {
+            "idx": 0,
+            "prices": [
+                {
+                    "material": "киперная лента (updated)",
+                    "units": "м",
+                    "unitMaterial": 0.25,
+                    "basicCost": 125.8,
+                    "unitCost": 6.45
+                }
+            ]
+        }
+    ]
+}

@@ -9,10 +9,10 @@ end_of_line = lf
 trim_trailing_whitespace = true
 indent_style = space
 
-[*.{py,toml,wsgi,xml,gradle}]
+[*.{json,py,toml,wsgi,xml,gradle}]
 indent_size = 4
 
-[{bower,package}.json]
+[{launch,bower,package}.json]
 indent_size = 2
 
 # Ignore paths
@@ -23,4 +23,3 @@ insert_final_newline = unset
 trim_trailing_whitespace = unset
 indent_style = unset
 indent_size = unset
-

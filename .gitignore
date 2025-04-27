@@ -32,9 +32,11 @@ publish/
 \!UNUSED
 ~*
 *_
+*.bak
 zia*
 *.sw?
 *~
 \!ARC*
 *.session
+*.log
 *crashed-session*
