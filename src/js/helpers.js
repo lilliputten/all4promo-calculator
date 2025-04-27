@@ -1,7 +1,7 @@
 // @ts-check
 
 import { isDev } from './config';
-import { showDataStruct } from './show-structure';
+import { showDataStruct, getAllDataTypeItems } from './show-structure';
 // import { parseQuery } from './urls';
 
 export function checkFullMode() {
@@ -21,8 +21,11 @@ export function checkFullMode() {
  * @param {boolean} showOptions
  */
 export function debugDataStruct(data, showOptions) {
-  const title = showOptions ? 'Options' : 'Structure';
-  const struct = showDataStruct(data, showOptions);
+  // const title = showOptions ? 'Options' : 'Structure';
+  // const struct = showDataStruct(data, showOptions);
+  // // eslint-disable-next-line no-console
+  // console.log(title + ':\n' + struct);
+  const allItems = getAllDataTypeItems(data, { getAll: true });
   // eslint-disable-next-line no-console
-  console.log(title + ':\n' + struct);
+  console.log('All items:\n' + allItems.join('\n'));
 }

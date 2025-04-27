@@ -191,6 +191,13 @@ function createGlobalApp(serverData) {
           return;
         }
         const selectedItems = getDataTypeSelectedItems(dataType);
+        /* // DEBUG
+         * const selectedItemsCmp = getAllDataTypeItems(this.data);
+         * console.log('[calcPrice] Check items', {
+         *   selectedItems,
+         *   selectedItemsCmp,
+         * });
+         */
         const { prices } = dataType;
         const filteredPrices = /** @type {PriceItem[] | undefined} */ (
           prices
