@@ -2,15 +2,16 @@
 
 import { isDev } from './config';
 import { showDataStruct } from './show-structure';
-import { parseQuery } from './urls';
+// import { parseQuery } from './urls';
 
 export function checkFullMode() {
   if (window.location.pathname === '/manage') {
     return true;
   }
   if (isDev) {
-    const urlParams = parseQuery(window.location.search);
-    return urlParams.mode == 'full';
+    return window.location.search === '?manage';
+    // const urlParams = parseQuery(window.location.search);
+    // return urlParams.mode == 'full';
   }
   return false;
 }
