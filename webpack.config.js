@@ -31,7 +31,6 @@ const templateFiles = fs
 const htmlPluginEntries = templateFiles.map((template) => {
   return new HTMLWebpackPlugin({
     inject: true,
-    // hash: true,
     filename: template.output,
     template: path.resolve(environment.paths.source, template.input),
     favicon: path.resolve(environment.paths.source, 'images', 'favicon.ico'),
@@ -157,8 +156,8 @@ module.exports = {
         },
       },
       {
-        test: /\.ya?ml$/,
-        use: 'yaml-loader',
+        test: /\.ejs$/,
+        loader: 'ejs-webpack-loader',
       },
     ],
   },
@@ -211,6 +210,9 @@ module.exports = {
     ],
   },
   plugins: [
+    new webpack.ProvidePlugin({
+      _: 'underscore',
+    }),
     isProd &&
       new CleanWebpackPlugin({
         verbose: true,
