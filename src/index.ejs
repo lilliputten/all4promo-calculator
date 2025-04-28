@@ -5,8 +5,9 @@
     <title>Конструктор</title>
   </head>
   <body id="app">
-    <!-- Body begin -->
+    <!-- body begin -->
 
+    <!-- container begin -->
     <div class="container pb-5" v-if="data">
       <h1 class="pt-3 mt-3">Конструктор</h1>
       <section id="main">
@@ -156,13 +157,20 @@
         </div>
       </section>
       <div class="actions d-flex gap-2 my-5 py-3">
-        <button class="btn btn-primary" @click="printHtml">Печать документа</button>
         <button
+            class="btn btn-primary d-flex gap-2"
+            @click="printHtml"
+          >
+          <i class="icon bi bi-printer text-white"></i>
+          Печать документа
+        </button>
+        <button
+          class="btn btn-success d-flex gap-2"
           v-if="isManage"
-          class="btn btn-success"
           v-bind:disabled="pricesHasChanged ? null : 'disabled'"
           @click="saveCostChanges"
         >
+          <i class="icon bi bi-floppy text-white"></i>
           Сохранить изменения
         </button>
       </div>
@@ -342,11 +350,12 @@
         </div>
       </section>
     </div>
+    <!-- container end -->
 
     <%- include partials/preloader.ejs %>
     <%- include partials/global-error.ejs %>
     <%- include partials/toast-container.ejs %>
 
-    <!-- Body end -->
+    <!-- body end -->
   </body>
 </html>

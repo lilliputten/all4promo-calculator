@@ -4,12 +4,6 @@ import { createApp } from 'vue/dist/vue.esm-bundler';
 
 import { Swiper, SwiperSlide } from 'swiper/vue';
 
-import axios from 'axios';
-import html2canvas from 'html2canvas';
-
-import { getDocument } from '../pdf.mjs';
-
-import { getDataTypeSelectedItems } from './show-structure';
 import { formatPriceToStr, parsePriceFromStr } from './numbers';
 import { getErrorText } from './strings';
 import { isDev } from './config';
@@ -21,29 +15,302 @@ import { debugDataStruct } from './helpers';
 /** DEBUG: Emulate changes at start */
 const debugInitialChanges = false;
 
+/** TODO: Add implementation type for app core object via jsdoc
+ * @typedef {Object} AppCore
+ * @property {DataJson} data
+ */
+
 /** Create global application
  * @param {DataJson} serverData
  * @return {import('vue').App<Element>}
  */
 export function createEditorApp(serverData) {
+  const appCore = {
+    /** @param {MouseEvent} ev */
+    passHandler(ev) {
+      ev.preventDefault();
+      return false;
+    },
+
+    /** @param {HTMLElement} target */
+    getAllDataForWrapperChild(target) {
+      const wrapper = /** @type {HTMLElement} */ (target.closest('div.data-type-wrapper'));
+      if (!wrapper) {
+        throw new Error('Can not find prices wrapper');
+      }
+      const { dataset } = wrapper;
+      const typeIdx = Number(dataset.typeIdx);
+      if (isNaN(typeIdx)) {
+        throw new Error('Undefined data type index');
+      }
+      /** @type {number[][]} */
+      const pricesSelected = this.pricesSelected;
+      const selectedList = pricesSelected[typeIdx]
+        ? pricesSelected[typeIdx]
+        : (pricesSelected[typeIdx] = []);
+      /** @type {DataJson} */
+      const data = this.data;
+      const dataType = data.types[typeIdx];
+      const { prices } = dataType;
+      return {
+        wrapper,
+        dataset,
+        typeIdx,
+        pricesSelected,
+        selectedList,
+        data,
+        dataType,
+        prices,
+      };
+    },
+
+    /** @param {HTMLElement} target */
+    getAllDataForRowChild(target) {
+      const row = target.closest('tr');
+      if (!row) {
+        throw new Error('Can not find prices row');
+      }
+      const { dataset } = row;
+      const typeIdx = Number(dataset.typeIdx);
+      if (isNaN(typeIdx)) {
+        throw new Error('Undefined data type index');
+      }
+      /** @type {number[][]} */
+      const pricesSelected = this.pricesSelected;
+      const selectedList = pricesSelected[typeIdx]
+        ? pricesSelected[typeIdx]
+        : (pricesSelected[typeIdx] = []);
+      /** @type {DataJson} */
+      const data = this.data;
+      const dataType = data.types[typeIdx];
+      const { prices } = dataType;
+      const rowIdx = Number(dataset.idx);
+      const isHeader = isNaN(rowIdx);
+      return {
+        row,
+        dataset,
+        typeIdx,
+        pricesSelected,
+        selectedList,
+        data,
+        dataType,
+        prices,
+        rowIdx,
+        isHeader,
+      };
+    },
+
+    /** @param {MouseEvent} ev */
+    deleteSelectedPrices(ev) {
+      const target = /** @type {HTMLElement} */ (ev.currentTarget);
+      const {
+        row,
+        // dataset,
+        typeIdx,
+        pricesSelected,
+        selectedList,
+        // data,
+        dataType,
+        prices,
+      } = this.getAllDataForWrapperChild(target);
+      console.log('[deleteSelectedPrices]', {
+        ev,
+        row,
+      });
+      if (prices && selectedList.length) {
+        dataType.prices = prices.filter((_item, itemIdx) => !selectedList.includes(itemIdx));
+        pricesSelected[typeIdx] = [];
+        this.pricesHasChanged = true;
+        if (!this.pricesChangedDataTypes.includes(typeIdx)) {
+          this.pricesChangedDataTypes.push(typeIdx);
+        }
+      }
+    },
+
+    /** @param {MouseEvent} ev */
+    onCheckCellClick(ev) {
+      const target = /** @type {HTMLElement} */ (ev.currentTarget);
+      const {
+        // row,
+        // dataset,
+        typeIdx,
+        pricesSelected,
+        selectedList,
+        // data,
+        // dataType,
+        prices,
+        rowIdx,
+        isHeader,
+      } = this.getAllDataForRowChild(target);
+      /* console.log('[onCheckCellClick]', {
+       *   isHeader,
+       *   selectedList,
+       *   pricesSelected,
+       *   rowIdx,
+       *   typeIdx,
+       *   dataset,
+       *   target,
+       *   row,
+       *   ev,
+       * });
+       */
+      if (isHeader) {
+        if (selectedList.length) {
+          pricesSelected[typeIdx] = [];
+        } else if (prices?.length) {
+          pricesSelected[typeIdx] = prices.map((_, n) => n);
+        }
+      } else {
+        if (selectedList.includes(rowIdx)) {
+          pricesSelected[typeIdx] = selectedList.filter((n) => n != rowIdx);
+        } else {
+          pricesSelected[typeIdx] = selectedList.concat(rowIdx);
+        }
+      }
+      pricesSelected[typeIdx].sort((a, b) => a - b);
+      // console.log('[onCheckCellClick] done:', pricesSelected[typeIdx].join(', '));
+    },
+
+    /** @param {number} val */
+    formatPrice(val) {
+      return formatPriceToStr(val);
+    },
+
+    /** @return {DataType | undefined} */
+    getCurrentDataType() {
+      /** @type {DataJson} */
+      const data = this.data;
+      /** Selected data type
+       * @type {DataType | undefined}
+       */
+      const dataType = data.types.find(({ selected }) => !!selected);
+      if (!dataType) {
+        // eslint-disable-next-line no-console
+        console.warn('[getCurrentDataType] No data type selected!');
+        return undefined;
+      }
+      return dataType;
+    },
+
+    /**
+     * @param {number} typeIdx
+     * @param {PriceItem} price
+     */
+    updatePriceRow(typeIdx, price) {
+      price.unitCost = parsePriceFromStr(price.unitMaterial) * parsePriceFromStr(price.basicCost);
+      this.pricesHasChanged = true;
+      if (!this.pricesChangedDataTypes.includes(typeIdx)) {
+        this.pricesChangedDataTypes.push(typeIdx);
+      }
+    },
+
+    /** Handle update of a basic cost field
+     * @param {InputEvent} ev
+     */
+    onPriceNumericFieldChanged(ev) {
+      const target = /** @type {HTMLInputElement} */ (ev.currentTarget);
+      const fieldId = target.id;
+      const {
+        // row,
+        // dataset,
+        typeIdx,
+        // pricesSelected,
+        // selectedList,
+        // data,
+        // dataType,
+        prices,
+        rowIdx,
+      } = this.getAllDataForRowChild(target);
+      if (!prices) {
+        throw new Error('Prices data not defined for the DataType!');
+      }
+      const price = prices[rowIdx];
+      if (!price) {
+        throw new Error('Not found price item for idx: ' + rowIdx);
+      }
+      const value = target.value;
+      const parsedValue = parsePriceFromStr(value);
+      /* // DEBUG
+       * const reasonId = [fieldId, rowIdx, value].filter(Boolean).join(': ');
+       * console.log('[onPriceNumericFieldChanged]', reasonId, {
+       *   fieldId,
+       *   parsedValue,
+       *   value,
+       *   typeIdx,
+       *   rowIdx,
+       *   price,
+       *   // prices,
+       * });
+       */
+      price[fieldId] = parsedValue;
+      this.updatePriceRow(typeIdx, price);
+    },
+
+    /** Save changed data on the server */
+    async saveCostChanges() {
+      /** @type {DataJson} */
+      const data = this.data;
+      /** @type {number[]} */
+      const pricesChangedDataTypes = this.pricesChangedDataTypes;
+      try {
+        const _resData = await saveCostChangesToServer(data, pricesChangedDataTypes);
+        /*
+         * console.log('[saveCostChanges] success: Got data (parsed json)', {
+         *   resData,
+         * });
+         */
+        this.pricesHasChanged = false;
+        this.pricesChangedDataTypes = [];
+        showSuccessToast('Данные сохранены');
+      } catch (err) {
+        const details = getErrorText(err);
+        const error = new ServerDataError('Ошибка сохранения данных', details);
+        // eslint-disable-next-line no-console
+        console.error('[saveCostChanges] Network error', error.message, {
+          details,
+          err,
+          error,
+        });
+        debugger; // eslint-disable-line no-debugger
+        showErrorToast(error);
+      }
+    },
+
+    /**
+     * @param {any[]} arr
+     */
+    getSelected(arr) {
+      return arr.find((el) => el.selected);
+    },
+
+    /**
+     * @param {InputEvent} ev
+     */
+    onPriceFieldUpdated(ev) {
+      const target = /** @type {HTMLInputElement} */ (ev.currentTarget);
+      const { typeIdx, prices, rowIdx } = this.getAllDataForRowChild(target);
+      if (!prices) {
+        throw new Error('Prices data not defined for the DataType!');
+      }
+      const price = prices[rowIdx];
+      if (!price) {
+        throw new Error('Not found price item for idx: ' + rowIdx);
+      }
+      this.updatePriceRow(typeIdx, price);
+    },
+  };
+
   // Create Vue app
   return createApp({
     data(_app) {
       return {
         isDev,
         // fullMode, // boolean,
+        pricesSelected: [], // number[][]
         pricesHasChanged: isDev && debugInitialChanges, // boolean
         pricesChangedDataTypes: isDev && debugInitialChanges ? [0] : [], // number[]
         data: null, // DataJson
         preloaded: false,
-        title: null,
-        edition: 10, // number of items to produce
-        logo: null,
-        comment: null,
-        priceUnit: null,
-        priceTotal: null,
-        filteredPrices: [], // PriceItem[], Actual prices for the current DataType node
-        date: new Date(),
       };
     },
     components: {
@@ -59,554 +326,19 @@ export function createEditorApp(serverData) {
       };
     },
     async mounted() {
-      // Toasts test
-      showSuccessToast('App edit');
-      // setTimeout(() => {
-      //   showErrorToast('Long body text');
-      // }, 7000);
-      const data = serverData;
-      debugDataStruct(data);
-      /* // DEBUG
-       * const app = this;
-       * console.log('[mounted]', {
-       *   test: data.types[0].prices,
-       *   app: { ...app },
-       * });
+      /* // Toasts test
+       * showSuccessToast('App edit');
+       * // setTimeout(() => {
+       * //   showErrorToast('Long body text');
+       * // }, 7000);
        */
+      const data = serverData;
+      // debugDataStruct(data);
       this.data = data;
       // Select the first top-level type
-      this.setList(0);
+      // this.setList(0);
       this.preloaded = true;
-      /* // UNUSED
-       * setTimeout(() => {
-       *   this.preloaded = true;
-       *   const observerLogo = new MutationObserver((mutations) => {
-       *     mutations.forEach((mutationRecord) => {
-       *       const node = [>* @type {HTMLElement} <] (mutationRecord.target);
-       *       const mutation = node.getAttribute('style');
-       *       this.$refs.logoElementBottom.setAttribute('style', mutation);
-       *     });
-       *   });
-       *   const targetLogo = this.$refs.logoElement;
-       *   observerLogo.observe(targetLogo, { attributes: true, attributeFilter: ['style'] });
-       *   const dragElement =
-       *     [>* @param {HTMLElement} elmnt <]
-       *     (elmnt) => {
-       *       let pos1 = 0;
-       *       let pos2 = 0;
-       *       let pos3 = 0;
-       *       let pos4 = 0;
-       *       const garabber = [>* @type {HTMLElement} <] (elmnt.querySelector('.element'));
-       *       if (document.getElementById(elmnt.id + 'header')) {
-       *         const node = document.getElementById(elmnt.id + 'header');
-       *         if (node) {
-       *           node.onmousedown = dragMouseDown;
-       *         }
-       *       } else {
-       *         if (garabber) {
-       *           garabber.onmousedown = dragMouseDown;
-       *         }
-       *       }
-       *       [>* @param {MouseEvent} e <]
-       *       function dragMouseDown(e) {
-       *         e = e || window.event;
-       *         e.preventDefault();
-       *         pos3 = e.clientX;
-       *         pos4 = e.clientY;
-       *         document.onmouseup = closeDragElement;
-       *         document.onmousemove = elementDrag;
-       *       }
-       *       [>* @param {MouseEvent} e <]
-       *       function elementDrag(e) {
-       *         e = e || window.event;
-       *         e.preventDefault();
-       *         pos1 = pos3 - e.clientX;
-       *         pos2 = pos4 - e.clientY;
-       *         pos3 = e.clientX;
-       *         pos4 = e.clientY;
-       *         elmnt.style.top = elmnt.offsetTop - pos2 + 'px';
-       *         elmnt.style.left = elmnt.offsetLeft - pos1 + 'px';
-       *       }
-       *       function closeDragElement() {
-       *         document.onmouseup = null;
-       *         document.onmousemove = null;
-       *       }
-       *     };
-       *   dragElement(targetLogo);
-       * }, 2000);
-       */
     },
-    methods: {
-      /**
-       * @param {number} val
-       */
-      formatPrice(val) {
-        return formatPriceToStr(val);
-      },
-      /**
-       * @return {number}
-       */
-      getCurrentDataTypeIndex() {
-        /** @type {DataJson} */
-        const data = this.data;
-        /** @type {number} */
-        const idx = data.types.findIndex(({ selected }) => !!selected);
-        return idx;
-      },
-      /**
-       * @return {DataType | undefined}
-       */
-      getCurrentDataType() {
-        /** @type {DataJson} */
-        const data = this.data;
-        /** Selected data type
-         * @type {DataType | undefined}
-         */
-        const dataType = data.types.find(({ selected }) => !!selected);
-        if (!dataType) {
-          // eslint-disable-next-line no-console
-          console.warn('[getCurrentDataType] No data type selected!');
-          return undefined;
-        }
-        return dataType;
-      },
-      /**
-       * @param {string} reason
-       */
-      calcPrice(reason, reasonId = '') {
-        /** Selected data type
-         * @type {DataType | undefined}
-         */
-        const dataType = this.getCurrentDataType(); // data.types.find(({ selected }) => !!selected);
-        if (!dataType) {
-          // eslint-disable-next-line no-console
-          console.warn('[calcPrice]', reason, reasonId, 'No data type selected!');
-          debugger; // eslint-disable-line no-debugger
-          return;
-        }
-        const selectedItems = getDataTypeSelectedItems(dataType);
-        /* // DEBUG
-         * const selectedItemsCmp = getAllDataTypeItems(this.data);
-         * console.log('[calcPrice] Check items', {
-         *   selectedItems,
-         *   selectedItemsCmp,
-         * });
-         */
-        const { prices } = dataType;
-        const filteredPrices = /** @type {PriceItem[] | undefined} */ (
-          prices
-            ?.map((price, idx) => {
-              const { conditions } = price;
-              if (conditions) {
-                // Unfilter a price entry if any of conditions aren't presented in currently selected items
-                for (const condItem of conditions) {
-                  if (!selectedItems.includes(condItem)) {
-                    return null;
-                  }
-                }
-              }
-              return /** @type {PriceItem} */ ({
-                _idx: idx,
-                ...price,
-              });
-            })
-            .filter(Boolean)
-        );
-        const count = !this.edition || isNaN(this.edition) ? 1 : this.edition;
-        /* console.log('[calcPrice]', reason, reasonId, {
-         *   filteredPrices,
-         *   prices: { ...prices },
-         *   selectedItems,
-         *   dataType: { ...dataType },
-         *   count,
-         * });
-         */
-        this.filteredPrices = filteredPrices;
-        this.priceUnit = filteredPrices?.reduce((summ, price) => {
-          return summ + parsePriceFromStr(price.unitCost);
-        }, 0);
-        this.priceTotal = isNaN(this.priceUnit) ? 0 : this.priceUnit * count;
-      },
-      /** Handle update of a basic cost field
-       * @param {InputEvent} e
-       */
-      onBasicCostChange(e) {
-        /** @type {number} */
-        const dataTypeIdx = this.getCurrentDataTypeIndex();
-        /** Selected data type
-         * @type {DataType | undefined}
-         */
-        const dataType = this.data.types[dataTypeIdx]; // getCurrentDataType(); // data.types.find(({ selected }) => !!selected);
-        if (!dataType) {
-          // eslint-disable-next-line no-console
-          console.error('[onBasicCostChange] No data type selected!');
-          debugger; // eslint-disable-line no-debugger
-          return;
-        }
-        const prices = dataType.prices;
-        if (!prices) {
-          // eslint-disable-next-line no-console
-          console.error('[onBasicCostChange] Prices data not defined for the DataType!');
-          debugger; // eslint-disable-line no-debugger
-          return;
-        }
-        const node = /** @type {HTMLInputElement} */ (e.target);
-        const { dataset } = node;
-        const idx = dataset.idx;
-        if (idx == undefined || idx == '' || isNaN(Number(idx))) {
-          // eslint-disable-next-line no-console
-          console.error('[onBasicCostChange] Prices data not defined for the DataType!');
-          debugger; // eslint-disable-line no-debugger
-          return;
-        }
-        const idxN = Number(idx);
-        /** @type {PriceItem | undefined } */
-        const price = prices[idxN];
-        if (!price) {
-          // eslint-disable-next-line no-console
-          console.error('[onBasicCostChange] Not found price item for idx: ' + idx);
-          debugger; // eslint-disable-line no-debugger
-          return;
-        }
-        const value = node.value;
-        const parsedValue = parsePriceFromStr(value);
-        price.basicCost = parsedValue;
-        price.unitCost = parsePriceFromStr(price.unitMaterial) * parsedValue;
-        this.pricesHasChanged = true;
-        if (!this.pricesChangedDataTypes.includes(dataTypeIdx)) {
-          this.pricesChangedDataTypes.push(dataTypeIdx);
-        }
-        const reasonId = ['basicCost', idx, value].filter(Boolean).join(': ');
-        /* console.log('[onBasicCostChange]', reasonId, {
-         *   parsedValue,
-         *   value,
-         *   idxN,
-         *   idx,
-         *   prices,
-         *   dataType: { ...dataType },
-         * });
-         */
-        this.calcPrice('onBasicCostChange', reasonId);
-      },
-      /** Save changed data on the server */
-      async saveCostChanges() {
-        /** @type {DataJson} */
-        const data = this.data;
-        /** @type {number[]} */
-        const pricesChangedDataTypes = this.pricesChangedDataTypes;
-        try {
-          const _resData = await saveCostChangesToServer(data, pricesChangedDataTypes);
-          /*
-           * console.log('[saveCostChanges] success: Got data (parsed json)', {
-           *   resData,
-           * });
-           */
-          this.pricesHasChanged = false;
-          this.pricesChangedDataTypes = [];
-          showSuccessToast('Данные сохранены');
-        } catch (err) {
-          const details = getErrorText(err);
-          const error = new ServerDataError('Ошибка сохранения данных', details);
-          // eslint-disable-next-line no-console
-          console.error('[saveCostChanges] Network error', error.message, {
-            details,
-            err,
-            error,
-          });
-          debugger; // eslint-disable-line no-debugger
-          showErrorToast(error);
-        }
-      },
-      /** Set the topmost level type (DataType)
-       * @param {number} num
-       */
-      async setList(num) {
-        const data = /** @type {DataJson} */ (this.data);
-        /** @type {string | undefined} */
-        let reasonId;
-        data.types.forEach((_el, index) => {
-          const isSelected = num === index;
-          data.types[index].selected = isSelected;
-          if (isSelected) {
-            reasonId = data.types[index].name;
-          }
-        });
-        const item = data.types[num];
-        // item.selected = true;
-        /* // We don't have colors on the top level of `DataType`
-         * if (item?.colors?.length) {
-         *   item?.colors?.forEach((el, index) => {
-         *     el.selected = !index;
-         *   });
-         * }
-         */
-        if (item?.types?.length) {
-          item.types.forEach((el) => {
-            el.options.forEach((/** @type {TypeOption} */ option, /** @type {number} */ idx) => {
-              option.selected = !idx;
-              if (option.count) {
-                option.count = 0;
-              }
-            });
-            if (el?.colors) {
-              el.colors.forEach((color, idx) => {
-                color.selected = !idx;
-              });
-            }
-          });
-        }
-        let color = '';
-        await Promise.all(
-          data.types.map(
-            /** @param {DataType & TypeType} type */
-            async (type) => {
-              if (type.svg) {
-                color = type.colors ? this.getSelected(type.colors)?.code : null;
-                if (type.svgNew) {
-                  type.svgNew = this.changeColor(type.svgNew, color);
-                } else {
-                  type.svgNew = await this.fetchSvg(type.svg, color);
-                }
-                /* console.log('XXX', {
-                 *   type: {...type},
-                 * });
-                 */
-              }
-              await Promise.all(
-                type.types.map(async (t) => {
-                  await Promise.all(
-                    t.options.map(async (option) => {
-                      if (option.svg) {
-                        color = t.colors ? this.getSelected(t.colors)?.code : null;
-                        if (option.svgNew) {
-                          option.svgNew = this.changeColor(option.svgNew, color);
-                        } else {
-                          option.svgNew = await this.fetchSvg(option.svg, color);
-                        }
-                      }
-                    }),
-                  );
-                }),
-              );
-            },
-          ),
-        );
-        // TODO: Invoke the method after all the above async op's?
-        this.calcPrice('setList', reasonId);
-      },
-      /** The main property change funciton
-       * @param {Array<TypeColor>} arr
-       * @param {number} num
-       * @param {TypeType | null} mainobj
-       */
-      setProp(arr, num, mainobj = null) {
-        const it = arr[num];
-        const isCheckbox = !!mainobj?.checkbox;
-        const hasColors = !!mainobj?.colors;
-        const hasSvgNew = !!mainobj?.svgNew;
-        /* if (!mainobj) {
-         *   // XXX: Is ti possible to have unset mainobj?
-         *   debugger;
-         * }
-         */
-        if (isCheckbox) {
-          it.selected = !it.selected;
-        } else {
-          arr.forEach((el, index) => {
-            el.selected = num === index;
-          });
-        }
-        const reasonValue = arr
-          .filter(({ selected }) => selected)
-          .map(({ name }) => name)
-          .join(', ');
-        const reasonId = [
-          //
-          mainobj?.title,
-          hasColors && arr === mainobj.colors ? 'Color' : 'Option',
-          reasonValue,
-        ]
-          .filter(Boolean)
-          .join(': ');
-        /* console.log('[setProp]', mainobj?.title, num, it?.name, {
-         *   reasonId,
-         *   // reasonValue,
-         *   isCheckbox,
-         *   hasColors,
-         *   hasSvgNew,
-         *   num,
-         *   arr: [...arr],
-         *   it: { ...it },
-         *   mainobj: { ...mainobj },
-         * });
-         */
-        if (hasColors) {
-          const colorCode = this.getSelected(mainobj.colors)?.code;
-          if (hasSvgNew) {
-            mainobj.svgNew = this.changeColor(mainobj.svgNew, colorCode);
-          } else if (this.getSelected(mainobj.options).svgNew) {
-            this.getSelected(mainobj.options).svgNew = this.changeColor(
-              this.getSelected(mainobj.options).svgNew,
-              colorCode,
-            );
-          }
-        }
-        this.calcPrice('setProp', reasonId);
-      },
-      /**
-       * @param {any[]} arr
-       */
-      getSelected(arr) {
-        return arr.find((el) => el.selected);
-      },
-      printHtml() {
-        const cl = /** @type {HTMLElement} */ (document.querySelector('#capture'));
-        document.querySelector('html')?.classList.add('prntbl');
-        html2canvas(cl).then((canvas) => {
-          const nWindow = window.open('');
-          const style = document.createElement('style');
-          style.innerHTML = 'canvas{width: 100%!important; height: auto!important;}';
-          if (nWindow) {
-            nWindow.document.head.appendChild(style);
-            nWindow.document.body.appendChild(canvas);
-            nWindow.focus();
-            nWindow.print();
-          }
-          document.querySelector('html')?.classList.remove('prntbl');
-        });
-      },
-      /**
-       * @param {string} link
-       * @param {string | null} color
-       */
-      fetchSvg(link, color = null) {
-        return new Promise((resolve) => {
-          axios.get(link).then((svg) => {
-            resolve(this.changeColor(svg.data, color));
-          });
-        });
-      },
-      /**
-       * @param {string} svg
-       * @param {any} color
-       */
-      changeColor(svg, color) {
-        return color ? svg.replace(/fill="[#,a-z,A-Z,0-9]+"/gm, `fill="${color}"`) : svg;
-      },
-      getEditionCount() {
-        let value = Number(this.edition);
-        if (isNaN(value) || value < 1) {
-          value = 1;
-        }
-        return value;
-      },
-      /**
-       * @param {InputEvent} e
-       */
-      onValueChange(e) {
-        const node = /** @type {HTMLInputElement} */ (e.target);
-        const type = node.dataset.type;
-        const name = node.dataset.name;
-        const value = node.value;
-        const reasonId = [type, name, value].filter(Boolean).join(': ');
-        /* console.log('[onValueChange]', {
-         *   reasonId,
-         *   name,
-         *   type,
-         *   value,
-         * });
-         */
-        this.calcPrice('onValueChange', reasonId);
-      },
-      /**
-       * @param {InputEvent} e
-       */
-      onSelectChange(e) {
-        const node = /** @type {HTMLSelectElement} */ (e.target);
-        const selectedOptions = node.selectedOptions;
-        const type = node.dataset.type;
-        const name = node.dataset.name;
-        const option = selectedOptions[0];
-        const value = option.value;
-        const reasonId = [type, name, value].filter(Boolean).join(': ');
-        /* // DEBUG
-         * const selectedIndex = Number(node.selectedIndex);
-         * console.log('[onSelectChange]', {
-         *   reasonId,
-         *   option,
-         *   node,
-         *   selectedIndex,
-         *   selectedOptions,
-         * });
-         */
-        this.calcPrice('onSelectChange', reasonId);
-      },
-      /**
-       * @param {InputEvent} e
-       */
-      onEditionChange(e) {
-        const node = /** @type {HTMLInputElement} */ (e.target);
-        const value = Number(node.value);
-        /* console.log('[onEditionChange]', {
-         *   edition: this.edition,
-         *   value,
-         * });
-         */
-        // TODO: Just to multiply price?
-        this.calcPrice('onEditionChange', 'count: ' + value);
-      },
-      /**
-       * @param {InputEvent} e
-       */
-      onFileChange(e) {
-        // @ts-ignore
-        const files = e.target?.files || e.dataTransfer.files;
-        if (!files.length) return;
-        this.createImage(files[0]);
-      },
-      /** @param {Blob} file */
-      createImage(file) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          this.logo = '';
-          if (file.type === 'application/pdf') {
-            getDocument(e.target?.result)
-              .promise.then(
-                /** @param {import('pdfjs-dist').PDFDocumentProxy} pdf */
-                (pdf) => {
-                  pdf.getPage(1).then((page) => {
-                    const scale = 1.5;
-                    const viewport = page.getViewport({ scale: scale });
-                    const canvas = document.createElement('canvas');
-                    const context = canvas.getContext('2d');
-                    if (context) {
-                      canvas.height = viewport.height;
-                      canvas.width = viewport.width;
-                      const renderContext = {
-                        canvasContext: context,
-                        viewport: viewport,
-                      };
-                      page.render(renderContext).promise.then(() => {
-                        this.logo = canvas.toDataURL();
-                      });
-                    }
-                  });
-                },
-              )
-              .catch((/** @type {Error | string} */ reason) => {
-                // eslint-disable-next-line no-console
-                console.error(reason);
-              });
-          } else {
-            this.logo = e.target?.result;
-          }
-        };
-        reader.readAsDataURL(file);
-      },
-      removeImage: function (/** @type {Event} */ _e) {
-        this.$refs.logoUpload.value = null;
-        this.logo = '';
-      },
-    },
+    methods: appCore,
   });
 }

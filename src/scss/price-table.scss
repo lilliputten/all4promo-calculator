@@ -1,6 +1,10 @@
 .price-table {
+  td,
   th {
     border: 1px solid #444;
+    vertical-align: middle;
+  }
+  th {
     font-weight: bold;
   }
   .priceUnit,
@@ -14,6 +18,9 @@
   .basicCost {
     background-color: #eee;
   }
+  .units {
+    width: 10%;
+  }
   .unitMaterial,
   .basicCost,
   .unitCost {
@@ -24,6 +31,18 @@
     width: 100%;
     input {
       text-align: right;
+    }
+  }
+  .check {
+    text-align: center;
+    width: 60px;
+    padding: 20px;
+    white-space: nowrap;
+  }
+  .conditions {
+    .conditions-item {
+      display: inline-block;
+      // margin: 2px;
     }
   }
 }
