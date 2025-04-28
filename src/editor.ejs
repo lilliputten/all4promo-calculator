@@ -30,11 +30,12 @@
             <button
               id="addPriceItem"
               class="btn btn-success d-flex gap-2"
-              _click="saveCostChanges"
+              @click="addPriceItem"
             >
               <i class="icon bi bi-plus-lg text-white"></i>
               Добавить
             </button>
+
             <button
               v-if="pricesSelected[typeIdx]?.length"
               id="deleteSelectedPrices"
@@ -51,7 +52,13 @@
         <!-- price-table -->
         <table v-if="dataType.prices && dataType.prices.length" class="table price-table mt-4">
           <thead>
-            <tr :id="'item-' + typeIdx + '-header'" :data-type-idx="typeIdx" data-idx="header" data-header="true">
+            <tr
+              class="header-row"
+              :id="'item-' + typeIdx + '-header'"
+              :data-type-idx="typeIdx"
+              data-idx="header"
+              data-header="true"
+            >
               <th
                 class="check"
                 v-on:click="onCheckCellClick"
@@ -74,7 +81,13 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(price, idx) in dataType.prices" :id="'item-' + typeIdx + '-' + idx" :data-type-idx="typeIdx" :data-idx="idx">
+            <tr
+              v-for="(price, idx) in dataType.prices"
+              class="price-row"
+              :id="'price-row-' + typeIdx + '-' + idx"
+              :data-type-idx="typeIdx"
+              :data-idx="idx"
+            >
               <td
                 class="check"
                 v-on:click="onCheckCellClick"

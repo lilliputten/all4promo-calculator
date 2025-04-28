@@ -101,10 +101,59 @@ export function createEditorApp(serverData) {
     },
 
     /** @param {MouseEvent} ev */
+    addPriceItem(ev) {
+      const target = /** @type {HTMLElement} */ (ev.currentTarget);
+      const {
+        wrapper,
+        // dataset,
+        typeIdx,
+        pricesSelected,
+        selectedList,
+        // data,
+        dataType,
+        prices,
+      } = this.getAllDataForWrapperChild(target);
+      /** @type {PriceItem} */
+      const newPriceItem = {
+        conditions: undefined, // string[];
+        material: '', // string;
+        units: '', // string;
+        // The numbers here could be formatted ones in a form like `1,123.99`
+        unitMaterial: 0, // number | string;
+        basicCost: 0, // number | string;
+        unitCost: 0, // number | string;
+      };
+      let addedIdx = 0;
+      if (!prices) {
+        dataType.prices = [newPriceItem];
+      } else {
+        addedIdx = prices.length;
+        dataType.prices = prices.concat(newPriceItem);
+      }
+      const rowId = 'price-row-' + typeIdx + '-' + addedIdx;
+      // Show and indicate newly added record
+      setTimeout(() => {
+        requestAnimationFrame(() => {
+          const row = wrapper.querySelector('tr#' + rowId);
+          if (row) {
+            row.scrollIntoView({
+              behavior: 'smooth',
+              block: 'center',
+            });
+            row.classList.add('new');
+            setTimeout(() => {
+              row.classList.remove('new');
+            }, 250);
+          }
+        });
+      }, 50);
+    },
+
+    /** @param {MouseEvent} ev */
     deleteSelectedPrices(ev) {
       const target = /** @type {HTMLElement} */ (ev.currentTarget);
       const {
-        row,
+        wrapper,
         // dataset,
         typeIdx,
         pricesSelected,
@@ -115,7 +164,7 @@ export function createEditorApp(serverData) {
       } = this.getAllDataForWrapperChild(target);
       console.log('[deleteSelectedPrices]', {
         ev,
-        row,
+        wrapper,
       });
       if (prices && selectedList.length) {
         dataType.prices = prices.filter((_item, itemIdx) => !selectedList.includes(itemIdx));

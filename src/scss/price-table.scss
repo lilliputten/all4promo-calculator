@@ -45,4 +45,11 @@
       // margin: 2px;
     }
   }
+  tr {
+    transition: background 1000ms;
+    &.new {
+      background-color: rgb(var(--bs-success-rgb));
+      transition: background 250ms;
+    }
+  }
 }
