@@ -1,0 +1,53 @@
+<%/* ex: set ft=html : */%>
+
+<!-- Delete account confirmation modal -->
+<div class="modal fade" id="addConditionModal" tabindex="-1" aria-labelledby="addConditionModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content max-vh-75">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addConditionModalLabel">Добавить условия</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" title="Закрыть" aria-label="Закрыть"></button>
+      </div>
+      <div class="modal-body overflow-auto">
+        <p class="mb-4 fw-bold">Выберите нужные условия:</p>
+        <ul>
+          <li
+            class="my-2 cursor-pointer"
+            v-for="text in addConditionsList"
+            @click="onConditionModalItemClick"
+            v-bind:disabled="addConditionsUsed.includes(text) ? 'disabled' : null"
+          >
+            <input
+              class="form-check-input pe-none me-2"
+              type="checkbox"
+              value=""
+              v-bind:checked="addConditionsSelected.includes(text) || addConditionsUsed.includes(text)"
+            >
+            <span class="text">
+              {{ text }}
+            <span>
+          </li>
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <button
+          data-bs-dismiss="modal"
+          class="btn btn-outline-secondary d-flex gap-2"
+        >
+          <i class="icon text-size-1em bi bi-x-lg"></i>
+          Закрыть
+        </button>
+        <button
+          data-bs-dismiss="modal"
+          class="btn btn-success d-flex gap-2"
+          v-bind:disabled="addConditionsSelected.length ? null : 'disabled'"
+          @click="onConditionModalSave"
+        >
+          <i class="icon text-size-1em bi bi-check-lg text-white"></i>
+          Добавить
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

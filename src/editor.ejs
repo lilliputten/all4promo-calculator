@@ -13,11 +13,11 @@
 
       <div class="actions d-flex gap-2 my-5 py-3">
         <button
-          class="btn btn-success d-flex gap-2"
+          class="btn btn-lg btn-success d-flex gap-3"
           v-bind:disabled="pricesHasChanged ? null : 'disabled'"
           @click="saveCostChanges"
         >
-          <i class="icon bi bi-floppy text-white"></i>
+          <i class="icon text-size-1em bi bi-floppy text-white"></i>
           Сохранить изменения
         </button>
       </div>
@@ -25,7 +25,15 @@
       <!-- wrapper begin -->
       <div v-for="(dataType, typeIdx) in data.types" class="data-type-wrapper mt-4" :data-type-idx="typeIdx">
         <div class="editor-header pt-3 mt-3 d-flex gap-2 align-items-center justify-content-between">
-          <h2 class="editor-title m-0">{{ dataType.name }}</h2>
+          <h2 class="editor-title m-0">
+            {{ dataType.name }}
+            <span
+              class="dimmed text-size-1em text-success ms-2"
+              v-if="pricesChangedDataTypes.includes(typeIdx)"
+            >
+              *
+            </span>
+          </h2>
           <div class="editor-actions d-flex gap-2 align-items-center">
             <button
               id="addPriceItem"
@@ -69,7 +77,8 @@
                   type="checkbox"
                   value=""
                   :id="'item-' + typeIdx + '-check'"
-                  v-bind:checked="pricesSelected[typeIdx]?.length >= dataType.prices?.length"
+                  v-bind:disabled="pricesSelected[typeIdx]?.length && pricesSelected[typeIdx]?.length < dataType.prices?.length"
+                  v-bind:checked="pricesSelected[typeIdx]?.length"
                 >
               </th>
               <th class="conditions">Условия</th>
@@ -81,6 +90,7 @@
             </tr>
           </thead>
           <tbody>
+            <!-- price row begin -->
             <tr
               v-for="(price, idx) in dataType.prices"
               class="price-row"
@@ -103,11 +113,12 @@
                 >
               </td>
               <td class="conditions">
-                <span class="conditions-item d-flex align-items-center gap-2" v-for="(cond, condIdx) in price.conditions" data-cond-idx="condIdx">
+                <span class="conditions-item d-flex align-items-center gap-2" v-for="(cond, condIdx) in price.conditions" :data-cond-idx="condIdx">
                   <button
                     id="deleteConditionsItem"
+                    :data-cond-idx="condIdx"
                     class="btn btn-sm"
-                    _click="deleteConditionsItem"
+                    @click="deleteConditionsItem"
                     title="Удалить условие"
                   >
                     <i class="icon bi bi-trash text-danger"></i>
@@ -115,10 +126,12 @@
                   {{ cond }}
                 </span>
                 <button
-                  id="addConditionsItem"
+                  id="showConditionsModal"
                   class="btn btn-sm"
-                  _click="addConditionsItem"
-                  title="Добавить условие"
+                  @click="showConditionsModal"
+                  title="Добавить условия"
+                  data-bs-toggle="modal"
+                  data-bs-target="#addConditionModal"
                 >
                   <i class="icon bi bi-plus-lg text-success"></i>
                 </button>
@@ -159,6 +172,7 @@
                 {{ formatPrice(price.unitCost) }}
               </td>
             </tr>
+            <!-- price row end -->
           </tbody>
         </table>
       </div>
@@ -166,6 +180,8 @@
 
     </div>
     <!-- container end -->
+
+    <%- include partials/add-condition-modal.ejs %>
 
     <%- include partials/preloader.ejs %>
     <%- include partials/global-error.ejs %>

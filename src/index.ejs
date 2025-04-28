@@ -158,19 +158,19 @@
       </section>
       <div class="actions d-flex gap-2 my-5 py-3">
         <button
-            class="btn btn-primary d-flex gap-2"
+            class="btn btn-lg btn-primary d-flex gap-3"
             @click="printHtml"
           >
-          <i class="icon bi bi-printer text-white"></i>
+          <i class="icon text-size-1em bi bi-printer text-white"></i>
           Печать документа
         </button>
         <button
-          class="btn btn-success d-flex gap-2"
+          class="btn btn-lg btn-success d-flex gap-3"
           v-if="isManage"
           v-bind:disabled="pricesHasChanged ? null : 'disabled'"
           @click="saveCostChanges"
         >
-          <i class="icon bi bi-floppy text-white"></i>
+          <i class="icon text-size-1em bi bi-floppy text-white"></i>
           Сохранить изменения
         </button>
       </div>

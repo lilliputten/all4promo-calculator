@@ -10,7 +10,7 @@ import { isDev } from './config';
 import { showErrorToast, showSuccessToast } from './toast';
 import { ServerDataError } from './ServerDataError';
 import { saveCostChangesToServer } from './data';
-import { debugDataStruct } from './helpers';
+import { getDataTypeSelectedItems } from './show-structure';
 
 /** DEBUG: Emulate changes at start */
 const debugInitialChanges = false;
@@ -84,8 +84,9 @@ export function createEditorApp(serverData) {
       const data = this.data;
       const dataType = data.types[typeIdx];
       const { prices } = dataType;
-      const rowIdx = Number(dataset.idx);
-      const isHeader = isNaN(rowIdx);
+      const priceRowIdx = Number(dataset.idx);
+      const isHeader = isNaN(priceRowIdx);
+      const price = !isHeader && prices ? prices[priceRowIdx] : undefined;
       return {
         row,
         dataset,
@@ -95,9 +96,66 @@ export function createEditorApp(serverData) {
         data,
         dataType,
         prices,
-        rowIdx,
+        price,
+        priceRowIdx,
         isHeader,
       };
+    },
+
+    /** @param {MouseEvent} ev */
+    onConditionModalItemClick(ev) {
+      const target = /** @type {HTMLElement} */ (ev.currentTarget);
+      const textNode = /** @type {HTMLElement} */ (target.querySelector('.text'));
+      const text = textNode?.innerText;
+      /** @type {string[]} */
+      const addConditionsSelected = this.addConditionsSelected;
+      if (this.addConditionsSelected.includes(text)) {
+        this.addConditionsSelected = addConditionsSelected.filter((it) => it !== text);
+      } else {
+        this.addConditionsSelected = addConditionsSelected.concat(text);
+      }
+    },
+
+    onConditionModalSave() {
+      /** @type {DataJson} */
+      const data = this.data;
+      /** @type {string[]} */
+      const addConditionsSelected = this.addConditionsSelected;
+      /** @type {number} */
+      const typeIdx = this.addConditionsTypeIdx;
+      /** @type {number} */
+      const priceRowIdx = this.addConditionsPriceRowIdx;
+      const dataType = data.types[typeIdx];
+      const prices = dataType.prices;
+      if (!prices) {
+        throw new Error('Prices data not defined for the DataType!');
+      }
+      const price = prices[priceRowIdx];
+      if (!price) {
+        throw new Error('Not found price item for idx: ' + priceRowIdx);
+      }
+      price.conditions = price.conditions
+        ? price.conditions.concat(addConditionsSelected)
+        : addConditionsSelected;
+      price.conditions.sort();
+      this.pricesHasChanged = true;
+      if (!this.pricesChangedDataTypes.includes(typeIdx)) {
+        this.pricesChangedDataTypes.push(typeIdx);
+      }
+    },
+
+    /** @param {MouseEvent} ev */
+    onConditionModalAdd(ev) {
+      const target = /** @type {HTMLElement} */ (ev.currentTarget);
+      const textNode = /** @type {HTMLElement} */ (target.querySelector('.text'));
+      const text = textNode.innerText;
+      /** @type {string[]} */
+      const addConditionsSelected = this.addConditionsSelected;
+      if (this.addConditionsSelected.includes(text)) {
+        this.addConditionsSelected = addConditionsSelected.filter((it) => it !== text);
+      } else {
+        this.addConditionsSelected = addConditionsSelected.concat(text);
+      }
     },
 
     /** @param {MouseEvent} ev */
@@ -107,13 +165,15 @@ export function createEditorApp(serverData) {
         wrapper,
         // dataset,
         typeIdx,
-        pricesSelected,
-        selectedList,
+        // pricesSelected,
+        // selectedList,
         // data,
         dataType,
         prices,
       } = this.getAllDataForWrapperChild(target);
-      /** @type {PriceItem} */
+      /** New row data
+       * @type {PriceItem}
+       */
       const newPriceItem = {
         conditions: undefined, // string[];
         material: '', // string;
@@ -123,6 +183,7 @@ export function createEditorApp(serverData) {
         basicCost: 0, // number | string;
         unitCost: 0, // number | string;
       };
+      // Add a row
       let addedIdx = 0;
       if (!prices) {
         dataType.prices = [newPriceItem];
@@ -130,8 +191,13 @@ export function createEditorApp(serverData) {
         addedIdx = prices.length;
         dataType.prices = prices.concat(newPriceItem);
       }
-      const rowId = 'price-row-' + typeIdx + '-' + addedIdx;
+      // Set 'updated' flags
+      this.pricesHasChanged = true;
+      if (!this.pricesChangedDataTypes.includes(typeIdx)) {
+        this.pricesChangedDataTypes.push(typeIdx);
+      }
       // Show and indicate newly added record
+      const rowId = 'price-row-' + typeIdx + '-' + addedIdx;
       setTimeout(() => {
         requestAnimationFrame(() => {
           const row = wrapper.querySelector('tr#' + rowId);
@@ -153,7 +219,7 @@ export function createEditorApp(serverData) {
     deleteSelectedPrices(ev) {
       const target = /** @type {HTMLElement} */ (ev.currentTarget);
       const {
-        wrapper,
+        // wrapper,
         // dataset,
         typeIdx,
         pricesSelected,
@@ -162,10 +228,6 @@ export function createEditorApp(serverData) {
         dataType,
         prices,
       } = this.getAllDataForWrapperChild(target);
-      console.log('[deleteSelectedPrices]', {
-        ev,
-        wrapper,
-      });
       if (prices && selectedList.length) {
         dataType.prices = prices.filter((_item, itemIdx) => !selectedList.includes(itemIdx));
         pricesSelected[typeIdx] = [];
@@ -173,6 +235,66 @@ export function createEditorApp(serverData) {
         if (!this.pricesChangedDataTypes.includes(typeIdx)) {
           this.pricesChangedDataTypes.push(typeIdx);
         }
+      }
+    },
+
+    /** @param {MouseEvent} ev */
+    showConditionsModal(ev) {
+      const target = /** @type {HTMLElement} */ (ev.currentTarget);
+      const {
+        // row,
+        // dataset,
+        typeIdx,
+        // pricesSelected,
+        // selectedList,
+        // data,
+        dataType,
+        // prices,
+        price,
+        priceRowIdx,
+        // isHeader,
+      } = this.getAllDataForRowChild(target);
+      if (!price) {
+        throw new Error('Not found price item for idx: ' + priceRowIdx);
+      }
+      const addConditionsList = getDataTypeSelectedItems(dataType, { getAll: true });
+      const conditions = price.conditions;
+      this.addConditionsTypeIdx = typeIdx;
+      this.addConditionsPriceRowIdx = priceRowIdx;
+
+      this.addConditionsList = addConditionsList; // string[], current conditions to show in the modal to add to the current price item
+      this.addConditionsSelected = []; // string[], selected conditions to add
+      this.addConditionsUsed = conditions ? [...conditions] : [];
+    },
+
+    /** @param {MouseEvent} ev */
+    deleteConditionsItem(ev) {
+      const target = /** @type {HTMLElement} */ (ev.currentTarget);
+      const { dataset } = target;
+      const condIdx = Number(dataset.condIdx);
+      const {
+        // row,
+        // dataset,
+        typeIdx,
+        // pricesSelected,
+        // selectedList,
+        // data,
+        // dataType,
+        // prices,
+        price,
+        priceRowIdx,
+        // isHeader,
+      } = this.getAllDataForRowChild(target);
+      if (!price) {
+        throw new Error('Not found price item for idx: ' + priceRowIdx);
+      }
+      const conditions = price.conditions;
+      if (conditions) {
+        price.conditions = conditions.filter((_it, idx) => idx != condIdx);
+      }
+      this.pricesHasChanged = true;
+      if (!this.pricesChangedDataTypes.includes(typeIdx)) {
+        this.pricesChangedDataTypes.push(typeIdx);
       }
     },
 
@@ -188,36 +310,26 @@ export function createEditorApp(serverData) {
         // data,
         // dataType,
         prices,
-        rowIdx,
+        priceRowIdx,
         isHeader,
       } = this.getAllDataForRowChild(target);
-      /* console.log('[onCheckCellClick]', {
-       *   isHeader,
-       *   selectedList,
-       *   pricesSelected,
-       *   rowIdx,
-       *   typeIdx,
-       *   dataset,
-       *   target,
-       *   row,
-       *   ev,
-       * });
-       */
+      if (!prices || !prices.length) {
+        return;
+      }
       if (isHeader) {
-        if (selectedList.length) {
+        if (selectedList.length >= prices.length) {
           pricesSelected[typeIdx] = [];
-        } else if (prices?.length) {
+        } else {
           pricesSelected[typeIdx] = prices.map((_, n) => n);
         }
       } else {
-        if (selectedList.includes(rowIdx)) {
-          pricesSelected[typeIdx] = selectedList.filter((n) => n != rowIdx);
+        if (selectedList.includes(priceRowIdx)) {
+          pricesSelected[typeIdx] = selectedList.filter((n) => n != priceRowIdx);
         } else {
-          pricesSelected[typeIdx] = selectedList.concat(rowIdx);
+          pricesSelected[typeIdx] = selectedList.concat(priceRowIdx);
         }
       }
       pricesSelected[typeIdx].sort((a, b) => a - b);
-      // console.log('[onCheckCellClick] done:', pricesSelected[typeIdx].join(', '));
     },
 
     /** @param {number} val */
@@ -267,30 +379,15 @@ export function createEditorApp(serverData) {
         // selectedList,
         // data,
         // dataType,
-        prices,
-        rowIdx,
+        // prices,
+        price,
+        priceRowIdx,
       } = this.getAllDataForRowChild(target);
-      if (!prices) {
-        throw new Error('Prices data not defined for the DataType!');
-      }
-      const price = prices[rowIdx];
       if (!price) {
-        throw new Error('Not found price item for idx: ' + rowIdx);
+        throw new Error('Not found price item for idx: ' + priceRowIdx);
       }
       const value = target.value;
       const parsedValue = parsePriceFromStr(value);
-      /* // DEBUG
-       * const reasonId = [fieldId, rowIdx, value].filter(Boolean).join(': ');
-       * console.log('[onPriceNumericFieldChanged]', reasonId, {
-       *   fieldId,
-       *   parsedValue,
-       *   value,
-       *   typeIdx,
-       *   rowIdx,
-       *   price,
-       *   // prices,
-       * });
-       */
       price[fieldId] = parsedValue;
       this.updatePriceRow(typeIdx, price);
     },
@@ -302,8 +399,8 @@ export function createEditorApp(serverData) {
       /** @type {number[]} */
       const pricesChangedDataTypes = this.pricesChangedDataTypes;
       try {
-        const _resData = await saveCostChangesToServer(data, pricesChangedDataTypes);
-        /*
+        await saveCostChangesToServer(data, pricesChangedDataTypes);
+        /* // XXX FUTURE: It's possible to get the results here and update all the data
          * console.log('[saveCostChanges] success: Got data (parsed json)', {
          *   resData,
          * });
@@ -337,13 +434,13 @@ export function createEditorApp(serverData) {
      */
     onPriceFieldUpdated(ev) {
       const target = /** @type {HTMLInputElement} */ (ev.currentTarget);
-      const { typeIdx, prices, rowIdx } = this.getAllDataForRowChild(target);
+      const { typeIdx, prices, priceRowIdx } = this.getAllDataForRowChild(target);
       if (!prices) {
         throw new Error('Prices data not defined for the DataType!');
       }
-      const price = prices[rowIdx];
+      const price = prices[priceRowIdx];
       if (!price) {
-        throw new Error('Not found price item for idx: ' + rowIdx);
+        throw new Error('Not found price item for idx: ' + priceRowIdx);
       }
       this.updatePriceRow(typeIdx, price);
     },
@@ -358,6 +455,11 @@ export function createEditorApp(serverData) {
         pricesSelected: [], // number[][]
         pricesHasChanged: isDev && debugInitialChanges, // boolean
         pricesChangedDataTypes: isDev && debugInitialChanges ? [0] : [], // number[]
+        addConditionsTypeIdx: undefined, // number
+        addConditionsPriceRowIdx: undefined, // number
+        addConditionsList: ['xxx'], // string[], current conditions to show in the modal to add to the current price item
+        addConditionsUsed: [], // string[], selected conditions to add
+        addConditionsSelected: [], // string[], selected conditions to add
         data: null, // DataJson
         preloaded: false,
       };
