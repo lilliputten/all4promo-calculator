@@ -101,14 +101,14 @@ export async function saveCostChangesToServer(data, pricesChangedDataTypes) {
     },
     body: JSON.stringify({ changedPrices: changedPricesData }),
   };
-  /* console.log('[saveCostChangesToServer] start', {
-   *   changedPricesData,
-   *   reqInit,
-   *   reqUrl,
-   *   // yamlData,
-   *   data,
-   * });
-   */
+  console.log('[saveCostChangesToServer] start', {
+    changedPricesData,
+    reqInit,
+    reqUrl,
+    // yamlData,
+    data,
+  });
+  debugger;
   const res = await fetch(reqUrl, reqInit);
   const { ok, status, statusText } = res;
   // eslint-disable-next-line no-console
@@ -118,6 +118,7 @@ export async function saveCostChangesToServer(data, pricesChangedDataTypes) {
     statusText,
     res,
   });
+  debugger;
   if (!ok) {
     const reason = [status, statusText].filter(Boolean).join(', ');
     const msg = ['Ошибка отправки запроса', reason && `(${reason})`].filter(Boolean).join(' ');
@@ -133,10 +134,10 @@ export async function saveCostChangesToServer(data, pricesChangedDataTypes) {
       const msg = ['Ошибка сервера', error].filter(Boolean).join(': ');
       throw new Error(msg);
     }
-    /* console.log('[saveCostChangesToServer] success: Got data (parsed json)', {
-     *   resData,
-     * });
-     */
+    console.log('[saveCostChangesToServer] success: Got data (parsed json)', {
+      resData,
+    });
+    debugger;
     return resData;
   } else {
     const error = new ServerDataError('Неверный формат данных');
