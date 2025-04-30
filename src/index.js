@@ -4,7 +4,7 @@ import { showErrorToast } from './js/toast';
 import { loadServerData } from './js/data';
 import { getAppMode, showGlobalError } from './js/helpers';
 
-import { createCalculatorApp } from './js/app-calculator';
+import { createConstructorApp } from './js/app-constructor';
 import { createEditorApp } from './js/app-editor';
 
 import 'swiper/css';
@@ -19,7 +19,7 @@ async function start() {
     const app =
       appMode === 'editor'
         ? createEditorApp(data)
-        : createCalculatorApp(data, appMode === 'manage');
+        : createConstructorApp(data, appMode === 'manage');
     window.globalApp = app.mount('#app');
   } catch (err) {
     const error = /** @type {import('src/@types/ErrorLike').ErrorLike} */ (err);
