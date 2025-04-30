@@ -6,55 +6,66 @@ const SP = '    ';
 
 /**
  * @param {TypeOption} data
+ * @param {GetItemOptions} opts
  * @param {string} prefix
  */
-export function getTypeOptionSelectedItems(data, prefix = '') {
+function getTypeOptionSelectedItems(data, opts = {}, prefix = '') {
   const name = data.name;
   const selectionsChoose = data.selectionsChoose;
   /** @type {string[]} */
   const arr = [];
   prefix = [prefix, name].filter(Boolean).join(DELIM);
-  if (data.selected) {
+  const selections = data.selections;
+  if ((!selections && opts.getAll) || data.selected) {
     arr.push(prefix);
   }
-  const selections = data.selections;
-  const selection = selections?.find(({ name }) => name === selectionsChoose);
-  if (selection) {
-    arr.push(prefix + DELIM + selection.name);
+  if (selections) {
+    if (opts.getAll) {
+      const items = selections.map(({ name }) => prefix + DELIM + name);
+      Array.prototype.push.apply(arr, items);
+    } else {
+      const selection = selections.find(({ name }) => name === selectionsChoose);
+      if (selection) {
+        arr.push(prefix + DELIM + selection.name);
+      }
+    }
   }
   return arr;
 }
 
 /**
  * @param {TypeType} data
+ * @param {GetItemOptions} opts
  * @param {string} prefix
  */
-export function getTypeTypeSelectedItems(data, prefix = '') {
+function getTypeTypeSelectedItems(data, opts = {}, prefix = '') {
   const name = data.title;
+  if (name === 'Размеры одежды') {
+    // debugger;
+  }
   // name = 'TypeType: ' + name;
   /** @type {string[]} */
   const arr = [];
   prefix = [prefix, name].filter(Boolean).join(DELIM);
   const options = data.options;
   options
-    .filter(({ selected }) => selected)
+    .filter(({ selected }) => opts.getAll || selected)
     .forEach((it) => {
       /** @type {string[]} */
-      const items = getTypeOptionSelectedItems(it, prefix);
-      if (items && items.length) {
+      const items = getTypeOptionSelectedItems(it, opts, prefix);
+      if (items.length) {
         Array.prototype.push.apply(arr, items);
       }
     });
   return arr;
 }
 
-/**
+/** The main method to get all the sub-options for the DataType
  * @param {DataType} data
+ * @param {GetItemOptions} opts
  * @param {string} prefix
- * @param {object} opts
- * @param {boolean} [opts.topLevelPrefix]
  */
-export function getDataTypeSelectedItems(data, prefix = '', opts = {}) {
+export function getDataTypeSelectedItems(data, opts = {}, prefix = '') {
   const name = data.name;
   /** @type {string[]} */
   const arr = [];
@@ -64,8 +75,26 @@ export function getDataTypeSelectedItems(data, prefix = '', opts = {}) {
   const typeTypes = data.types;
   typeTypes.forEach((it) => {
     /** @type {string[]} */
-    const items = getTypeTypeSelectedItems(it, prefix);
-    if (items && items.length) {
+    const items = getTypeTypeSelectedItems(it, opts, prefix);
+    if (items.length) {
+      Array.prototype.push.apply(arr, items);
+    }
+  });
+  return arr;
+}
+
+/** Get all the items
+ * @param {DataJson} data
+ * @param {GetItemOptions} opts
+ * @param {string} prefix
+ */
+export function getAllDataTypeItems(data, opts = {}, prefix = '') {
+  /** @type {string[]} */
+  const arr = [];
+  const nextOpts = { topLevelPrefix: true, ...opts };
+  data.types.forEach((dataType) => {
+    const items = getDataTypeSelectedItems(dataType, nextOpts, prefix);
+    if (items.length) {
       Array.prototype.push.apply(arr, items);
     }
   });
@@ -109,7 +138,7 @@ function showOption(data, prefix, level) {
   if (data.selections) {
     s += data.selections.map((it) => showSelection(it, prefix, level + 1)).join('');
   } else {
-    s += prefix + NL;
+    // s += prefix + NL;
   }
   return s;
 }
@@ -139,7 +168,7 @@ function showSubTypes(data, prefix, level) {
   if (data.options) {
     s += data.options.map((it) => showOption(it, prefix, level + 1)).join('');
   } else if (prefix) {
-    s += prefix + NL;
+    // s += prefix + NL;
   }
   return s;
 }

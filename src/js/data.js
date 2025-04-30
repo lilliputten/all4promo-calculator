@@ -56,6 +56,15 @@ export async function loadServerData() {
     console.log('[loadServerData] success: Got parsed data', {
       data,
     });
+    if (!data) {
+      const error = new Error('Не получено данных с сервера.');
+      // eslint-disable-next-line no-console
+      console.error('[start]', error.message, {
+        error,
+      });
+      debugger; // eslint-disable-line no-debugger
+      throw error;
+    }
     return data;
   } catch (err) {
     const details = getErrorText(err);
@@ -82,10 +91,6 @@ export async function saveCostChangesToServer(data, pricesChangedDataTypes) {
       prices: data.types[idx].prices,
     };
   });
-  // const pricesData = data.types.map((dataType) => {
-  //   return dataType.prices;
-  // });
-  // const yamlData = YAML.stringify(data);
   const reqUrl = updatePricesUrl;
   /** @type {RequestInit} */
   const reqInit = {
@@ -103,6 +108,7 @@ export async function saveCostChangesToServer(data, pricesChangedDataTypes) {
     // yamlData,
     data,
   });
+  debugger;
   const res = await fetch(reqUrl, reqInit);
   const { ok, status, statusText } = res;
   // eslint-disable-next-line no-console
@@ -112,6 +118,7 @@ export async function saveCostChangesToServer(data, pricesChangedDataTypes) {
     statusText,
     res,
   });
+  debugger;
   if (!ok) {
     const reason = [status, statusText].filter(Boolean).join(', ');
     const msg = ['Ошибка отправки запроса', reason && `(${reason})`].filter(Boolean).join(' ');

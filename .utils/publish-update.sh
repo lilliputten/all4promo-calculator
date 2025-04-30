@@ -1,6 +1,6 @@
 #!/bin/sh
 # @desc Update publish folder (prepare remote update)
-# @changed 2025.04.26, 20:20
+# @changed 2025.04.27, 22:00
 
 scriptsPath=$(dirname "$(echo "$0" | sed -e 's,\\,/,g')")
 rootPath=`dirname "$scriptsPath"`
@@ -26,6 +26,6 @@ cd "$PUBLISH_FOLDER" && \
   (test -z "$BUILD_FOLDER" || test ! -d "../$BUILD_FOLDER" || ( \
     (test -z "`compgen -G \"../$BUILD_FOLDER/.*\"`" || ( cp -Rfu ../$BUILD_FOLDER/.[^.]* . && echo "Copied dot files from the build folder" ) ) && \
     cp -Rfu ../$BUILD_FOLDER/* . && echo "Copied regular files from the build folder" ) ) && \
-    rm -f data/data.json && \
+    mv -vf data/data.json data/data-sample.json && \
   cd .. && \
   echo OK

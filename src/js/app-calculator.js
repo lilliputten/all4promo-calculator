@@ -15,25 +15,24 @@ import { getErrorText } from './strings';
 import { isDev } from './config';
 import { showErrorToast, showSuccessToast } from './toast';
 import { ServerDataError } from './ServerDataError';
-import { loadServerData, saveCostChangesToServer } from './data';
-import { checkFullMode, debugDataStruct } from './helpers';
+import { saveCostChangesToServer } from './data';
+import { debugDataStruct } from './helpers';
 
-import 'swiper/css';
-
-import '../scss/index.scss';
-
-const fullMode = checkFullMode();
-
+/** DEBUG: Emulate changes at start */
 const debugInitialChanges = false;
 
-/** @param {DataJson} serverData */
-function createGlobalApp(serverData) {
+/** Create global application
+ * @param {DataJson} serverData
+ * @param {boolean} isManage
+ * @return {import('vue').App<Element>}
+ */
+export function createCalculatorApp(serverData, isManage) {
   // Create Vue app
-  window.globalApp = createApp({
+  return createApp({
     data(_app) {
       return {
         isDev,
-        fullMode, // boolean,
+        isManage, // boolean,
         pricesHasChanged: isDev && debugInitialChanges, // boolean
         pricesChangedDataTypes: isDev && debugInitialChanges ? [0] : [], // number[]
         data: null, // DataJson
@@ -68,7 +67,7 @@ function createGlobalApp(serverData) {
        * // }, 7000);
        */
       const data = serverData;
-      debugDataStruct(data, true);
+      debugDataStruct(data);
       /* // DEBUG
        * const app = this;
        * console.log('[mounted]', {
@@ -79,8 +78,8 @@ function createGlobalApp(serverData) {
       this.data = data;
       // Select the first top-level type
       this.setList(0);
+      this.preloaded = true;
       setTimeout(() => {
-        this.preloaded = true;
         const observerLogo = new MutationObserver((mutations) => {
           mutations.forEach((mutationRecord) => {
             const node = /** @type {HTMLElement} */ (mutationRecord.target);
@@ -191,6 +190,13 @@ function createGlobalApp(serverData) {
           return;
         }
         const selectedItems = getDataTypeSelectedItems(dataType);
+        /* // DEBUG
+         * const selectedItemsCmp = getAllDataTypeItems(this.data);
+         * console.log('[calcPrice] Check items', {
+         *   selectedItems,
+         *   selectedItemsCmp,
+         * });
+         */
         const { prices } = dataType;
         const filteredPrices = /** @type {PriceItem[] | undefined} */ (
           prices
@@ -212,13 +218,14 @@ function createGlobalApp(serverData) {
             .filter(Boolean)
         );
         const count = !this.edition || isNaN(this.edition) ? 1 : this.edition;
-        console.log('[calcPrice]', reason, reasonId, {
-          filteredPrices,
-          prices: { ...prices },
-          selectedItems,
-          dataType: { ...dataType },
-          count,
-        });
+        /* console.log('[calcPrice]', reason, reasonId, {
+         *   filteredPrices,
+         *   prices: { ...prices },
+         *   selectedItems,
+         *   dataType: { ...dataType },
+         *   count,
+         * });
+         */
         this.filteredPrices = filteredPrices;
         this.priceUnit = filteredPrices?.reduce((summ, price) => {
           return summ + parsePriceFromStr(price.unitCost);
@@ -275,14 +282,15 @@ function createGlobalApp(serverData) {
           this.pricesChangedDataTypes.push(dataTypeIdx);
         }
         const reasonId = ['basicCost', idx, value].filter(Boolean).join(': ');
-        console.log('[onBasicCostChange]', reasonId, {
-          parsedValue,
-          value,
-          idxN,
-          idx,
-          prices,
-          dataType: { ...dataType },
-        });
+        /* console.log('[onBasicCostChange]', reasonId, {
+         *   parsedValue,
+         *   value,
+         *   idxN,
+         *   idx,
+         *   prices,
+         *   dataType: { ...dataType },
+         * });
+         */
         this.calcPrice('onBasicCostChange', reasonId);
       },
       /** Save changed data on the server */
@@ -292,11 +300,12 @@ function createGlobalApp(serverData) {
         /** @type {number[]} */
         const pricesChangedDataTypes = this.pricesChangedDataTypes;
         try {
-          const resData = await saveCostChangesToServer(data, pricesChangedDataTypes);
-          console.log('[saveCostChanges] success: Got data (parsed json)', {
-            resData,
-          });
-          debugger;
+          const _resData = await saveCostChangesToServer(data, pricesChangedDataTypes);
+          /*
+           * console.log('[saveCostChanges] success: Got data (parsed json)', {
+           *   resData,
+           * });
+           */
           this.pricesHasChanged = false;
           this.pricesChangedDataTypes = [];
           showSuccessToast('Данные сохранены');
@@ -317,7 +326,6 @@ function createGlobalApp(serverData) {
        * @param {number} num
        */
       async setList(num) {
-        console.log('[setList]', num);
         const data = /** @type {DataJson} */ (this.data);
         /** @type {string | undefined} */
         let reasonId;
@@ -401,10 +409,11 @@ function createGlobalApp(serverData) {
         const isCheckbox = !!mainobj?.checkbox;
         const hasColors = !!mainobj?.colors;
         const hasSvgNew = !!mainobj?.svgNew;
-        if (!mainobj) {
-          // XXX: Is ti possible to have unset mainobj?
-          debugger;
-        }
+        /* if (!mainobj) {
+         *   // XXX: Is ti possible to have unset mainobj?
+         *   debugger;
+         * }
+         */
         if (isCheckbox) {
           it.selected = !it.selected;
         } else {
@@ -424,17 +433,18 @@ function createGlobalApp(serverData) {
         ]
           .filter(Boolean)
           .join(': ');
-        console.log('[setProp]', mainobj?.title, num, it?.name, {
-          reasonId,
-          // reasonValue,
-          isCheckbox,
-          hasColors,
-          hasSvgNew,
-          num,
-          arr: [...arr],
-          it: { ...it },
-          mainobj: { ...mainobj },
-        });
+        /* console.log('[setProp]', mainobj?.title, num, it?.name, {
+         *   reasonId,
+         *   // reasonValue,
+         *   isCheckbox,
+         *   hasColors,
+         *   hasSvgNew,
+         *   num,
+         *   arr: [...arr],
+         *   it: { ...it },
+         *   mainobj: { ...mainobj },
+         * });
+         */
         if (hasColors) {
           const colorCode = this.getSelected(mainobj.colors)?.code;
           if (hasSvgNew) {
@@ -504,12 +514,13 @@ function createGlobalApp(serverData) {
         const name = node.dataset.name;
         const value = node.value;
         const reasonId = [type, name, value].filter(Boolean).join(': ');
-        console.log('[onValueChange]', {
-          reasonId,
-          name,
-          type,
-          value,
-        });
+        /* console.log('[onValueChange]', {
+         *   reasonId,
+         *   name,
+         *   type,
+         *   value,
+         * });
+         */
         this.calcPrice('onValueChange', reasonId);
       },
       /**
@@ -517,20 +528,22 @@ function createGlobalApp(serverData) {
        */
       onSelectChange(e) {
         const node = /** @type {HTMLSelectElement} */ (e.target);
-        const selectedIndex = Number(node.selectedIndex);
         const selectedOptions = node.selectedOptions;
         const type = node.dataset.type;
         const name = node.dataset.name;
         const option = selectedOptions[0];
         const value = option.value;
         const reasonId = [type, name, value].filter(Boolean).join(': ');
-        console.log('[onSelectChange]', {
-          reasonId,
-          option,
-          node,
-          selectedIndex,
-          selectedOptions,
-        });
+        /* // DEBUG
+         * const selectedIndex = Number(node.selectedIndex);
+         * console.log('[onSelectChange]', {
+         *   reasonId,
+         *   option,
+         *   node,
+         *   selectedIndex,
+         *   selectedOptions,
+         * });
+         */
         this.calcPrice('onSelectChange', reasonId);
       },
       /**
@@ -539,10 +552,11 @@ function createGlobalApp(serverData) {
       onEditionChange(e) {
         const node = /** @type {HTMLInputElement} */ (e.target);
         const value = Number(node.value);
-        console.log('[onEditionChange]', {
-          edition: this.edition,
-          value,
-        });
+        /* console.log('[onEditionChange]', {
+         *   edition: this.edition,
+         *   value,
+         * });
+         */
         // TODO: Just to multiply price?
         this.calcPrice('onEditionChange', 'count: ' + value);
       },
@@ -599,55 +613,5 @@ function createGlobalApp(serverData) {
         this.logo = '';
       },
     },
-  }).mount('#app');
+  });
 }
-
-/** @param {ServerDataError|Error|string} err */
-function showGlobalError(err) {
-  const errorNode = document.getElementById('global-error');
-  if (!errorNode) {
-    // TODO: To create the node?
-    return;
-  }
-  document.body.classList.toggle('with-error', true);
-  errorNode.classList.toggle('visible', true);
-  const title = getErrorText(err);
-  const details = err instanceof ServerDataError ? err.details : '';
-  const titleNode = /** @type {HTMLElement} */ (errorNode.querySelector('.error-title'));
-  const detailsNode = /** @type {HTMLElement} */ (errorNode.querySelector('.error-details'));
-  if (titleNode && detailsNode) {
-    titleNode.innerText = title;
-    detailsNode.innerText = details || '';
-  } else {
-    errorNode.innerText = [title, details].filter(Boolean).join('\n\n');
-  }
-}
-
-async function start() {
-  try {
-    const data = await loadServerData();
-    if (!data) {
-      const error = new Error('Не получено данных с сервера.');
-      // eslint-disable-next-line no-console
-      console.error('[start]', error.message, {
-        error,
-      });
-      debugger; // eslint-disable-line no-debugger
-      throw error;
-    }
-    createGlobalApp(data);
-  } catch (err) {
-    const error = /** @type {ServerDataError|Error|string} */ (err);
-    // eslint-disable-next-line no-console
-    console.error('[start] error', {
-      error,
-    });
-    debugger; // eslint-disable-line no-debugger
-    // Show error pane over the application
-    showGlobalError(error);
-    // Show error toast?
-    showErrorToast(error);
-  }
-}
-
-start();

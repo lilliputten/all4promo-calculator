@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <%- include partials/header-content.ejs %>
+    <title>Редактор цен</title>
+  </head>
+  <body id="app">
+    <!-- body begin -->
+
+    <!-- container begin -->
+    <div class="container pb-5" v-if="data">
+      <h1 class="pt-3 mt-3">Редактор цен</h1>
+
+      <div class="actions d-flex gap-2 my-5 py-3">
+        <button
+          class="btn btn-lg btn-success d-flex gap-3"
+          v-bind:disabled="pricesHasChanged ? null : 'disabled'"
+          @click="saveCostChanges"
+        >
+          <i class="icon text-size-1em bi bi-floppy text-white"></i>
+          Сохранить изменения
+        </button>
+      </div>
+
+      <!-- wrapper begin -->
+      <div v-for="(dataType, typeIdx) in data.types" class="data-type-wrapper mt-4" :data-type-idx="typeIdx">
+        <div class="editor-header pt-3 mt-3 d-flex gap-2 align-items-center justify-content-between">
+          <h2 class="editor-title m-0">
+            {{ dataType.name }}
+            <span
+              class="dimmed text-size-1em text-success ms-2"
+              v-if="pricesChangedDataTypes.includes(typeIdx)"
+            >
+              *
+            </span>
+          </h2>
+          <div class="editor-actions d-flex gap-2 align-items-center">
+            <button
+              id="addPriceItem"
+              class="btn btn-success d-flex gap-2"
+              @click="addPriceItem"
+            >
+              <i class="icon bi bi-plus-lg text-white"></i>
+              Добавить
+            </button>
+
+            <button
+              v-if="pricesSelected[typeIdx]?.length"
+              id="deleteSelectedPrices"
+              class="btn btn-danger d-flex gap-2"
+              v-bind:disabled="pricesSelected[typeIdx]?.length ? null : 'disabled'"
+              @click="deleteSelectedPrices"
+            >
+              <i class="icon bi bi-trash text-white"></i>
+              Удалить выделенное
+              <span class="dimmed text-white" v-if="pricesSelected[typeIdx]?.length">({{ pricesSelected[typeIdx].length }})</span>
+            </button>
+          </div>
+        </div>
+        <!-- price-table -->
+        <table v-if="dataType.prices && dataType.prices.length" class="table price-table mt-4">
+          <thead>
+            <tr
+              class="header-row"
+              :id="'item-' + typeIdx + '-header'"
+              :data-type-idx="typeIdx"
+              data-idx="header"
+              data-header="true"
+            >
+              <th
+                class="check"
+                v-on:click="onCheckCellClick"
+                title="Выбрать/отменить все строки"
+              >
+                <input
+                  class="form-check-input pe-none"
+                  type="checkbox"
+                  value=""
+                  :id="'item-' + typeIdx + '-check'"
+                  v-bind:disabled="pricesSelected[typeIdx]?.length && pricesSelected[typeIdx]?.length < dataType.prices?.length"
+                  v-bind:checked="pricesSelected[typeIdx]?.length"
+                >
+              </th>
+              <th class="conditions">Условия</th>
+              <th class="material">Материал</th>
+              <th class="units">Ед. измерения</th>
+              <th class="unitMaterial">Расход материала за ед</th>
+              <th class="basicCost">Стоимость за м, кг, шт, усл</th>
+              <th class="unitCost">Стоимость за ед.</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- price row begin -->
+            <tr
+              v-for="(price, idx) in dataType.prices"
+              class="price-row"
+              :id="'price-row-' + typeIdx + '-' + idx"
+              :data-type-idx="typeIdx"
+              :data-idx="idx"
+            >
+              <td
+                class="check"
+                v-on:click="onCheckCellClick"
+                title="Выбрать строку"
+              >
+                <!-- <span class="me-3">{{ idx }}</span> -->
+                <input
+                  class="form-check-input pe-none"
+                  type="checkbox"
+                  value=""
+                  :id="'item-' + typeIdx + '-' + idx + '-check'"
+                  v-bind:checked="pricesSelected[typeIdx]?.includes(idx) ? true : null"
+                >
+              </td>
+              <td class="conditions">
+                <span class="conditions-item d-flex align-items-center gap-2" v-for="(cond, condIdx) in price.conditions" :data-cond-idx="condIdx">
+                  <button
+                    id="deleteConditionsItem"
+                    :data-cond-idx="condIdx"
+                    class="btn btn-sm"
+                    @click="deleteConditionsItem"
+                    title="Удалить условие"
+                  >
+                    <i class="icon bi bi-trash text-danger"></i>
+                  </button>
+                  {{ cond }}
+                </span>
+                <button
+                  id="showConditionsModal"
+                  class="btn btn-sm"
+                  @click="showConditionsModal"
+                  title="Добавить условия"
+                  data-bs-toggle="modal"
+                  data-bs-target="#addConditionModal"
+                >
+                  <i class="icon bi bi-plus-lg text-success"></i>
+                </button>
+              </td>
+              <td class="material">
+                <input
+                  id="material"
+                  class="form-control"
+                  v-model="price.material"
+                  v-on:change="onPriceFieldUpdated"
+                />
+              </td>
+              <td class="units">
+                <input
+                  id="units"
+                  class="form-control"
+                  v-model="price.units"
+                  v-on:change="onPriceFieldUpdated"
+                />
+              </td>
+              <td class="unitMaterial">
+                <input
+                  id="unitMaterial"
+                  class="form-control"
+                  :value="formatPrice(price.unitMaterial)"
+                  v-on:change="onPriceNumericFieldChanged"
+                />
+              </td>
+              <td class="basicCost">
+                <input
+                  id="basicCost"
+                  class="form-control"
+                  :value="formatPrice(price.basicCost)"
+                  v-on:change="onPriceNumericFieldChanged"
+                />
+              </td>
+              <td class="unitCost">
+                {{ formatPrice(price.unitCost) }}
+              </td>
+            </tr>
+            <!-- price row end -->
+          </tbody>
+        </table>
+      </div>
+      <!-- wrapper end -->
+
+    </div>
+    <!-- container end -->
+
+    <%- include partials/add-condition-modal.ejs %>
+
+    <%- include partials/preloader.ejs %>
+    <%- include partials/global-error.ejs %>
+    <%- include partials/toast-container.ejs %>
+
+    <!-- body end -->
+  </body>
+</html>

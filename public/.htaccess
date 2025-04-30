@@ -1,4 +1,4 @@
-# @changed 2025.04.26, 23:09
+# @changed 2025.04.28, 00:01
 
 Options -Indexes
 
@@ -15,7 +15,7 @@ AuthUserFile /home/g/goldenjeru/.security/.htpasswd
 
 # Fake manage page (uses the same code as root one) -- should require authorization
 RewriteBase "/"
-RewriteRule "^manage$" "" [PT]
+RewriteRule "^(manage)$" "" [PT]
 
 # Remove html extensions
 RewriteCond %{REQUEST_FILENAME}.html -f
@@ -34,7 +34,7 @@ Require valid-user
 # RewriteCond %{QUERY_STRING} mode=full
 # RewriteRule ^ - [E=auth:1]
 
-SetEnvIf Request_URI ^/(manage|.*\.(log|php))$ auth=true
+SetEnvIf Request_URI ^/(editor|manage|.*\.(log|php))$ auth=true
 
 # Deny authorized files
 Deny from env=auth
