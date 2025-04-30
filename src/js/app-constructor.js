@@ -5,7 +5,7 @@ import { createApp } from 'vue/dist/vue.esm-bundler';
 import { Swiper, SwiperSlide } from 'swiper/vue';
 
 import axios from 'axios';
-import html2canvas from 'html2canvas';
+// import html2canvas from 'html2canvas';
 
 import { getDocument } from '../pdf.mjs';
 
@@ -16,7 +16,7 @@ import { isDev } from './config';
 import { showErrorToast, showSuccessToast } from './toast';
 import { ServerDataError } from './ServerDataError';
 import { saveCostChangesToServer } from './data';
-import { debugDataStruct } from './helpers';
+// import { debugDataStruct } from './helpers';
 
 /** DEBUG: Emulate changes at start */
 const debugInitialChanges = false;
@@ -333,20 +333,54 @@ export function createConstructorApp(serverData, isManage) {
       return arr.find((el) => el.selected);
     },
     printHtml() {
-      const cl = /** @type {HTMLElement} */ (document.querySelector('#capture'));
-      document.querySelector('html')?.classList.add('prntbl');
-      html2canvas(cl).then((canvas) => {
-        const nWindow = window.open('');
-        const style = document.createElement('style');
-        style.innerHTML = 'canvas{width: 100%!important; height: auto!important;}';
-        if (nWindow) {
-          nWindow.document.head.appendChild(style);
-          nWindow.document.body.appendChild(canvas);
+      const captureNode = /** @type {HTMLElement} */ (document.getElementById('capture'));
+      const htmlNode = document.querySelector('html');
+      if (!htmlNode) {
+        throw new Error('Не удаётся найти элемент html');
+      }
+      const nWindow = window.open(
+        '',
+        '_blank',
+        'left=0,top=0,width=700,height=600,toolbar=0,scrollbars=0,status=0',
+      );
+      if (nWindow) {
+        const nDoc = nWindow.document;
+        nDoc.title = 'Таблица цен для печати';
+        const links = document.getElementsByTagName('link');
+        Array.from(links).forEach((node) => {
+          const newNode = document.createElement('link');
+          newNode.setAttribute('rel', node.rel);
+          newNode.setAttribute('href', node.href);
+          nDoc.head.appendChild(newNode);
+        });
+        const newNode = /** @type {HTMLElement} */ (captureNode.cloneNode(true));
+        nDoc.body.classList.add('prntbl');
+        nDoc.body.appendChild(newNode);
+        setTimeout(() => {
           nWindow.focus();
           nWindow.print();
-        }
-        document.querySelector('html')?.classList.remove('prntbl');
-      });
+          nWindow.close();
+        }, 100);
+
+        /* // Old way: using html2canvas
+         * const style = document.createElement('style');
+         * style.innerText = `
+         *   .container { display: flex; justify-content: center; align-items: center; }
+         *   canvas { width: 95% !important; height: auto !important; max-height:95%;}
+         *   `;
+         * nDoc.head.appendChild(style);
+         * document.body.classList.add('prntbl');
+         * html2canvas(captureNode).then((canvas) => {
+         *   const container = document.createElement('div');
+         *   container.classList.add('container');
+         *   container.appendChild(canvas);
+         *   nDoc.body.appendChild(container);
+         *   nWindow.focus();
+         *   nWindow.print();
+         *   document.body.classList.remove('prntbl');
+         * });
+         */
+      }
     },
     /**
      * @param {string} link
@@ -515,21 +549,8 @@ export function createConstructorApp(serverData, isManage) {
       };
     },
     async mounted() {
-      /* // Toasts test
-       * showSuccessToast('Success text');
-       * // setTimeout(() => {
-       * //   showErrorToast('Long body text');
-       * // }, 7000);
-       */
       const data = serverData;
-      debugDataStruct(data);
-      /* // DEBUG
-       * const app = this;
-       * console.log('[mounted]', {
-       *   test: data.types[0].prices,
-       *   app: { ...app },
-       * });
-       */
+      // debugDataStruct(data);
       this.data = data;
       // Select the first top-level type
       this.setList(0);
