@@ -19,6 +19,7 @@ export async function loadServerData() {
       status,
       statusText,
       res,
+      url,
     });
     if (!ok) {
       const reason = [status, statusText].filter(Boolean).join(', ');

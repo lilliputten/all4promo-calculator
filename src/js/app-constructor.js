@@ -76,13 +76,6 @@ export function createConstructorApp(serverData, isManage) {
         return;
       }
       const selectedItems = getDataTypeSelectedItems(dataType);
-      /* // DEBUG
-       * const selectedItemsCmp = getAllDataTypeItems(this.data);
-       * console.log('[calcPrice] Check items', {
-       *   selectedItems,
-       *   selectedItemsCmp,
-       * });
-       */
       const { prices } = dataType;
       const filteredPrices = /** @type {PriceItem[] | undefined} */ (
         prices
@@ -103,20 +96,43 @@ export function createConstructorApp(serverData, isManage) {
           })
           .filter(Boolean)
       );
-      const count = !this.edition || isNaN(this.edition) ? 1 : this.edition;
-      /* console.log('[calcPrice]', reason, reasonId, {
-       *   filteredPrices,
-       *   prices: { ...prices },
-       *   selectedItems,
-       *   dataType: { ...dataType },
-       *   count,
-       * });
-       */
+      const count = !this.edition || isNaN(this.edition) ? 1 : Number(this.edition);
       this.filteredPrices = filteredPrices;
-      this.priceUnit = filteredPrices?.reduce((summ, price) => {
-        return summ + parsePriceFromStr(price.unitCost);
-      }, 0);
-      this.priceTotal = isNaN(this.priceUnit) ? 0 : this.priceUnit * count;
+      const coeff = this.getCoeff(count);
+      const singlePrice =
+        filteredPrices?.reduce((summ, price) => {
+          return summ + parsePriceFromStr(price.unitCost);
+        }, 0) || 0;
+      this.priceUnit = singlePrice * coeff;
+      this.priceTotal = this.priceUnit && this.priceUnit * count;
+      console.log('[calcPrice] coeff', reason, reasonId, {
+        coeff,
+        count,
+        singlePrice,
+        priceUnit: this.priceUnit,
+        priceTotal: this.priceTotal,
+      });
+    },
+    /** Calculate the proper coefficient for a given count of products
+     * @param {number} count
+     */
+    getCoeff(count) {
+      /** Cofficients table
+       * Array<above, coeff>
+       */
+      const coeffsTable = [
+        [0, 2], // от 1 до 30	2
+        [31, 1.9], // от 31 до 100	1.9
+        [101, 1.8], // от 101 до 1000	1.8
+        [1001, 1.7], // от 1001 до 5000	1.7
+        [5001, 1.6], // от 5001 до 10000	1.6
+        [10001, 1.5], // свыше 10001	1.5
+      ];
+      let coeff = coeffsTable[0][1];
+      for (let i = 1; i < coeffsTable.length && count >= coeffsTable[i][0]; i++) {
+        coeff = coeffsTable[i][1];
+      }
+      return coeff;
     },
     /** Handle update of a basic cost field
      * @param {InputEvent} e

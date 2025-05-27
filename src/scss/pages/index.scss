@@ -19,14 +19,21 @@
   align-items: center;
   justify-content: center;
   position: relative;
-  height: 440px;
-  width: 440px;
-  min-width: 440px;
   margin: auto;
-  img,
-  svg {
-    width: 440px;
-    height: 440px;
+  @mixin imgSize($imgSize) {
+    // $imgSize: 240px;
+    height: $imgSize;
+    width: $imgSize;
+    min-width: $imgSize;
+    img,
+    svg {
+      width: $imgSize;
+      height: $imgSize;
+    }
+  }
+  @include imgSize(240px);
+  &.preview {
+    @include imgSize(440px);
   }
   .inner {
     width: 100%;

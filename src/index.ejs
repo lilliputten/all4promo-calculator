@@ -12,7 +12,7 @@
       <h1 class="pt-3 mt-3">Конструктор</h1>
       <section id="main">
         <div class="row">
-          <div class="col-lg-6 img-holder">
+          <div class="col-lg-3 col-xl-3 img-holder">
             <div class="svg-holder">
               <div v-bind:class="(!logo)?'hidden':''" class="logoHolder" ref="logoElement">
                 <img class="element" :src="logo" alt="" />
@@ -28,7 +28,7 @@
               </template>
             </div>
           </div>
-          <div class="col-lg-6">
+          <div class="col-lg-9 col-xl-9">
             <div id="grayBlock">
               <div class="row">
                 <div class="col-4">
@@ -177,64 +177,7 @@
 
       <section id="capture">
 
-        <h2 class="result-title subtitle mt-5">
-          Таблица цен (образец)
-        </h2>
-
-        <!-- price-table -->
-        <table class="table price-table">
-          <thead>
-            <tr>
-              <th v-if="isManage" class="material">Материал</th>
-              <th v-else="isManage" class="info"></th>
-              <th v-if="isManage" class="units">Ед. измерения</th>
-              <th v-if="isManage" class="unitMaterial">Расход материала за ед</th>
-              <th v-if="isManage" class="basicCost">Стоимость за м, кг, шт, усл</th>
-              <th v-if="isManage" class="unitCost">Стоимость за ед.</th>
-              <th v-else="isManage" class="unitCost">Стоимость</th>
-            </tr>
-          </thead>
-          <tbody v-if="isManage">
-            <tr v-for="price in filteredPrices" :data-idx="price._idx">
-              <td class="material">{{ price.material }}</td>
-              <td class="units">{{ price.units }}</td>
-              <td class="unitMaterial">{{ price.unitMaterial }}</td>
-              <td class="basicCost" :data-value="price.basicCost">
-                <input
-                  :data-idx="price._idx"
-                  class="form-control basicCostValue"
-                  _type="number"
-                  _v-model="price.basicCost"
-                  :value="formatPrice(price.basicCost)"
-                  v-on:change="onBasicCostChange"
-                />
-              </td>
-              <td class="unitCost">{{ formatPrice(price.unitCost) }}</td>
-            </tr>
-          </tbody>
-          <tfoot>
-            <tr class="priceUnit">
-              <td
-                v-bind:class="isManage ? 'material' : 'info'"
-                v-bind:colspan="isManage ? 4 : null"
-              >
-                Стоимость за ед. для клиента с НДС
-              </td>
-              <td class="unitCost">{{ formatPrice(priceUnit) }}</td>
-            </tr>
-            <tr class="priceTotal">
-              <td
-                v-bind:class="isManage ? 'material' : 'info'"
-                v-bind:colspan="isManage ? 4 : null"
-              >
-                Стоимость для клиента за тираж с НДС
-              </td>
-              <td class="unitCost">{{ formatPrice(priceTotal) }}</td>
-            </tr>
-          </tfoot>
-        </table>
-
-        <h2 class="result-title subtitle mt-5">Старая таблица</h2>
+        <h2 class="result-title subtitle mt-5">Параметры изделия</h2>
 
         <table class="table">
           <!--
@@ -314,29 +257,84 @@
               </p>
             </td>
           </tr>
-          <tr>
-            <td colspan="2" class="nobord">
-              <div class="svg-holder">
-                <div
-                  v-bind:class="(!logo)?'hidden':''"
-                  class="logoHolder bottom"
-                  ref="logoElementBottom"
-                >
-                  <img class="element" :src="logo" alt="" />
-                </div>
-                <template v-for="(type, index) in data.types">
-                  <template v-if="type?.selected && type?.svgNew">
-                    <template v-for="(el, index) in type.types">
-                      <template v-if="getSelected(el.options)?.svgNew">
-                        <div class="inner" v-html="getSelected(el.options).svgNew"></div>
-                      </template>
-                    </template>
-                  </template>
-                </template>
-              </div>
-            </td>
-          </tr>
         </table>
+
+        <h2 class="result-title subtitle mt-5">
+          Таблица цен (образец)
+        </h2>
+
+        <!-- price-table -->
+        <table class="table price-table">
+          <thead>
+            <tr>
+              <th v-if="isManage" class="material">Материал</th>
+              <th v-else="isManage" class="info"></th>
+              <th v-if="isManage" class="units">Ед. измерения</th>
+              <th v-if="isManage" class="unitMaterial">Расход материала за ед</th>
+              <th v-if="isManage" class="basicCost">Стоимость за м, кг, шт, усл</th>
+              <th v-if="isManage" class="unitCost">Стоимость за ед.</th>
+              <th v-else="isManage" class="unitCost">Стоимость</th>
+            </tr>
+          </thead>
+          <tbody v-if="isManage">
+            <tr v-for="price in filteredPrices" :data-idx="price._idx">
+              <td class="material">{{ price.material }}</td>
+              <td class="units">{{ price.units }}</td>
+              <td class="unitMaterial">{{ price.unitMaterial }}</td>
+              <td class="basicCost" :data-value="price.basicCost">
+                <input
+                  :data-idx="price._idx"
+                  class="form-control basicCostValue"
+                  _type="number"
+                  _v-model="price.basicCost"
+                  :value="formatPrice(price.basicCost)"
+                  v-on:change="onBasicCostChange"
+                />
+              </td>
+              <td class="unitCost">{{ formatPrice(price.unitCost) }}</td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr class="priceUnit">
+              <td
+                v-bind:class="isManage ? 'material' : 'info'"
+                v-bind:colspan="isManage ? 4 : null"
+              >
+                Стоимость за ед. для клиента с НДС
+              </td>
+              <td class="unitCost">{{ formatPrice(priceUnit) }}</td>
+            </tr>
+            <tr class="priceTotal">
+              <td
+                v-bind:class="isManage ? 'material' : 'info'"
+                v-bind:colspan="isManage ? 4 : null"
+              >
+                Стоимость для клиента за тираж с НДС
+              </td>
+              <td class="unitCost">{{ formatPrice(priceTotal) }}</td>
+            </tr>
+          </tfoot>
+        </table>
+
+        <!-- Preview -->
+        <div class="svg-holder preview">
+          <div
+            v-bind:class="(!logo)?'hidden':''"
+            class="logoHolder bottom"
+            ref="logoElementBottom"
+          >
+            <img class="element" :src="logo" alt="" />
+          </div>
+          <template v-for="(type, index) in data.types">
+            <template v-if="type?.selected && type?.svgNew">
+              <template v-for="(el, index) in type.types">
+                <template v-if="getSelected(el.options)?.svgNew">
+                  <div class="inner" v-html="getSelected(el.options).svgNew"></div>
+                </template>
+              </template>
+            </template>
+          </template>
+        </div>
 
         <div class="bottom">
           <p>Утвержденный макет является основанием для изготовления тиража</p>
