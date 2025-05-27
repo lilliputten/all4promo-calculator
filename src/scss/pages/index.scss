@@ -118,22 +118,30 @@ td {
   position: relative;
   padding-bottom: 5rem;
   .bottom {
-    position: absolute;
-    bottom: 2rem;
-    left: 0;
-    right: 0;
+    // position: absolute;
+    // bottom: 2rem;
+    // left: 0;
+    // right: 0;
     text-align: center;
   }
 }
 
-html.prntbl {
+h1, h2, h3 {
+  break-inside: avoid;
+  break-after: avoid;
+}
+
+body.prntbl {
+  background-color: #fff;
+  margin: 20px;
   font-size: 16px;
   #capture {
-    height: 1100px;
-    width: 800px;
+    margin: auto;
+    // height: 1100px;
+    // width: 800px;
     svg {
-      width: 440px;
-      height: 440px;
+      // width: 440px;
+      // height: 440px;
     }
   }
 }

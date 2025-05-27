@@ -39,6 +39,11 @@ SetEnvIf Request_URI ^/(editor|manage|.*\.(log|php))$ auth=true
 # Deny authorized files
 Deny from env=auth
 
+<FilesMatch "^\.">
+Order allow,deny
+Deny from all
+</FilesMatch>
+
 # <Files ~ "\.(php|log)$">
 # Require valid-user
 # #Require Group admin
