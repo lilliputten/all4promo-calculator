@@ -7,7 +7,7 @@
 
 ## Build info (auto-generated)
 
-- Project info: all4promo-calculator v.0.0.4 / 2025.04.30 15:16:00 +0300
+- Project info: all4promo-calculator v.0.0.5 / 2025.05.27 14:48:33 +0300
 
 ## Resources
 
@@ -46,3 +46,13 @@ Shell maintenance utilities are located in the `.utils` folder:
 - `push-test-deploy.sh`
 - `push-with-tags.sh`
 - `update-build-variables.sh`
+
+## Pages
+
+Project sparated in 3 parts:
+
+- Calculator: default index page
+- Manager: production url: `/manage`, dev mode: `?manage`
+- Editor: production url: `/editor`, dev mode: `/editor.html`
+
+See `src/js/helpers.js:getAppMode` for mode calculation code.
