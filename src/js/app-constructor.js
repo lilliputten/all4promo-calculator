@@ -16,10 +16,12 @@ import { isDev } from './config';
 import { showErrorToast, showSuccessToast } from './toast';
 import { ServerDataError } from './ServerDataError';
 import { saveCostChangesToServer } from './data';
-// import { debugDataStruct } from './helpers';
+import { debugDataStruct } from './helpers';
 
 /** DEBUG: Emulate changes at start */
 const debugInitialChanges = false;
+
+const showDebugDataStruct = true;
 
 /** Create global application
  * @param {DataJson} serverData
@@ -342,6 +344,33 @@ export function createConstructorApp(serverData, isManage) {
       }
       this.calcPrice('setProp', reasonId);
     },
+    /** Get classname for a particular data type
+     * @param {TypeType} obj
+     */
+    getClassByType(obj) {
+      const selected = [
+        // These titles should be marked as selected
+        'Нанесение',
+        'Бирки',
+        'Сигнальный образец',
+      ];
+      const { title } = obj;
+      const isSelected = selected.includes(title);
+      const className = [
+        // Combine class names
+        'mb-2',
+        isSelected && 'marked',
+      ]
+        .filter(Boolean)
+        .join(' ');
+      console.log('XXX', {
+        className,
+        isSelected,
+        title,
+        obj,
+      });
+      return className;
+    },
     /**
      * @param {any[]} arr
      */
@@ -566,7 +595,9 @@ export function createConstructorApp(serverData, isManage) {
     },
     async mounted() {
       const data = serverData;
-      // debugDataStruct(data);
+      if (showDebugDataStruct) {
+        debugDataStruct(data);
+      }
       this.data = data;
       // Select the first top-level type
       this.setList(0);

@@ -212,7 +212,7 @@
             </td>
           </tr>
           <tr v-for="index in Math.ceil((getSelected(data.types)?.types.length+1)/2)">
-            <td>
+            <td :set="item = getSelected(data.types).types[index*2-3]">
               <p class="mb-2" v-if="index===1">
                 <span class="fw-bold">{{data.title}}:</span>
                 {{getSelected(data.types)?.name}}
@@ -220,39 +220,39 @@
                   - {{getSelected(data.types)?.colors.find(color=>color.selected).name}}
                 </span>
               </p>
-              <p class="mb-2" v-if="index>1">
-                <span class="fw-bold">{{getSelected(data.types).types[index*2-3].title}}:</span>
+              <p v-if="index>1" v-bind:class="getClassByType(item)">
+                <span class="fw-bold">{{item.title}}:&nbsp;</span>
                 <span
-                  v-for="(opt,ind) in getSelected(data.types).types[index*2-3].options.filter(option=>option.selected)"
-                  >&nbsp;{{opt.name}}
+                  v-for="(opt,ind) in item.options.filter(option=>option.selected)"
+                  >{{opt.name}}
                   <span v-if="opt.selectionsChoose">({{opt.selectionsChoose}})</span
                   ><span v-if="opt.count" class="fw-bold">кол-во - {{opt.count}}</span>
                   <span
-                    v-if="getSelected(data.types).types[index*2-3].options.filter(option=>option.selected).length != ind+1"
+                    v-if="item.options.filter(option=>option.selected).length != ind+1"
                     >,&nbsp;&nbsp;</span
                   >
                 </span>
 
-                <span v-if="getSelected(data.types).types[index*2-3].colors"
-                  >-{{getSelected(data.types).types[index*2-3].colors.find(color=>color.selected).name}}</span
+                <span v-if="item.colors"
+                  >-{{item.colors.find(color=>color.selected).name}}</span
                 >
               </p>
             </td>
-            <td>
-              <p class="mb-2" v-if="getSelected(data.types).types[index*2-2]">
-                <span class="fw-bold">{{getSelected(data.types).types[index*2-2].title}}:</span>
+            <td :set="item = getSelected(data.types).types[index*2-2]">
+              <p v-bind:class="getClassByType(item)" v-if="item">
+                <span class="fw-bold">{{item.title}}:&nbsp;</span>
                 <span
-                  v-for="(opt,ind) in getSelected(data.types).types[index*2-2].options.filter(option=>option.selected)"
-                  >&nbsp;{{opt.name}}
+                  v-for="(opt,ind) in item.options.filter(option=>option.selected)"
+                  >{{opt.name}}
                   <span v-if="opt.selectionsChoose">({{opt.selectionsChoose}})</span
                   ><span v-if="opt.count" class="fw-bold">кол-во - {{opt.count}}</span
                   ><span
-                    v-if="getSelected(data.types).types[index*2-2].options.filter(option=>option.selected).length != ind+1"
+                    v-if="item.options.filter(option=>option.selected).length != ind+1"
                     >,&nbsp;&nbsp;</span
                   ></span
                 >
-                <span v-if="getSelected(data.types).types[index*2-2].colors"
-                  >-{{getSelected(data.types).types[index*2-2].colors.find(color=>color.selected).name}}</span
+                <span v-if="item.colors"
+                  >-{{item.colors.find(color=>color.selected).name}}</span
                 >
               </p>
             </td>

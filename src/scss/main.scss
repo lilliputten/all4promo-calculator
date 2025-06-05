@@ -14,14 +14,14 @@ html {
   }
 }
 body {
-  * {
+  // * {
     font-family: 'Muli', arial, serif;
     font-size: $fz16;
     color: $black;
     @include media-breakpoint-down(md) {
       font-size: $fz16;
     }
-  }
+  // }
   a {
     color: $blue;
     transition: all 200ms !important;

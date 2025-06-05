@@ -16,7 +16,7 @@
                 {
                     "material": "нитки",
                     "units": "боб",
-                    "unitMaterial": "0.0-7",
+                    "unitMaterial": 0.7,
                     "basicCost": 187,
                     "unitCost": 13.09
                 },
