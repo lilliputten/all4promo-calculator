@@ -35,12 +35,10 @@
   }
   @include imgSize(240px);
   // NOTE: All previews should be the same size to allow logo resizes & moves to be synced
-  // &.preview {
-  //   @include imgSize(440px);
-  // }
-  // body.prntbl &.preview {
-  //   @include imgSize(340px);
-  // }
+  body:not(.prntbl) &.preview {
+    // ...But we can use zoom
+    zoom: 1.5;
+  }
   .inner {
     width: 100%;
     height: 100%;

@@ -16,9 +16,9 @@
                 {
                     "material": "нитки",
                     "units": "боб",
-                    "unitMaterial": 0.7,
+                    "unitMaterial": 0.07,
                     "basicCost": 187,
-                    "unitCost": 13.09
+                    "unitCost": 13.090000000000002
                 },
                 {
                     "material": "пакет",
@@ -35,7 +35,9 @@
                     "unitCost": 550
                 },
                 {
-                    "conditions": ["Шнурки / Есть"],
+                    "conditions": [
+                        "Шнурки / Есть"
+                    ],
                     "material": "шнур",
                     "units": "м",
                     "unitMaterial": 1.3,
@@ -43,7 +45,9 @@
                     "unitCost": 19.5
                 },
                 {
-                    "conditions": ["Шнурки / Есть"],
+                    "conditions": [
+                        "Шнурки / Есть"
+                    ],
                     "material": "люверсы (2 шт)",
                     "units": "комп",
                     "unitMaterial": 1,
@@ -51,7 +55,9 @@
                     "unitCost": 4.5
                 },
                 {
-                    "conditions": ["Молния / Есть"],
+                    "conditions": [
+                        "Молния / Есть"
+                    ],
                     "material": "молния (75 см)",
                     "units": "шт",
                     "unitMaterial": 1,
@@ -59,7 +65,9 @@
                     "unitCost": 150
                 },
                 {
-                    "conditions": ["Отделка низ и рукава / Рибана"],
+                    "conditions": [
+                        "Отделка низ и рукава / Рибана"
+                    ],
                     "material": "рибана",
                     "units": "кг",
                     "unitMaterial": 0.17,
@@ -67,7 +75,9 @@
                     "unitCost": 197.2
                 },
                 {
-                    "conditions": ["Отделка низ и рукава / Кашкорсе"],
+                    "conditions": [
+                        "Отделка низ и рукава / Кашкорсе"
+                    ],
                     "material": "кашкорсе",
                     "units": "кг",
                     "unitMaterial": 0.17,
@@ -1478,6 +1488,210 @@
                         }
                     ]
                 }
+            ],
+            "prices": [
+                {
+                    "material": "киперная лента",
+                    "units": "м",
+                    "unitMaterial": 0.25,
+                    "basicCost": 25.8,
+                    "unitCost": 6.45
+                },
+                {
+                    "material": "нитки",
+                    "units": "боб",
+                    "unitMaterial": 0.07,
+                    "basicCost": 187,
+                    "unitCost": 13.090000000000002
+                },
+                {
+                    "material": "пакет",
+                    "units": "шт",
+                    "unitMaterial": 1,
+                    "basicCost": 4.8,
+                    "unitCost": 4.8
+                },
+                {
+                    "material": "пошив",
+                    "units": "усл",
+                    "unitMaterial": 1,
+                    "basicCost": 450,
+                    "unitCost": 450
+                },
+                {
+                    "conditions": [
+                        "Отделка низ и рукава / Рибана"
+                    ],
+                    "material": "рибана",
+                    "units": "кг",
+                    "unitMaterial": 0.17,
+                    "basicCost": 1160,
+                    "unitCost": 197.20000000000002
+                },
+                {
+                    "conditions": [
+                        "Отделка низ и рукава / Кашкорсе"
+                    ],
+                    "material": "кашкорсе",
+                    "units": "кг",
+                    "unitMaterial": 0.17,
+                    "basicCost": 1160,
+                    "unitCost": 197.20000000000002
+                },
+                {
+                    "conditions": [
+                        "Выбор ткани / Футер 2х нитка без начеса / 240-260 гр",
+                        "Силуэт / Стандарт"
+                    ],
+                    "material": "футер 2-х нитка 240-260г без начеса",
+                    "units": "кг",
+                    "unitMaterial": 0.48,
+                    "basicCost": 1550,
+                    "unitCost": 744
+                },
+                {
+                    "conditions": [
+                        "Выбор ткани / Футер 2х нитка с начесом / 240-260 гр",
+                        "Силуэт / Стандарт"
+                    ],
+                    "material": "футер 2-х нитка 240-260г с начесом",
+                    "units": "кг",
+                    "unitMaterial": 0.45,
+                    "basicCost": 1550,
+                    "unitCost": 697.5
+                },
+                {
+                    "conditions": [
+                        "Выбор ткани / Футер 3х нитка без начеса / 320 гр",
+                        "Силуэт / Стандарт"
+                    ],
+                    "material": "футер 3-х нитка 320г без начеса",
+                    "units": "кг",
+                    "unitMaterial": 0.68,
+                    "basicCost": 1100,
+                    "unitCost": 748
+                },
+                {
+                    "conditions": [
+                        "Выбор ткани / Футер 3х нитка с начесом / 320 гр",
+                        "Силуэт / Стандарт"
+                    ],
+                    "material": "футер 3-х нитка 320г с начесом",
+                    "units": "кг",
+                    "unitMaterial": 0.58,
+                    "basicCost": 1100,
+                    "unitCost": 638
+                },
+                {
+                    "conditions": [
+                        "Выбор ткани / Футер 3х нитка без начеса / 350 гр",
+                        "Силуэт / Стандарт"
+                    ],
+                    "material": "футер 3-х нитка 350г без начеса",
+                    "units": "кг",
+                    "unitMaterial": 0.75,
+                    "basicCost": 1500,
+                    "unitCost": 1125
+                },
+                {
+                    "conditions": [
+                        "Выбор ткани / Футер 3х нитка с начесом / 350 гр",
+                        "Силуэт / Стандарт"
+                    ],
+                    "material": "футер 3-х нитка 350г с начесом",
+                    "units": "кг",
+                    "unitMaterial": 0.7,
+                    "basicCost": 1500,
+                    "unitCost": 1050
+                },
+                {
+                    "conditions": [
+                        "Выбор ткани / Футер 3х нитка без начеса / 420 гр",
+                        "Силуэт / Стандарт"
+                    ],
+                    "material": "футер 3-х нитка 420г без начеса",
+                    "units": "кг",
+                    "unitMaterial": 1,
+                    "basicCost": 1500,
+                    "unitCost": 1500
+                },
+                {
+                    "conditions": [
+                        "Выбор ткани / Футер 2х нитка без начеса / 240-260 гр",
+                        "Силуэт / Оверсайз"
+                    ],
+                    "material": "футер 2-х нитка 240-260г без начеса",
+                    "units": "кг",
+                    "unitMaterial": 0.62,
+                    "basicCost": 1550,
+                    "unitCost": 961
+                },
+                {
+                    "conditions": [
+                        "Выбор ткани / Футер 2х нитка с начесом / 240-260 гр",
+                        "Силуэт / Оверсайз"
+                    ],
+                    "material": "футер 2-х нитка 240-260г с начесом",
+                    "units": "кг",
+                    "unitMaterial": 0.59,
+                    "basicCost": 1550,
+                    "unitCost": 914.5
+                },
+                {
+                    "conditions": [
+                        "Выбор ткани / Футер 3х нитка без начеса / 320 гр",
+                        "Силуэт / Оверсайз"
+                    ],
+                    "material": "футер 3-х нитка 320г без начеса",
+                    "units": "кг",
+                    "unitMaterial": 0.89,
+                    "basicCost": 1100,
+                    "unitCost": 979
+                },
+                {
+                    "conditions": [
+                        "Выбор ткани / Футер 3х нитка с начесом / 320 гр",
+                        "Силуэт / Оверсайз"
+                    ],
+                    "material": "футер 3-х нитка 320г с начесом",
+                    "units": "кг",
+                    "unitMaterial": 0.75,
+                    "basicCost": 1100,
+                    "unitCost": 825
+                },
+                {
+                    "conditions": [
+                        "Выбор ткани / Футер 3х нитка без начеса / 350 гр",
+                        "Силуэт / Оверсайз"
+                    ],
+                    "material": "футер 3-х нитка 350г без начеса",
+                    "units": "кг",
+                    "unitMaterial": 1,
+                    "basicCost": 1500,
+                    "unitCost": 1500
+                },
+                {
+                    "conditions": [
+                        "Выбор ткани / Футер 3х нитка с начесом / 350 гр",
+                        "Силуэт / Оверсайз"
+                    ],
+                    "material": "футер 3-х нитка 350г с начесом",
+                    "units": "кг",
+                    "unitMaterial": 0.9,
+                    "basicCost": 1500,
+                    "unitCost": 1350
+                },
+                {
+                    "conditions": [
+                        "Выбор ткани / Футер 3х нитка без начеса / 420 гр",
+                        "Силуэт / Оверсайз"
+                    ],
+                    "material": "футер 3-х нитка 420г без начеса",
+                    "units": "кг",
+                    "unitMaterial": 1.2,
+                    "basicCost": 1500,
+                    "unitCost": 1800
+                }
             ]
         },
         {
@@ -1961,6 +2175,320 @@
                         }
                     ]
                 }
+            ],
+            "prices": [
+                {
+                    "material": "киперная лента",
+                    "units": "м",
+                    "unitMaterial": 0.35,
+                    "basicCost": 25.8,
+                    "unitCost": 9.03
+                },
+                {
+                    "material": "нитки",
+                    "units": "боб",
+                    "unitMaterial": 0.07,
+                    "basicCost": 187,
+                    "unitCost": 13.090000000000002
+                },
+                {
+                    "material": "пакет",
+                    "units": "шт",
+                    "unitMaterial": 1,
+                    "basicCost": 4.8,
+                    "unitCost": 4.8
+                },
+                {
+                    "material": "пошив",
+                    "units": "усл",
+                    "unitMaterial": 1,
+                    "basicCost": 250,
+                    "unitCost": 250
+                },
+                {
+                    "conditions": [
+                        "Горловина / Рибана"
+                    ],
+                    "material": "рибана",
+                    "units": "кг",
+                    "unitMaterial": 0.02,
+                    "basicCost": 1160,
+                    "unitCost": 23.2
+                },
+                {
+                    "conditions": [
+                        "Горловина / Кашкорсе"
+                    ],
+                    "material": "кашкорсе",
+                    "units": "кг",
+                    "unitMaterial": 0.02,
+                    "basicCost": 1160,
+                    "unitCost": 23.2
+                },
+                {
+                    "conditions": [
+                        "Выбор ткани / Кулирка хб / 140 гр",
+                        "Силуэт / Стандарт"
+                    ],
+                    "material": "кулирка хб 140г",
+                    "units": "кг",
+                    "unitMaterial": 0.25,
+                    "basicCost": 940,
+                    "unitCost": 235
+                },
+                {
+                    "conditions": [
+                        "Выбор ткани / Кулирка хб / 160 гр",
+                        "Силуэт / Стандарт"
+                    ],
+                    "material": "кулирка хб 160г",
+                    "units": "кг",
+                    "unitMaterial": 0.25,
+                    "basicCost": 940,
+                    "unitCost": 235
+                },
+                {
+                    "conditions": [
+                        "Выбор ткани / Кулирка хб / 180 гр",
+                        "Силуэт / Стандарт"
+                    ],
+                    "material": "кулирка хб 180г",
+                    "units": "кг",
+                    "unitMaterial": 0.25,
+                    "basicCost": 940,
+                    "unitCost": 235
+                },
+                {
+                    "conditions": [
+                        "Выбор ткани / Кулирка хб / 250 гр",
+                        "Силуэт / Стандарт"
+                    ],
+                    "material": "кулирка хб 250г",
+                    "units": "кг",
+                    "unitMaterial": 0.38,
+                    "basicCost": 950,
+                    "unitCost": 361
+                },
+                {
+                    "conditions": [
+                        "Выбор ткани / Кулирка хб / 300 гр",
+                        "Силуэт / Стандарт"
+                    ],
+                    "material": "кулирка хб 300г",
+                    "units": "кг",
+                    "unitMaterial": 0.4,
+                    "basicCost": 1170,
+                    "unitCost": 468
+                },
+                {
+                    "conditions": [
+                        "Выбор ткани / Кулирка хб/эластан / 180 гр",
+                        "Силуэт / Стандарт"
+                    ],
+                    "material": "кулирка хб/эластан 180г",
+                    "units": "кг",
+                    "unitMaterial": 0.25,
+                    "basicCost": 1150,
+                    "unitCost": 287.5
+                },
+                {
+                    "conditions": [
+                        "Выбор ткани / Кулирка хб/эластан / 200-220 гр",
+                        "Силуэт / Стандарт"
+                    ],
+                    "material": "кулирка хб/эластан 200-220г",
+                    "units": "кг",
+                    "unitMaterial": 0.35,
+                    "basicCost": 1150,
+                    "unitCost": 402.5
+                },
+                {
+                    "conditions": [
+                        "Выбор ткани / Футер 2х нитка / 240-260 гр",
+                        "Силуэт / Стандарт"
+                    ],
+                    "material": "футер 2-х нитка 240-260г ",
+                    "units": "кг",
+                    "unitMaterial": 0.4,
+                    "basicCost": 1550,
+                    "unitCost": 620
+                },
+                {
+                    "conditions": [
+                        "Выбор ткани / Кулирка хб / 140 гр",
+                        "Силуэт / Оверсайз"
+                    ],
+                    "material": "кулирка хб 140г",
+                    "units": "кг",
+                    "unitMaterial": 0.3,
+                    "basicCost": 940,
+                    "unitCost": 282
+                },
+                {
+                    "conditions": [
+                        "Выбор ткани / Кулирка хб / 160 гр",
+                        "Силуэт / Оверсайз"
+                    ],
+                    "material": "кулирка хб 160г",
+                    "units": "кг",
+                    "unitMaterial": 0.3,
+                    "basicCost": 940,
+                    "unitCost": 282
+                },
+                {
+                    "conditions": [
+                        "Выбор ткани / Кулирка хб / 180 гр",
+                        "Силуэт / Оверсайз"
+                    ],
+                    "material": "кулирка хб 180г",
+                    "units": "кг",
+                    "unitMaterial": 0.3,
+                    "basicCost": 940,
+                    "unitCost": 282
+                },
+                {
+                    "conditions": [
+                        "Выбор ткани / Кулирка хб / 250 гр",
+                        "Силуэт / Оверсайз"
+                    ],
+                    "material": "кулирка хб 250г",
+                    "units": "кг",
+                    "unitMaterial": 0.4,
+                    "basicCost": 950,
+                    "unitCost": 380
+                },
+                {
+                    "conditions": [
+                        "Выбор ткани / Кулирка хб / 300 гр",
+                        "Силуэт / Оверсайз"
+                    ],
+                    "material": "кулирка хб 300г",
+                    "units": "кг",
+                    "unitMaterial": 0.5,
+                    "basicCost": 1170,
+                    "unitCost": 585
+                },
+                {
+                    "conditions": [
+                        "Выбор ткани / Кулирка хб/эластан / 180 гр",
+                        "Силуэт / Оверсайз"
+                    ],
+                    "material": "кулирка хб/эластан 180г",
+                    "units": "кг",
+                    "unitMaterial": 0.35,
+                    "basicCost": 1150,
+                    "unitCost": 402.5
+                },
+                {
+                    "conditions": [
+                        "Выбор ткани / Кулирка хб/эластан / 200-220 гр",
+                        "Силуэт / Оверсайз"
+                    ],
+                    "material": "кулирка хб/эластан 200-220г",
+                    "units": "кг",
+                    "unitMaterial": 0.4,
+                    "basicCost": 1150,
+                    "unitCost": 460
+                },
+                {
+                    "conditions": [
+                        "Выбор ткани / Футер 2х нитка / 240-260 гр",
+                        "Силуэт / Оверсайз"
+                    ],
+                    "material": "футер 2-х нитка 240-260г ",
+                    "units": "кг",
+                    "unitMaterial": 0.5,
+                    "basicCost": 1550,
+                    "unitCost": 775
+                },
+                {
+                    "conditions": [
+                        "Выбор ткани / Кулирка хб / 140 гр",
+                        "Силуэт / Приталенный"
+                    ],
+                    "material": "кулирка хб 140г",
+                    "units": "кг",
+                    "unitMaterial": 0.25,
+                    "basicCost": 940,
+                    "unitCost": 235
+                },
+                {
+                    "conditions": [
+                        "Выбор ткани / Кулирка хб / 160 гр",
+                        "Силуэт / Приталенный"
+                    ],
+                    "material": "кулирка хб 160г",
+                    "units": "кг",
+                    "unitMaterial": 0.25,
+                    "basicCost": 940,
+                    "unitCost": 235
+                },
+                {
+                    "conditions": [
+                        "Выбор ткани / Кулирка хб / 180 гр",
+                        "Силуэт / Приталенный"
+                    ],
+                    "material": "кулирка хб 180г",
+                    "units": "кг",
+                    "unitMaterial": 0.25,
+                    "basicCost": 940,
+                    "unitCost": 235
+                },
+                {
+                    "conditions": [
+                        "Выбор ткани / Кулирка хб / 250 гр",
+                        "Силуэт / Приталенный"
+                    ],
+                    "material": "кулирка хб 250г",
+                    "units": "кг",
+                    "unitMaterial": 0.38,
+                    "basicCost": 950,
+                    "unitCost": 361
+                },
+                {
+                    "conditions": [
+                        "Выбор ткани / Кулирка хб / 300 гр",
+                        "Силуэт / Приталенный"
+                    ],
+                    "material": "кулирка хб 300г",
+                    "units": "кг",
+                    "unitMaterial": 0.4,
+                    "basicCost": 1170,
+                    "unitCost": 468
+                },
+                {
+                    "conditions": [
+                        "Выбор ткани / Кулирка хб/эластан / 180 гр",
+                        "Силуэт / Приталенный"
+                    ],
+                    "material": "кулирка хб/эластан 180г",
+                    "units": "кг",
+                    "unitMaterial": 0.25,
+                    "basicCost": 1150,
+                    "unitCost": 287.5
+                },
+                {
+                    "conditions": [
+                        "Выбор ткани / Кулирка хб/эластан / 200-220 гр",
+                        "Силуэт / Приталенный"
+                    ],
+                    "material": "кулирка хб/эластан 200-220г",
+                    "units": "кг",
+                    "unitMaterial": 0.35,
+                    "basicCost": 1150,
+                    "unitCost": 402.5
+                },
+                {
+                    "conditions": [
+                        "Выбор ткани / Футер 2х нитка / 240-260 гр",
+                        "Силуэт / Приталенный"
+                    ],
+                    "material": "футер 2-х нитка 240-260г ",
+                    "units": "кг",
+                    "unitMaterial": 0.4,
+                    "basicCost": 1550,
+                    "unitCost": 620
+                }
             ]
         },
         {
@@ -2443,6 +2971,320 @@
                             "selectionsChoose": "Силикон"
                         }
                     ]
+                }
+            ],
+            "prices": [
+                {
+                    "material": "киперная лента",
+                    "units": "м",
+                    "unitMaterial": 0.35,
+                    "basicCost": 25.8,
+                    "unitCost": 9.03
+                },
+                {
+                    "material": "нитки",
+                    "units": "боб",
+                    "unitMaterial": 0.07,
+                    "basicCost": 187,
+                    "unitCost": 13.090000000000002
+                },
+                {
+                    "material": "пакет",
+                    "units": "шт",
+                    "unitMaterial": 1,
+                    "basicCost": 4.8,
+                    "unitCost": 4.8
+                },
+                {
+                    "material": "пошив",
+                    "units": "усл",
+                    "unitMaterial": 1,
+                    "basicCost": 350,
+                    "unitCost": 350
+                },
+                {
+                    "conditions": [
+                        "Горловина / Рибана"
+                    ],
+                    "material": "рибана",
+                    "units": "кг",
+                    "unitMaterial": 0.15,
+                    "basicCost": 1160,
+                    "unitCost": 174
+                },
+                {
+                    "conditions": [
+                        "Горловина / Кашкорсе"
+                    ],
+                    "material": "кашкорсе",
+                    "units": "кг",
+                    "unitMaterial": 0.15,
+                    "basicCost": 1160,
+                    "unitCost": 174
+                },
+                {
+                    "conditions": [
+                        "Выбор ткани / Кулирка хб / 140 гр",
+                        "Силуэт / Стандарт"
+                    ],
+                    "material": "кулирка хб 140г",
+                    "units": "кг",
+                    "unitMaterial": 0.3,
+                    "basicCost": 940,
+                    "unitCost": 282
+                },
+                {
+                    "conditions": [
+                        "Выбор ткани / Кулирка хб / 160 гр",
+                        "Силуэт / Стандарт"
+                    ],
+                    "material": "кулирка хб 160г",
+                    "units": "кг",
+                    "unitMaterial": 0.3,
+                    "basicCost": 940,
+                    "unitCost": 282
+                },
+                {
+                    "conditions": [
+                        "Выбор ткани / Кулирка хб / 180 гр",
+                        "Силуэт / Стандарт"
+                    ],
+                    "material": "кулирка хб 180г",
+                    "units": "кг",
+                    "unitMaterial": 0.3,
+                    "basicCost": 940,
+                    "unitCost": 282
+                },
+                {
+                    "conditions": [
+                        "Выбор ткани / Кулирка хб / 250 гр",
+                        "Силуэт / Стандарт"
+                    ],
+                    "material": "кулирка хб 180г",
+                    "units": "кг",
+                    "unitMaterial": 0.48,
+                    "basicCost": 950,
+                    "unitCost": 456
+                },
+                {
+                    "conditions": [
+                        "Выбор ткани / Кулирка хб / 300 гр",
+                        "Силуэт / Стандарт"
+                    ],
+                    "material": "кулирка хб 300г",
+                    "units": "кг",
+                    "unitMaterial": 0.5,
+                    "basicCost": 1170,
+                    "unitCost": 585
+                },
+                {
+                    "conditions": [
+                        "Выбор ткани / Кулирка хб/эластан / 180 гр",
+                        "Силуэт / Стандарт"
+                    ],
+                    "material": "кулирка хб/эластан 180г",
+                    "units": "кг",
+                    "unitMaterial": 0.4,
+                    "basicCost": 1150,
+                    "unitCost": 460
+                },
+                {
+                    "conditions": [
+                        "Выбор ткани / Кулирка хб/эластан / 200-220 гр",
+                        "Силуэт / Стандарт"
+                    ],
+                    "material": "кулирка хб/эластан 200-220г",
+                    "units": "кг",
+                    "unitMaterial": 0.45,
+                    "basicCost": 1150,
+                    "unitCost": 517.5
+                },
+                {
+                    "conditions": [
+                        "Выбор ткани / Футер 2х нитка / 240-260 гр",
+                        "Силуэт / Стандарт"
+                    ],
+                    "material": "футер 2-х нитка 240-260г ",
+                    "units": "кг",
+                    "unitMaterial": 0.5,
+                    "basicCost": 1550,
+                    "unitCost": 775
+                },
+                {
+                    "conditions": [
+                        "Выбор ткани / Кулирка хб / 140 гр",
+                        "Силуэт / Оверсайз"
+                    ],
+                    "material": "кулирка хб 140г",
+                    "units": "кг",
+                    "unitMaterial": 0.4,
+                    "basicCost": 940,
+                    "unitCost": 376
+                },
+                {
+                    "conditions": [
+                        "Выбор ткани / Кулирка хб / 160 гр",
+                        "Силуэт / Оверсайз"
+                    ],
+                    "material": "кулирка хб 160г",
+                    "units": "кг",
+                    "unitMaterial": 0.4,
+                    "basicCost": 940,
+                    "unitCost": 376
+                },
+                {
+                    "conditions": [
+                        "Выбор ткани / Кулирка хб / 180 гр",
+                        "Силуэт / Оверсайз"
+                    ],
+                    "material": "кулирка хб 180г",
+                    "units": "кг",
+                    "unitMaterial": 0.4,
+                    "basicCost": 940,
+                    "unitCost": 376
+                },
+                {
+                    "conditions": [
+                        "Выбор ткани / Кулирка хб / 250 гр",
+                        "Силуэт / Оверсайз"
+                    ],
+                    "material": "кулирка хб 250г",
+                    "units": "кг",
+                    "unitMaterial": 0.5,
+                    "basicCost": 950,
+                    "unitCost": 475
+                },
+                {
+                    "conditions": [
+                        "Выбор ткани / Кулирка хб / 300 гр",
+                        "Силуэт / Оверсайз"
+                    ],
+                    "material": "кулирка хб 300г",
+                    "units": "кг",
+                    "unitMaterial": 0.65,
+                    "basicCost": 1170,
+                    "unitCost": 760.5
+                },
+                {
+                    "conditions": [
+                        "Выбор ткани / Кулирка хб/эластан / 180 гр",
+                        "Силуэт / Оверсайз"
+                    ],
+                    "material": "кулирка хб/эластан 180г",
+                    "units": "кг",
+                    "unitMaterial": 0.5,
+                    "basicCost": 1150,
+                    "unitCost": 575
+                },
+                {
+                    "conditions": [
+                        "Выбор ткани / Кулирка хб/эластан / 200-220 гр",
+                        "Силуэт / Оверсайз"
+                    ],
+                    "material": "кулирка хб/эластан 200-220г",
+                    "units": "кг",
+                    "unitMaterial": 0.55,
+                    "basicCost": 1150,
+                    "unitCost": 632.5
+                },
+                {
+                    "conditions": [
+                        "Выбор ткани / Футер 2х нитка / 240-260 гр",
+                        "Силуэт / Оверсайз"
+                    ],
+                    "material": "футер 2-х нитка 240-260г ",
+                    "units": "кг",
+                    "unitMaterial": 0.65,
+                    "basicCost": 1550,
+                    "unitCost": 1007.5
+                },
+                {
+                    "conditions": [
+                        "Выбор ткани / Кулирка хб / 140 гр",
+                        "Силуэт / Приталенный"
+                    ],
+                    "material": "кулирка хб 140г",
+                    "units": "кг",
+                    "unitMaterial": 0.3,
+                    "basicCost": 940,
+                    "unitCost": 282
+                },
+                {
+                    "conditions": [
+                        "Выбор ткани / Кулирка хб / 160 гр",
+                        "Силуэт / Приталенный"
+                    ],
+                    "material": "кулирка хб 160г",
+                    "units": "кг",
+                    "unitMaterial": 0.3,
+                    "basicCost": 940,
+                    "unitCost": 282
+                },
+                {
+                    "conditions": [
+                        "Выбор ткани / Кулирка хб / 180 гр",
+                        "Силуэт / Приталенный"
+                    ],
+                    "material": "кулирка хб 180г",
+                    "units": "кг",
+                    "unitMaterial": 0.3,
+                    "basicCost": 940,
+                    "unitCost": 282
+                },
+                {
+                    "conditions": [
+                        "Выбор ткани / Кулирка хб / 250 гр",
+                        "Силуэт / Приталенный"
+                    ],
+                    "material": "кулирка хб 250г",
+                    "units": "кг",
+                    "unitMaterial": 0.48,
+                    "basicCost": 950,
+                    "unitCost": 456
+                },
+                {
+                    "conditions": [
+                        "Выбор ткани / Кулирка хб / 300 гр",
+                        "Силуэт / Приталенный"
+                    ],
+                    "material": "кулирка хб 300г",
+                    "units": "кг",
+                    "unitMaterial": 0.5,
+                    "basicCost": 1170,
+                    "unitCost": 585
+                },
+                {
+                    "conditions": [
+                        "Выбор ткани / Кулирка хб/эластан / 180 гр",
+                        "Силуэт / Приталенный"
+                    ],
+                    "material": "кулирка хб/эластан 180г",
+                    "units": "кг",
+                    "unitMaterial": 0.4,
+                    "basicCost": 1150,
+                    "unitCost": 460
+                },
+                {
+                    "conditions": [
+                        "Выбор ткани / Кулирка хб/эластан / 200-220 гр",
+                        "Силуэт / Приталенный"
+                    ],
+                    "material": "кулирка хб/эластан 200-220г",
+                    "units": "кг",
+                    "unitMaterial": 0.45,
+                    "basicCost": 1150,
+                    "unitCost": 517.5
+                },
+                {
+                    "conditions": [
+                        "Выбор ткани / Футер 2х нитка / 240-260 гр",
+                        "Силуэт / Приталенный"
+                    ],
+                    "material": "футер 2-х нитка 240-260г ",
+                    "units": "кг",
+                    "unitMaterial": 0.5,
+                    "basicCost": 1550,
+                    "unitCost": 775
                 }
             ]
         }

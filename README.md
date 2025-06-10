@@ -7,7 +7,7 @@
 
 ## Build info (auto-generated)
 
-- Project info: all4promo-calculator v.0.0.7 / 2025.06.10 16:44:36 +0300
+- Project info: all4promo-calculator v.0.0.7 / 2025.06.10 16:53:04 +0300
 
 ## Resources
 
