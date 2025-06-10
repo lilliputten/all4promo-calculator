@@ -15,15 +15,15 @@
   justify-content: center;
 }
 .svg-holder {
+  break-inside: avoid;
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
   margin: auto;
   @mixin imgSize($imgSize) {
-    // $imgSize: 240px;
     height: $imgSize;
-    width: $imgSize;
+    // width: $imgSize;
     min-width: $imgSize;
     img,
     svg {
@@ -34,6 +34,9 @@
   @include imgSize(240px);
   &.preview {
     @include imgSize(440px);
+  }
+  body.prntbl &.preview {
+    @include imgSize(340px);
   }
   .inner {
     width: 100%;
@@ -125,10 +128,7 @@ td {
   position: relative;
   padding-bottom: 5rem;
   .bottom {
-    // position: absolute;
-    // bottom: 2rem;
-    // left: 0;
-    // right: 0;
+    break-inside: avoid;
     text-align: center;
   }
 }
@@ -141,15 +141,9 @@ h1, h2, h3 {
 body.prntbl {
   background-color: #fff;
   margin: 20px;
-  font-size: 16px;
+  font-size: 12px;
   #capture {
     margin: auto;
-    // height: 1100px;
-    // width: 800px;
-    svg {
-      // width: 440px;
-      // height: 440px;
-    }
   }
 }
 

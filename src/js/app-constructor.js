@@ -358,17 +358,11 @@ export function createConstructorApp(serverData, isManage) {
       const isSelected = selected.includes(title);
       const className = [
         // Combine class names
-        'mb-2',
+        // 'mb-2',
         isSelected && 'marked',
       ]
         .filter(Boolean)
         .join(' ');
-      console.log('XXX', {
-        className,
-        isSelected,
-        title,
-        obj,
-      });
       return className;
     },
     /**
@@ -383,10 +377,21 @@ export function createConstructorApp(serverData, isManage) {
       if (!htmlNode) {
         throw new Error('Не удаётся найти элемент html');
       }
+      const doDebug = false && isDev;
       const nWindow = window.open(
         '',
         '_blank',
-        'left=0,top=0,width=700,height=600,toolbar=0,scrollbars=0,status=0',
+        [
+          !doDebug && 'left=0',
+          !doDebug && 'top=0',
+          !doDebug && 'width=700',
+          !doDebug && 'height=600',
+          !doDebug && 'toolbar=0',
+          !doDebug && 'scrollbars=0',
+          !doDebug && 'status=0',
+        ]
+          .filter(Boolean)
+          .join(','),
       );
       if (nWindow) {
         const nDoc = nWindow.document;
@@ -403,8 +408,10 @@ export function createConstructorApp(serverData, isManage) {
         nDoc.body.appendChild(newNode);
         setTimeout(() => {
           nWindow.focus();
+          // if (!isDev) {
           nWindow.print();
           nWindow.close();
+          // }
         }, 100);
 
         /* // Old way: using html2canvas

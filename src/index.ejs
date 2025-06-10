@@ -180,40 +180,22 @@
         <h2 class="result-title subtitle mt-5">Параметры изделия</h2>
 
         <table class="table">
-          <!--
-          <tr>
-            <td colspan="2">
-              <div class="d-flex align-items-center justify-content-between">
-                <h1 class="pb-3 m-0">РПК «Пи-Ай-Ви»</h1>
-                <span class="d-flex aling-items-center fw-bold">
-                  {{date.getDate()+'.'+String(date.getMonth()+1).padStart(2,
-                  '0')+'.'+date.getFullYear()}}
-                </span>
-              </div>
-            </td>
-          </tr>
-          <tr>
-            <td colspan="2">
-              <p class="mb-2"><span class="fw-bold">Стоимость:</span> {{price}}</p>
-            </td>
-          </tr>
-          -->
           <tr>
             <td>
-              <p class="mb-2"><span class="fw-bold">Клиент:</span> {{title}}</p>
+              <p><span class="fw-bold">Клиент:</span> {{title}}</p>
             </td>
             <td>
-              <p class="mb-2"><span class="fw-bold">Тираж:</span> {{edition}}</p>
+              <p><span class="fw-bold">Тираж:</span> {{edition}}</p>
             </td>
           </tr>
           <tr>
             <td colspan="2">
-              <p class="mb-2"><span class="fw-bold">Комментарий:</span> {{comment}}</p>
+              <p><span class="fw-bold">Комментарий:</span> {{comment}}</p>
             </td>
           </tr>
           <tr v-for="index in Math.ceil((getSelected(data.types)?.types.length+1)/2)">
             <td :set="item = getSelected(data.types).types[index*2-3]">
-              <p class="mb-2" v-if="index===1">
+              <p v-if="index===1">
                 <span class="fw-bold">{{data.title}}:</span>
                 {{getSelected(data.types)?.name}}
                 <span v-if="getSelected(data.types)?.colors">
