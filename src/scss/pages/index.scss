@@ -23,21 +23,24 @@
   margin: auto;
   @mixin imgSize($imgSize) {
     height: $imgSize;
-    // width: $imgSize;
+    width: $imgSize;
     min-width: $imgSize;
-    img,
-    svg {
-      width: $imgSize;
-      height: $imgSize;
+    .inner {
+      img,
+      svg {
+        width: $imgSize;
+        height: $imgSize;
+      }
     }
   }
   @include imgSize(240px);
-  &.preview {
-    @include imgSize(440px);
-  }
-  body.prntbl &.preview {
-    @include imgSize(340px);
-  }
+  // NOTE: All previews should be the same size to allow logo resizes & moves to be synced
+  // &.preview {
+  //   @include imgSize(440px);
+  // }
+  // body.prntbl &.preview {
+  //   @include imgSize(340px);
+  // }
   .inner {
     width: 100%;
     height: 100%;
@@ -62,7 +65,7 @@
     &.hidden {
       visibility: hidden;
     }
-    &:not(.bottom) {
+    &:not(.bottomHolder) {
       resize: both;
     }
   }
@@ -133,7 +136,9 @@ td {
   }
 }
 
-h1, h2, h3 {
+h1,
+h2,
+h3 {
   break-inside: avoid;
   break-after: avoid;
 }

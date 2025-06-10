@@ -610,17 +610,6 @@ export function createConstructorApp(serverData, isManage) {
       this.setList(0);
       this.preloaded = true;
       setTimeout(() => {
-        const observerLogo = new MutationObserver((mutations) => {
-          mutations.forEach((mutationRecord) => {
-            const node = /** @type {HTMLElement} */ (mutationRecord.target);
-            const mutation = node.getAttribute('style');
-            this.$refs.logoElementBottom.setAttribute('style', mutation);
-          });
-        });
-
-        const targetLogo = this.$refs.logoElement;
-        observerLogo.observe(targetLogo, { attributes: true, attributeFilter: ['style'] });
-
         const dragElement =
           /** @param {HTMLElement} elmnt */
           (elmnt) => {
@@ -668,6 +657,16 @@ export function createConstructorApp(serverData, isManage) {
             }
           };
 
+        // Draggable logo
+        const targetLogo = this.$refs.logoElement;
+        const observerLogo = new MutationObserver((mutations) => {
+          mutations.forEach((mutationRecord) => {
+            const node = /** @type {HTMLElement} */ (mutationRecord.target);
+            const mutation = node.getAttribute('style');
+            this.$refs.logoElementBottom.setAttribute('style', mutation);
+          });
+        });
+        observerLogo.observe(targetLogo, { attributes: true, attributeFilter: ['style'] });
         dragElement(targetLogo);
       }, 2000);
     },
