@@ -13,41 +13,32 @@ php_flag register_globals on
 # htpasswd -b .htpasswd {user} {pass}
 AuthUserFile /home/g/goldenjeru/.security/.htpasswd
 
-# Fake manage page (uses the same code as root one) -- should require authorization
-RewriteBase "/"
-RewriteRule "^(manage)$" "" [PT]
-
-# Remove html extensions
-RewriteCond %{REQUEST_FILENAME}.html -f
-RewriteRule !.*\.html$ %{REQUEST_FILENAME}.html [L]
-
-AuthType Basic
-AuthName "Site Access"
-
-# Allow everybody
-Order Allow,Deny
-Satisfy any
-Allow from all
-Require valid-user
-
-# TODO: Deny some arguments
-# RewriteCond %{QUERY_STRING} mode=full
-# RewriteRule ^ - [E=auth:1]
-
-SetEnvIf Request_URI ^/(editor|manage|.*\.(log|php))$ auth=true
-
-# Deny authorized files
-Deny from env=auth
-
-<FilesMatch "^\.">
-Order allow,deny
-Deny from all
-</FilesMatch>
-
-# <Files ~ "\.(php|log)$">
+# # Fake manage page (uses the same code as root one) -- should require authorization
+# RewriteBase "/"
+# RewriteRule "^(manage)$" "" [PT]
+#
+# # Remove html extensions
+# RewriteCond %{REQUEST_FILENAME}.html -f
+# RewriteRule !.*\.html$ %{REQUEST_FILENAME}.html [L]
+#
+# AuthType Basic
+# AuthName "Site Access"
+#
+# # Allow everybody
+# Order Allow,Deny
+# Satisfy any
+# Allow from all
 # Require valid-user
-# #Require Group admin
-# </Files>
+#
+# SetEnvIf Request_URI ^/(editor|manage|.*\.(log|php))$ auth=true
+#
+# # Deny authorized files
+# Deny from env=auth
+#
+# <FilesMatch "^\.">
+# Order allow,deny
+# Deny from all
+# </FilesMatch>
 
 <FilesMatch "\.(json)$">
     <IfModule mod_expires.c>
