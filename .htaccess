@@ -8,11 +8,11 @@ php_value log_errors 1
 php_value error_log php_errors.log
 php_flag register_globals on
 
-# Create/update an `.htpasswd` file using a command:
-# htpasswd -cb .htpasswd {user} {pass}
-# htpasswd -b .htpasswd {user} {pass}
-AuthUserFile /home/g/goldenjeru/.security/.htpasswd
-
+# # Create/update an `.htpasswd` file using a command:
+# # htpasswd -cb .htpasswd {user} {pass}
+# # htpasswd -b .htpasswd {user} {pass}
+# AuthUserFile /home/g/goldenjeru/.security/.htpasswd
+#
 # # Fake manage page (uses the same code as root one) -- should require authorization
 # RewriteBase "/"
 # RewriteRule "^(manage)$" "" [PT]
