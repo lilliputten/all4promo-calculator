@@ -12,18 +12,18 @@ php_flag register_globals on
 # # htpasswd -cb .htpasswd {user} {pass}
 # # htpasswd -b .htpasswd {user} {pass}
 # AuthUserFile /home/g/goldenjeru/.security/.htpasswd
-#
-# # Fake manage page (uses the same code as root one) -- should require authorization
-# RewriteBase "/"
-# RewriteRule "^(manage)$" "" [PT]
-#
-# # Remove html extensions
-# RewriteCond %{REQUEST_FILENAME}.html -f
-# RewriteRule !.*\.html$ %{REQUEST_FILENAME}.html [L]
-#
-# AuthType Basic
-# AuthName "Site Access"
-#
+
+# Fake manage page (uses the same code as root one) -- should require authorization
+RewriteBase "/"
+RewriteRule "^(manage)$" "" [PT]
+
+# Remove html extensions
+RewriteCond %{REQUEST_FILENAME}.html -f
+RewriteRule !.*\.html$ %{REQUEST_FILENAME}.html [L]
+
+AuthType Basic
+AuthName "Site Access"
+
 # # Allow everybody
 # Order Allow,Deny
 # Satisfy any
